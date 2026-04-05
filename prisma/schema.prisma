@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+enum Users_role {
+    ADMIN
+    STAFF
+}
+enum Users_dept {
+    HR
+    SALES
+    MARKETING
+    DESIGN
+    ERACTION
+    DELIVARY
+
+
+}
+enum Customer_type {
+    WALKIN
+    REFERRAL
+    EXISTING
+}
+
+enum Service_type {
+    BOARD
+    BANNER
+    LED
+    ROAD_SHOW
+    INVITATION
+    CARD
+
+}
+model Users {
+  id            String   @id @default(uuid())  
+  full_name     String   
+  email         String?    
+  phone         String   
+  password_hash String    
+  role          Users_role    
+  department    Users_dept   
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())  
+
+  
+}
+
+model Customer {
+  id            String   @id @default(uuid())  
+  name          String    
+  phone         String    
+  email         String?  
+  address       String?  
+  customer_type Customer_type   
+  created_at    DateTime @default(now())  
+
+  @@index([phone])
+  
+}
+
+model Projects {
+      id            String   @id @default(uuid()) 
+      project_code  String   
+      customer_id   String  
+      service_type  Service_type
+      description  String
+    //   status Project_status
+      
+
+
+}
