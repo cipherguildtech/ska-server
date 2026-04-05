@@ -4,12 +4,134 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
-//////////////////////////////////////////////////
-// ENUMS
-//////////////////////////////////////////////////
+model Users {
+  id             String           @id @default(uuid())
+  full_name      String
+  email          String?          @unique
+  phone          String           @unique
+  password_hash  String
+  role           Users_role
+  department     Users_dept
+  is_active      Boolean          @default(true)
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  history_logs   ProjectHistory[]
+  created_tasks  Tasks[]          @relation("CreatedTasks")
+  assigned_tasks Tasks[]          @relation("AssignedTasks")
+
+  @@index([department])
+}
+
+model Customer {
+  id            String        @id @default(uuid())
+  name          String
+  phone         String
+  email         String?
+  address       String?
+  customer_type Customer_type
+  referal       String?
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+  projects      Projects[]
+
+  @@index([phone])
+}
+
+model Projects {
+  id            String           @id @default(uuid())
+  project_code  String           @unique
+  customer_id   String
+  service_type  Service_type
+  description   String
+  status        Project_status   @default(ACTIVE)
+  current_stage Int              @default(1)
+  paid          Decimal          @default(0.00) @db.Decimal(10, 2)
+  balance       Decimal          @default(0.00) @db.Decimal(10, 2)
+  deadline      DateTime
+  created_at    DateTime         @default(now())
+  updated_at    DateTime         @updatedAt
+  payments      Payments[]
+  history       ProjectHistory[]
+  customer      Customer         @relation(fields: [customer_id], references: [id])
+  quotations    Quotations[]
+  tasks         Tasks[]
+
+  @@index([customer_id])
+  @@index([status])
+}
+
+model Tasks {
+  id           String      @id @default(uuid())
+  project_id   String
+  assigned_to  String
+  assigned_by  String
+  department   Users_dept
+  title        String
+  notes        String?
+  status       Task_status @default(PENDING)
+  file         String?     @db.LongText
+  history      String?     @db.LongText
+  due_at       DateTime
+  completed_at DateTime?
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+  assigner     Users       @relation("CreatedTasks", fields: [assigned_by], references: [id])
+  assignee     Users       @relation("AssignedTasks", fields: [assigned_to], references: [id])
+  project      Projects    @relation(fields: [project_id], references: [id])
+
+  @@index([project_id])
+  @@index([assigned_to])
+  @@index([assigned_by], map: "Tasks_assigned_by_fkey")
+}
+
+model Quotations {
+  id              String          @id @default(uuid())
+  project_id      String
+  amount          Decimal         @db.Decimal(10, 2)
+  advance_paid    Decimal?        @db.Decimal(10, 2)
+  approval_status Approval_status @default(DRAFT)
+  pdf_url         String?
+  approved_at     DateTime?
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+  payments        Payments[]
+  project         Projects        @relation(fields: [project_id], references: [id])
+
+  @@index([project_id])
+}
+
+model Payments {
+  id           String       @id @default(uuid())
+  project_id   String
+  quotation_id String?
+  amount       Decimal      @db.Decimal(10, 2)
+  type         Payment_type
+  reference    String?
+  paid_at      DateTime
+  created_at   DateTime     @default(now())
+  project      Projects     @relation(fields: [project_id], references: [id])
+  quotation    Quotations?  @relation(fields: [quotation_id], references: [id])
+
+  @@index([project_id])
+  @@index([quotation_id])
+}
+
+model ProjectHistory {
+  id         String   @id @default(uuid())
+  project_id String
+  changed_by String
+  stages     String?  @db.LongText
+  statuses   String?  @db.LongText
+  note       String?
+  changed_at DateTime @default(now())
+  user       Users    @relation(fields: [changed_by], references: [id])
+  project    Projects @relation(fields: [project_id], references: [id])
+
+  @@index([project_id])
+  @@index([changed_by], map: "ProjectHistory_changed_by_fkey")
+}
 
 enum Users_role {
   ADMIN
@@ -64,187 +186,4 @@ enum Payment_type {
   ADVANCE
   PARTIAL
   FINAL
-}
-
-//////////////////////////////////////////////////
-// MODELS
-//////////////////////////////////////////////////
-
-model Users {
-  id            String      @id @default(uuid())
-  full_name     String
-  email         String?     @unique
-  phone         String      @unique
-  password_hash String
-  role          Users_role
-  department    Users_dept
-  is_active     Boolean     @default(true)
-
-  created_at    DateTime    @default(now())
-  updated_at    DateTime    @updatedAt
-
-  // Relations
-  assigned_tasks Tasks[]    @relation("AssignedTasks")
-  created_tasks  Tasks[]    @relation("CreatedTasks")
-  history_logs   ProjectHistory[]
-
-  @@index([department])
-}
-
-//////////////////////////////////////////////////
-
-model Customer {
-  id            String         @id @default(uuid())
-  name          String
-  phone         String
-  email         String?
-  address       String?
-  customer_type Customer_type
-  referal String?
-
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-
-  // Relations
-  projects      Projects[]
-
-  @@index([phone])
-}
-
-//////////////////////////////////////////////////
-
-model Projects {
-  id            String          @id @default(uuid())
-  project_code  String          @unique
-
-  customer_id   String
-  customer      Customer        @relation(fields: [customer_id], references: [id])
-
-  service_type  Service_type
-  description   String
-
-  status        Project_status  @default(ACTIVE)
-  current_stage Int             @default(1)
-
-  paid          Decimal         @db.Decimal(10, 2) @default(0)
-  balance       Decimal         @db.Decimal(10, 2) @default(0)
-
-  deadline      DateTime
-
-  created_at    DateTime        @default(now())
-  updated_at    DateTime        @updatedAt
-
-  // Relations
-  tasks         Tasks[]
-  quotations    Quotations[]
-  payments      Payments[]
-  history       ProjectHistory[]
-
-  @@index([customer_id])
-  @@index([status])
-}
-
-//////////////////////////////////////////////////
-
-model Tasks {
-  id            String      @id @default(uuid())
-
-  project_id    String
-  project       Projects    @relation(fields: [project_id], references: [id])
-
-  assigned_to   String
-  assignee      Users       @relation("AssignedTasks", fields: [assigned_to], references: [id])
-
-  assigned_by   String
-  assigner      Users       @relation("CreatedTasks", fields: [assigned_by], references: [id])
-
-  department    Users_dept
-
-  title         String
-  notes         String?
-
-  status        Task_status @default(PENDING)
-
-  file          Json?
-  history       Json?
-
-  due_at        DateTime
-  completed_at  DateTime?
-
-  created_at    DateTime    @default(now())
-  updated_at    DateTime    @updatedAt
-
-  @@index([project_id])
-  @@index([assigned_to])
-}
-
-//////////////////////////////////////////////////
-
-model Quotations {
-  id              String          @id @default(uuid())
-
-  project_id      String
-  project         Projects        @relation(fields: [project_id], references: [id])
-
-  amount          Decimal         @db.Decimal(10, 2)
-  advance_paid    Decimal?        @db.Decimal(10, 2)
-
-  approval_status Approval_status @default(DRAFT)
-
-  pdf_url         String?
-
-  approved_at     DateTime?
-
-  created_at      DateTime        @default(now())
-  updated_at      DateTime        @updatedAt
-
-  // Relations
-  payments        Payments[]
-
-  @@index([project_id])
-}
-
-//////////////////////////////////////////////////
-
-model Payments {
-  id            String       @id @default(uuid())
-
-  project_id    String
-  project       Projects     @relation(fields: [project_id], references: [id])
-
-  quotation_id  String?
-  quotation     Quotations?  @relation(fields: [quotation_id], references: [id])
-
-  amount        Decimal      @db.Decimal(10, 2)
-
-  type          Payment_type
-  reference     String?
-
-  paid_at       DateTime
-
-  created_at    DateTime     @default(now())
-
-  @@index([project_id])
-  @@index([quotation_id])
-}
-
-//////////////////////////////////////////////////
-
-model ProjectHistory {
-  id          String    @id @default(uuid())
-
-  project_id  String
-  project     Projects  @relation(fields: [project_id], references: [id])
-
-  changed_by  String
-  user        Users     @relation(fields: [changed_by], references: [id])
-
-  stages      Json?
-  statuses    Json?
-
-  note        String?
-
-  changed_at  DateTime  @default(now())
-
-  @@index([project_id])
 }
