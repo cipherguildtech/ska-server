@@ -1,20 +1,36 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
-import "dotenv/config"
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { Injectable, OnModuleDestroy, OnModuleInit, Logger } from '@nestjs/common';
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { PrismaClient } from '@prisma/client';
+
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy{
-    constructor() {
-        const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
-        super({ adapter });
-    }
-    async onModuleInit() {
-        await this.$connect();
-        console.log('db connected');
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(PrismaService.name);
+
+  constructor() {
+    const databaseUrl = process.env.DATABASE_URL;
+
+    if (!databaseUrl?.trim()) {
+      throw new Error(
+        'DATABASE_URL is required to initialize Prisma. Set it in your environment before starting the app.',
+      );
     }
 
-    async onModuleDestroy() {
-        await this.$disconnect();
-        console.log("db disconnected");
+    const adapter = new PrismaMariaDb(databaseUrl);
+    super({ adapter });
+  }
+
+  async onModuleInit() {
+    try {
+      await this.$connect();
+      this.logger.log('Successfully connected to the database');
+    } catch (error) {
+      this.logger.error('Failed to connect to the database');
+      throw error;
     }
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
+    this.logger.log('Disconnected from the database');
+  }
 }
