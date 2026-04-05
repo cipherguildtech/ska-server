@@ -6,11 +6,8 @@ import { CustomersModule } from './customers/customers.module';
 import { TasksModule } from './tasks/tasks.module';
 
 @Module({
-  imports: [TasksModule,
-    
-
-  ],
-  imports: [PrismaModule, CustomersModule],
+  
+  imports: [PrismaModule, CustomersModule, TasksModule],
   controllers: [AppController],
   providers: [AppService],
 
