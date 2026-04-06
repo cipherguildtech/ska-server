@@ -1,4 +1,4 @@
-import { Controller , Get, Post, Param, Put} from "@nestjs/common";
+import { Controller , Get, Post, Param, Put, Body} from "@nestjs/common";
 import {CustomersService} from "./customers.service";
 
 @Controller('customers')
@@ -11,13 +11,13 @@ export class CustomersContoller {
     }
 
     @Post()
-    createCustomer() {
-        return this.customersService.createCustomer();
+    async createCustomer(@Body() requestBody: {}) {
+        return await this.customersService.createCustomer(requestBody);
     }
 
     @Get(':id')
-    getCustomer(@Param() param: number) {
-        return this.customersService.getCustomer(param);
+    async getCustomer(@Param('id') id: string) {
+        return await this.customersService.getCustomer(id);
     }
 
     @Put(':id')
