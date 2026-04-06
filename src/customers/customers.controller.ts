@@ -9,7 +9,7 @@ export class CustomersContoller {
     async getCustomers(){
         return await this.customersService.getCustomers();
     }
-    
+
     @Post()
     async createCustomer(@Body() requestBody: {}) {
         return await this.customersService.createCustomer(requestBody);

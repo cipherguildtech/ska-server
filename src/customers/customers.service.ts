@@ -20,7 +20,7 @@ export class CustomersService {
         }
         catch(e) {
             if(e instanceof PrismaClientKnownRequestError) {
-                if(e.code === "P2002") {
+                if(e.code === 'P2002') {
                     throw new ConflictException("customer with these details already exists");
                 }
         }
@@ -37,7 +37,14 @@ export class CustomersService {
         })
         }
         catch(e) {
+            if( e instanceof PrismaClientKnownRequestError) {
+                if(e.code == 'P2025') {
+                    throw new NotFoundException('customer not exsists')
+                }
+            }
+           else {
             throw new InternalServerErrorException("something went wrong");
+           }
         }
     }
 
@@ -52,8 +59,11 @@ export class CustomersService {
         }
         catch(e) {
             if(e instanceof PrismaClientKnownRequestError) {
-                if(e.code === "P2001") {
-                    throw new NotFoundException("user Not Found");
+                if(e.code === 'P2025') {
+                    throw new NotFoundException("customer not exsists");
+                }
+                else if (e.code === 'P2002') {
+                    throw new ConflictException("customer with these details already exists");
                 }
             }
             else {
