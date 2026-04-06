@@ -11,9 +11,9 @@ export class TasksController {
     return this.tasksService.getAll();
   }
 
-  @Get('all/:project_id')
-  getAllByProjectId(@Param('project_id')  project_id :number ) {
-    return this.tasksService.getAll();
+  @Get('all_project/:project_id')
+  getAllByProjectId(@Param('project_id')  project_id :string ) {
+    return this.tasksService.getAllByProjectId(project_id);
   }
   @Get('all/:assigned_to')
   getAllByAssignedTo(@Param('assigned_to')  assigned_to :string ) {

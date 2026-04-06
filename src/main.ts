@@ -17,6 +17,7 @@ function loadEnvironment() {
 async function bootstrap() {
   loadEnvironment();
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
