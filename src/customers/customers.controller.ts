@@ -6,10 +6,10 @@ export class CustomersContoller {
     constructor( private readonly customersService: CustomersService) { }
 
     @Get()
-    getCustomers(){
-        return this.customersService.getCustomers();
+    async getCustomers(){
+        return await this.customersService.getCustomers();
     }
-
+    
     @Post()
     async createCustomer(@Body() requestBody: {}) {
         return await this.customersService.createCustomer(requestBody);
@@ -21,8 +21,8 @@ export class CustomersContoller {
     }
 
     @Put(':id')
-    updateCustomer(@Param() param: number){
-        return this.customersService.updateCustomer(param);
+    async updateCustomer(@Param('id') id: string, @Body() requestBody: {}){
+        return await this.customersService.updateCustomer(id, requestBody);
     }
 
 }

@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
  
@@ -6,12 +6,28 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 export class CustomersService {
     constructor(private prisma: PrismaService) {}
     async getCustomers() {
-        return "";
-        // await this.prisma.customer.findMany
+       try {
+        return await this.prisma.customer.findMany();
+       }
+       catch(e) {
+        throw new InternalServerErrorException("something went wrong");
+       }
     }
 
     async createCustomer(requestBody) {
-        return await this.prisma.customer.create({data: requestBody});
+        try {
+            return await this.prisma.customer.create({data: requestBody});
+        }
+        catch(e) {
+            if(e instanceof PrismaClientKnownRequestError) {
+                if(e.code === "P2002") {
+                    throw new ConflictException("customer with these details already exists");
+                }
+        }
+        else {
+            throw new InternalServerErrorException("something went wrong");
+        }
+    }
     }
 
     async getCustomer(id: string) {
@@ -25,7 +41,24 @@ export class CustomersService {
         }
     }
 
-    updateCustomer(id: number) {
-return "";
+    async updateCustomer(id: string, requestBody) {
+        try {
+            await this.prisma.customer.update(
+                {
+                    data: requestBody,
+                    where: {id}
+                }
+            )
+        }
+        catch(e) {
+            if(e instanceof PrismaClientKnownRequestError) {
+                if(e.code === "P2001") {
+                    throw new NotFoundException("user Not Found");
+                }
+            }
+            else {
+                throw new InternalServerErrorException("someting went wrong");
+            }
+        }
     }
 }
