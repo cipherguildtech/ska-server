@@ -1,5 +1,6 @@
-import { Controller , Get, Post, Param, Put, Body} from "@nestjs/common";
+import { Controller , Get, Post, Param, Put, Body, Delete} from "@nestjs/common";
 import {CustomersService} from "./customers.service";
+import { request } from "node:https";
 
 @Controller('customers')
 export class CustomersContoller {

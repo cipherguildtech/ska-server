@@ -50,7 +50,7 @@ export class ProjectsService {
             return await this.prisma.projects.findUnique(
                 {
                     where: {id},
-                    select: history
+                    select: {history: true}
                 }
             )
         }

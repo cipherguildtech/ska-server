@@ -7,9 +7,12 @@ export class CustomersService {
     constructor(private prisma: PrismaService) {}
     async getCustomers() {
        try {
-        return await this.prisma.customer.findMany();
+        return await this.prisma.customer.findMany(
+            {omit: {created_at: true, updated_at: true }}
+        );
        }
        catch(e) {
+        console.log(e);
         throw new InternalServerErrorException("something went wrong");
        }
     }
