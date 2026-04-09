@@ -178,7 +178,34 @@ export class TasksService {
     return tasks;
   }
 
+//GET ALL TASKS BY ASSIGNED TO
+  async getAllAssignedTo(assigned_to: string) {
+    try {
+      return await this.prisma.tasks.findMany({
+        where: {
+          assigned_to
+        },
+        include:{
+          assignee:true,
+          assigner:true,
+          project:true
+        }
+      });
+    } catch (error) {
+      if (isDbHourlyConnectionLimitError(error)) {
+        throw new ServiceUnavailableException(
+          'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
+        );
+      }
 
+      if (error instanceof RangeError && error.message === 'Invalid time value') {
+        throw new InternalServerErrorException(
+          'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
+        );
+      }
+      throw error;
+    }
+  }
 
   //   async getAllByProjectId(project_id:string) {
   //     try {

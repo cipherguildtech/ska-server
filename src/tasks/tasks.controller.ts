@@ -26,15 +26,16 @@ export class TasksController {
     return this.tasksService.deleteTasks(id);
   }
 
-  
+    @Get('all/:assigned_to')
+  getAllByAssignedTo(@Param('assigned_to')  assigned_to :string ) {
+    return this.tasksService.getAllAssignedTo(assigned_to);
+  }
+
   // @Get('all_project/:project_id')
   // getAllByProjectId(@Param('project_id')  project_id :string ) {
   //   return this.tasksService.getAllByProjectId(project_id);
   // }
-  // @Get('all/:assigned_to')
-  // getAllByAssignedTo(@Param('assigned_to')  assigned_to :string ) {
-  //   return this.tasksService.getAll();
-  // }
+
   // @Get('all/:assigned_by')
   // getAllByAssignedBy(@Param('assigned_by')  assigned_by :string ) {
   //   return this.tasksService.getAll();

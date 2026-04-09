@@ -27,7 +27,10 @@ export class QuotationServices {
         return quotations;
     }
     async update(id:string ,body: any) {
-        const quotations = await this.prisma.quotations.create({
+        const quotations = await this.prisma.quotations.update({
+            where: {
+                id: id
+            },
             data: {
                 project_id: body.project_id,
                 amount: body.amount,
