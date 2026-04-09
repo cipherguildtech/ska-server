@@ -25,7 +25,7 @@ export class ProjectsController {
     }
 
     @Put(':id/status')
-    async updateProjectStatus(@Param("id") id: string, @Body() requestBody: {}) {
+    async updateProjectStatus(@Param("id") id: string, @Body() requestBody: {status: string}) {
         return await this.projectService.updateProjectStatus(id, requestBody);
     }
 }
