@@ -8,7 +8,7 @@ export class CustomersService {
     async getCustomers() {
        try {
         return await this.prisma.customer.findMany(
-            {omit: {created_at: true, updated_at: true }}
+            {omit: {created_at: true, updated_at: true}}
         );
        }
        catch(e) {
@@ -36,7 +36,9 @@ export class CustomersService {
     async getCustomer(id: string) {
         try {
             return await this.prisma.customer.findUniqueOrThrow({
-            where: {id}
+            where: {id},
+            include: {projects: true},
+            omit: {created_at: true, updated_at: true}
         })
         }
         catch(e) {
@@ -53,7 +55,7 @@ export class CustomersService {
 
     async updateCustomer(id: string, requestBody) {
         try {
-            await this.prisma.customer.update(
+            return await this.prisma.customer.update(
                 {
                     data: requestBody,
                     where: {id}

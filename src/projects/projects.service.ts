@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { Project_status } from "@prisma/client";
 
 @Injectable()
 export class ProjectsService {
@@ -59,11 +60,13 @@ export class ProjectsService {
         }
     }
 
-    async updateProjectStatus(id: string, requestBody) {
+    async updateProjectStatus(id: string, requestBody: {status: string}) {
+
         try {
+            const Status = requestBody.status as Project_status
             return await this.prisma.projects.update(
                 {
-                    data: requestBody,
+                    data: {status: Status},
                     where: {id}
                 }
             )
