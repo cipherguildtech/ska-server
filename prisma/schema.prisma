@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  
+ 
 }
 
 model Users {
@@ -138,16 +138,26 @@ model ProjectHistory {
 
 enum Users_role {
   ADMIN
+  HR
+  DIRECTOR
+  SALES
+  TEAM
   STAFF
 }
 
 enum Users_dept {
-  HR
-  SALES
-  MARKETING
-  DESIGN
-  PRODUCTION
-  DELIVERY
+  DESIGNING
+  SITE_VISITING
+  MARKEING
+  WELDING
+  FITTING
+  TRANSPORT
+  PRINTING
+  CNC_CUTTING
+  LASER
+  LETTER_MAKING
+  ERRACTON
+  ORDER
 }
 
 enum Customer_type {
@@ -157,17 +167,26 @@ enum Customer_type {
 }
 
 enum Service_type {
+  ADS
   BOARD
   BANNER
-  LED
+  LED_BOARD
   ROAD_SHOW
   INVITATION
   CARD
+  DESIGN
+PAMPLET
+VISITING_CARD
+OTHERS
+BRANDING
+
 }
 
 enum Project_status {
   ACTIVE
   ON_HOLD
+  PENDING
+  IN_PROGRESS
   COMPLETED
   CANCELLED
 }
@@ -176,6 +195,7 @@ enum Task_status {
   PENDING
   IN_PROGRESS
   COMPLETED
+  CANCELLED
 }
 
 enum Approval_status {

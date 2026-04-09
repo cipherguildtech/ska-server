@@ -31,6 +31,10 @@ export class TasksController {
     return this.tasksService.getAllAssignedTo(assigned_to);
   }
 
+  @Get('count/:dept/:assigned_to')
+  getCount(@Param('dept') dept: string, @Param('assigned_to') assigned_to: string) {
+    return this.tasksService.getCount(dept, assigned_to);
+  }
   // @Get('all_project/:project_id')
   // getAllByProjectId(@Param('project_id')  project_id :string ) {
   //   return this.tasksService.getAllByProjectId(project_id);
