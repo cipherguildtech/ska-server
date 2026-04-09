@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
+import { projectCreationDTO } from "./DTO/project_creation_DTO";
+import { Project_status } from "@prisma/client";
 
 @Controller('projects')
 export class ProjectsController {
@@ -15,7 +17,7 @@ export class ProjectsController {
     }
 
     @Post()
-    async createProject(@Body() requestBody: {}) {
+    async createProject(@Body() requestBody: projectCreationDTO) {
         return await this.projectService.createProject(requestBody);
     }
 
@@ -35,7 +37,12 @@ export class ProjectsController {
     }
 
     @Put(':id/status')
-    async updateProjectStatus(@Param("id") id: string, @Body() requestBody: {status: string}) {
+    async updateProjectStatus(@Param("id") id: string, @Body() requestBody: {status: Project_status}) {
         return await this.projectService.updateProjectStatus(id, requestBody);
+    }
+
+    @Put(':id/increment')
+    async incrementProjectCurrentStage(@Param("id") id : string) {
+        return this.projectService.incrementProjectCurrentStage(id);
     }
 }
