@@ -1,7 +1,8 @@
-import { Body, Controller, HttpException, Post, Put } from '@nestjs/common';
+import { Body, Controller, HttpException, Post, Put, Get, Delete } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './DTO/loginDto';
 import { RegisterDto } from './DTO/registerDto';
+import { VerifyOtpDto } from './DTO/verifyOtpDto';
 
 @Controller('auth')
 export class AuthController {
@@ -28,7 +29,8 @@ export class AuthController {
     }
 
     @Post('verify_otp')
-    async verifyOtp(@Body() requestBody: {otp: string, email: string}) {
-        return await this.authService.verifyOTP(requestBody.otp,requestBody.email);
+    async verifyOtp(@Body() requestBody: VerifyOtpDto) {
+        console.log(requestBody);
+        return await this.authService.verifyOTP(requestBody);
     }
 }
