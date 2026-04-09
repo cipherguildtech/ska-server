@@ -211,30 +211,30 @@ export class TasksService {
   }
 async getCount(dept: string, assigned_to: string) {
     try {
-      if (dept === Users_dept.HR) {
+      if (dept === Users_dept.CNC_CUTTING) {
        const totalTasks = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.HR,
+          department: Users_dept.CNC_CUTTING,
           assigned_to
         },
       });
        const pending = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.HR,
+          department: Users_dept.CNC_CUTTING,
           assigned_to,
           status: 'PENDING',
         },
       });
        const inProgress = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.HR,
+          department: Users_dept.CNC_CUTTING,
           assigned_to,
           status: 'IN_PROGRESS',
         },
       });
        const completed = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.HR,
+          department: Users_dept.CNC_CUTTING,
           assigned_to,
           status: 'COMPLETED',
         },
@@ -242,7 +242,7 @@ async getCount(dept: string, assigned_to: string) {
       
        const delayed = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.HR,
+          department: Users_dept.CNC_CUTTING,
           assigned_to,
           due_at:{
             //if completed_at is null and due_at is less than current date then it is delayed
