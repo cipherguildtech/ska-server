@@ -1,5 +1,7 @@
 import { Injectable, InternalServerErrorException, ServiceUnavailableException, Body } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Users_dept } from '@prisma/client';
+import { log } from 'console';
 
 
 function isDbHourlyConnectionLimitError(error: unknown): boolean {
@@ -180,6 +182,7 @@ export class TasksService {
 
 //GET ALL TASKS BY ASSIGNED TO
   async getAllAssignedTo(assigned_to: string) {
+     
     try {
       return await this.prisma.tasks.findMany({
         where: {
@@ -206,7 +209,72 @@ export class TasksService {
       throw error;
     }
   }
+async getCount(dept: string, assigned_to: string) {
+    try {
+      if (dept === Users_dept.HR) {
+       const totalTasks = await this.prisma.tasks.count({
+        where: {
+          department: Users_dept.HR,
+          assigned_to
+        },
+      });
+       const pending = await this.prisma.tasks.count({
+        where: {
+          department: Users_dept.HR,
+          assigned_to,
+          status: 'PENDING',
+        },
+      });
+       const inProgress = await this.prisma.tasks.count({
+        where: {
+          department: Users_dept.HR,
+          assigned_to,
+          status: 'IN_PROGRESS',
+        },
+      });
+       const completed = await this.prisma.tasks.count({
+        where: {
+          department: Users_dept.HR,
+          assigned_to,
+          status: 'COMPLETED',
+        },
+      });
+      
+       const delayed = await this.prisma.tasks.count({
+        where: {
+          department: Users_dept.HR,
+          assigned_to,
+          due_at:{
+            //if completed_at is null and due_at is less than current date then it is delayed
+            lt: new Date(),
+          },
+          completed_at: null,
+          status: {
+            not: 'COMPLETED',
+          },
 
+        },
+      });
+      
+ 
+
+    return { totalTasks,pending,inProgress,completed,delayed,inCompleted: totalTasks - completed};
+    }
+    } catch (error) {
+      if (isDbHourlyConnectionLimitError(error)) {
+        throw new ServiceUnavailableException(
+          'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
+        );
+      }
+      
+      if (error instanceof RangeError && error.message === 'Invalid time value') {
+        throw new InternalServerErrorException(
+          'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
+        );
+      }
+      throw error;
+    }
+  }
   //   async getAllByProjectId(project_id:string) {
   //     try {
   //       return await this.prisma.tasks.findMany({
