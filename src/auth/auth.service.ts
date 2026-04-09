@@ -4,11 +4,26 @@ import { LoginDto } from './DTO/loginDto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { RegisterDto } from './DTO/registerDto';
 import * as bcrypt from 'bcrypt';
+import * as nodemailer from 'nodemailer';
+import { randomInt } from 'crypto';
+import * as dotenv from 'dotenv';
+
 const saltOrRounds = 10
 
 @Injectable()
 export class AuthService {
-    constructor( private readonly prisma: PrismaService ) {}
+    private readonly emailTransporter;
+    constructor( private readonly prisma: PrismaService ) {
+        this.emailTransporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: 587,
+            auth: {
+                user: process.env.SENDER_EMAIL,
+                pass: process.env.SENDER_EMAIL_PASSWORD
+            }
+
+        });
+    }
 
     async logIn( {email, password}: LoginDto) {
         try {
@@ -84,7 +99,65 @@ export class AuthService {
         
     }
 
-    async sendOTP() {
+    async sendOTP(email: string) {
+        const OTP = randomInt(100000, 999999).toString();
 
+        try {
+            this.prisma.users.update(
+                {
+                    data: {
+                        otp: OTP,
+                        otp_expiry: new Date(Date.now() + 5 * 60 * 1000)  
+                    },
+                    where: {
+                        email: email
+                    }
+                }
+            );
+
+        await this.emailTransporter.sendMail({
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: 'OTP for password resetting',
+        text: `Your OTP is ${OTP}`,
+        html: `<p>Your OTP is <strong>${OTP}</strong></p>`,
+      });
+
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+
+    }
+
+    
+    async verifyOTP(otp: string, email: string) {
+        try {
+            const user = await this.prisma.users.findUnique(
+                {
+                    where: {
+                        email: email
+                    }
+                }
+            );
+
+            if(user !== null) {
+                if(user.otp === otp) {
+                    if(new Date() > user.otp_expiry!) {
+                        throw new HttpException('otp expired', HttpStatus.UNAUTHORIZED);
+                    }
+                    else {
+                        throw new HttpException('otp verified', HttpStatus.OK);
+                    }
+                }
+                else {
+                    throw new HttpException('wrong otp', HttpStatus.UNAUTHORIZED);
+                }
+            }
+        }
+
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
     }
 }

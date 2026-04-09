@@ -13,6 +13,8 @@ model Users {
   email          String?          @unique
   phone          String           @unique
   password_hash  String
+  otp            String?
+  otp_expiry DateTime?
   role           Users_role
   department     Users_dept
   is_active      Boolean          @default(true)
