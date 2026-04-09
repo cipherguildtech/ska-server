@@ -28,8 +28,8 @@ model Users {
 model Customer {
   id            String        @id @default(uuid())
   name          String
-  phone         String
-  email         String?
+  phone         String        @unique
+  email         String?       @unique
   address       String?
   customer_type Customer_type
   referal       String?

@@ -1,23 +1,77 @@
-import { Injectable } from "@nestjs/common";
- import { PrismaService } from "../prisma/prisma.service";
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
  
 @Injectable()
 export class CustomersService {
     constructor(private prisma: PrismaService) {}
     async getCustomers() {
-        return "";
-        // await this.prisma.customer.findMany
+       try {
+        return await this.prisma.customer.findMany(
+            {omit: {created_at: true, updated_at: true }}
+        );
+       }
+       catch(e) {
+        console.log(e);
+        throw new InternalServerErrorException("something went wrong");
+       }
     }
 
-    createCustomer() {
-return "";
+    async createCustomer(requestBody) {
+        try {
+            return await this.prisma.customer.create({data: requestBody});
+        }
+        catch(e) {
+            if(e instanceof PrismaClientKnownRequestError) {
+                if(e.code === 'P2002') {
+                    throw new ConflictException("customer with these details already exists");
+                }
+        }
+        else {
+            throw new InternalServerErrorException("something went wrong");
+        }
+    }
     }
 
-    getCustomer(id: number) {
-return "";
+    async getCustomer(id: string) {
+        try {
+            return await this.prisma.customer.findUniqueOrThrow({
+            where: {id}
+        })
+        }
+        catch(e) {
+            if( e instanceof PrismaClientKnownRequestError) {
+                if(e.code == 'P2025') {
+                    throw new NotFoundException('customer not exsists')
+                }
+            }
+           else {
+            throw new InternalServerErrorException("something went wrong");
+           }
+        }
     }
 
-    updateCustomer(id: number) {
-return "";
+    async updateCustomer(id: string, requestBody) {
+        try {
+            await this.prisma.customer.update(
+                {
+                    data: requestBody,
+                    where: {id}
+                }
+            )
+        }
+        catch(e) {
+            if(e instanceof PrismaClientKnownRequestError) {
+                if(e.code === 'P2025') {
+                    throw new NotFoundException("customer not exsists");
+                }
+                else if (e.code === 'P2002') {
+                    throw new ConflictException("customer with these details already exists");
+                }
+            }
+            else {
+                throw new InternalServerErrorException("someting went wrong");
+            }
+        }
     }
 }

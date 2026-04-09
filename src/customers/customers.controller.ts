@@ -1,28 +1,29 @@
-import { Controller , Get, Post, Param, Put} from "@nestjs/common";
+import { Controller , Get, Post, Param, Put, Body, Delete} from "@nestjs/common";
 import {CustomersService} from "./customers.service";
+import { request } from "node:https";
 
 @Controller('customers')
 export class CustomersContoller {
     constructor( private readonly customersService: CustomersService) { }
 
     @Get()
-    getCustomers(){
-        return this.customersService.getCustomers();
+    async getCustomers(){
+        return await this.customersService.getCustomers();
     }
 
     @Post()
-    createCustomer() {
-        return this.customersService.createCustomer();
+    async createCustomer(@Body() requestBody: {}) {
+        return await this.customersService.createCustomer(requestBody);
     }
 
     @Get(':id')
-    getCustomer(@Param() param: number) {
-        return this.customersService.getCustomer(param);
+    async getCustomer(@Param('id') id: string) {
+        return await this.customersService.getCustomer(id);
     }
 
     @Put(':id')
-    updateCustomer(@Param() param: number){
-        return this.customersService.updateCustomer(param);
+    async updateCustomer(@Param('id') id: string, @Body() requestBody: {}){
+        return await this.customersService.updateCustomer(id, requestBody);
     }
 
 }
