@@ -42,7 +42,7 @@ export class TasksService {
           title: true,
           notes: true,
           status: true,
-          file: true,
+          files: true,
           history: true,
           due_at: true,
           assignee: {
@@ -97,7 +97,7 @@ export class TasksService {
       throw error;
     }
   }
- 
+
   //CREATE TASK
   async createTasks(body: any) {
     const tasks = await this.prisma.tasks.create(
@@ -110,7 +110,7 @@ export class TasksService {
           title: body.title,
           notes: body.notes,
           status: body.status,
-          file: body.file,
+          files: body.files,
           history: body.history,
           due_at: body.due_at,
         }
@@ -167,31 +167,33 @@ export class TasksService {
       }
     });
     if (!existing) return "Task not available";
-    
+
     const tasks = await this.prisma.tasks.delete(
       {
         where: {
           id
         },
-         
+
       }
     );
 
     return tasks;
   }
 
-//GET ALL TASKS BY ASSIGNED TO
+  //GET ALL TASKS BY ASSIGNED TO
   async getAllAssignedTo(assigned_to: string) {
-     
+
+
     try {
       return await this.prisma.tasks.findMany({
         where: {
           assigned_to
         },
-        include:{
-          assignee:true,
-          assigner:true,
-          project:true
+
+        include: {
+          assignee: true,
+          assigner: true,
+          project: true
         }
       });
     } catch (error) {
@@ -209,42 +211,50 @@ export class TasksService {
       throw error;
     }
   }
-async getCount(dept: string, assigned_to: string) {
+
+
+  async getCount(dept: string, assigned_to: string) {
     try {
-      if (dept === Users_dept.CNC_CUTTING) {
-       const totalTasks = await this.prisma.tasks.count({
+      if (dept.toUpperCase() != Users_dept.CNC_CUTTING && dept.toUpperCase() != Users_dept.DESIGNING && dept.toUpperCase() != Users_dept.ERRACTON
+        && dept.toUpperCase() != Users_dept.FITTING && dept.toUpperCase() != Users_dept.LASER && dept.toUpperCase() != Users_dept.LETTER_MAKING
+        && dept.toUpperCase() != Users_dept.MARKEING && dept.toUpperCase() != Users_dept.ORDER && dept.toUpperCase() != Users_dept.PRINTING
+        && dept.toUpperCase() != Users_dept.SITE_VISITING && dept.toUpperCase() != Users_dept.TRANSPORT && dept.toUpperCase() != Users_dept.WELDING) {
+        return ("Invalid department");
+      }
+
+      const totalTasks = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.CNC_CUTTING,
+          department: dept.toUpperCase() as Users_dept,
           assigned_to
         },
       });
-       const pending = await this.prisma.tasks.count({
+      const pending = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.CNC_CUTTING,
+          department: dept.toUpperCase() as Users_dept,
           assigned_to,
           status: 'PENDING',
         },
       });
-       const inProgress = await this.prisma.tasks.count({
+      const inProgress = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.CNC_CUTTING,
+          department: dept.toUpperCase() as Users_dept,
           assigned_to,
           status: 'IN_PROGRESS',
         },
       });
-       const completed = await this.prisma.tasks.count({
+      const completed = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.CNC_CUTTING,
+          department: dept.toUpperCase() as Users_dept,
           assigned_to,
           status: 'COMPLETED',
         },
       });
-      
-       const delayed = await this.prisma.tasks.count({
+
+      const delayed = await this.prisma.tasks.count({
         where: {
-          department: Users_dept.CNC_CUTTING,
+          department: dept.toUpperCase() as Users_dept,
           assigned_to,
-          due_at:{
+          due_at: {
             //if completed_at is null and due_at is less than current date then it is delayed
             lt: new Date(),
           },
@@ -255,18 +265,18 @@ async getCount(dept: string, assigned_to: string) {
 
         },
       });
-      
- 
 
-    return { totalTasks,pending,inProgress,completed,delayed,inCompleted: totalTasks - completed};
-    }
+
+
+      return { totalTasks, pending, inProgress, completed, delayed, inCompleted: totalTasks - completed };
+
     } catch (error) {
       if (isDbHourlyConnectionLimitError(error)) {
         throw new ServiceUnavailableException(
           'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
         );
       }
-      
+
       if (error instanceof RangeError && error.message === 'Invalid time value') {
         throw new InternalServerErrorException(
           'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
@@ -274,6 +284,35 @@ async getCount(dept: string, assigned_to: string) {
       }
       throw error;
     }
+  }
+
+
+  async updateNotes(id: string, body: any) {
+    const existing = await this.prisma.tasks.findUnique({
+      where: {
+        id
+      }
+    });
+    if (!existing) return "Task not available";
+    const 
+          data=body.files ?{
+            notes: body.notes,
+            history: body.history,
+            files: body.files
+        }:{
+          notes: body.notes,
+          history: body.history
+        };
+    const tasks = await this.prisma.tasks.update(
+      {
+        where: {
+          id
+        },
+        data
+      }
+    );
+    
+    return tasks;
   }
   //   async getAllByProjectId(project_id:string) {
   //     try {

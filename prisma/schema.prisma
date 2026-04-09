@@ -74,7 +74,7 @@ model Tasks {
   title        String
   notes        String?
   status       Task_status @default(PENDING)
-  file         String?     @db.LongText
+  files         Json?      
   history      String?     @db.LongText
   due_at       DateTime
   completed_at DateTime?

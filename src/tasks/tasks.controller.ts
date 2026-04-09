@@ -26,7 +26,7 @@ export class TasksController {
     return this.tasksService.deleteTasks(id);
   }
 
-    @Get('all/:assigned_to')
+    @Get('all_by_assigned_to/:assigned_to')
   getAllByAssignedTo(@Param('assigned_to')  assigned_to :string ) {
     return this.tasksService.getAllAssignedTo(assigned_to);
   }
@@ -35,6 +35,11 @@ export class TasksController {
   getCount(@Param('dept') dept: string, @Param('assigned_to') assigned_to: string) {
     return this.tasksService.getCount(dept, assigned_to);
   }
+  @Put('update_notes/:id')
+  updateNotes(@Param('id') id: string, @Body() body: any) {
+    return this.tasksService.updateNotes(id, body);
+  }
+
   // @Get('all_project/:project_id')
   // getAllByProjectId(@Param('project_id')  project_id :string ) {
   //   return this.tasksService.getAllByProjectId(project_id);
