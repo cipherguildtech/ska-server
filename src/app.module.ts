@@ -8,6 +8,7 @@ import { QuotationModule } from './quotations/quotations.module';
 import { ProjectsModule } from './projects/projects.module';
 import { PaymentModule } from './payments/payment.module';
 import { ProjectHistoryModule } from './project_history/project_history.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [PrismaModule,
@@ -16,8 +17,8 @@ import { ProjectHistoryModule } from './project_history/project_history.module';
     ProjectsModule,
     QuotationModule,
     PaymentModule,
-    ProjectHistoryModule
-
+    ProjectHistoryModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

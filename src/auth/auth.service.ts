@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './DTO/loginDto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
@@ -7,23 +7,13 @@ import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import { randomInt } from 'crypto';
 import * as dotenv from 'dotenv';
+import { Resend } from 'resend';
 
 const saltOrRounds = 10
 
 @Injectable()
 export class AuthService {
-    private readonly emailTransporter;
-    constructor( private readonly prisma: PrismaService ) {
-        this.emailTransporter = nodemailer.createTransport({
-            host: process.env.EMAIL_HOST,
-            port: 587,
-            auth: {
-                user: process.env.SENDER_EMAIL,
-                pass: process.env.SENDER_EMAIL_PASSWORD
-            }
-
-        });
-    }
+    constructor( private readonly prisma: PrismaService ) {}
 
     async logIn( {email, password}: LoginDto) {
         try {
@@ -33,22 +23,28 @@ export class AuthService {
                 }
             )
 
-            if( user.password_hash === await bcrypt.hash(password,saltOrRounds)) {
-                throw new HttpException('authentication success', HttpStatus.OK)
+            if( !(await bcrypt.compare(password,user.password_hash)) ) {
+               throw new UnauthorizedException('login failed');
             }
             else {
-                throw new HttpException('authentication failed', HttpStatus.UNAUTHORIZED)
+                return {
+                message: "login success"
+               };
             }
         }
         catch(e) {
+            console.log(e);
             if( e instanceof PrismaClientKnownRequestError) {
                 if(e.code == 'P2025') {
-                    throw new NotFoundException('customer not exsists')
+                    throw new NotFoundException('user not exsists');
                 }
             }
-            else {
-                throw new InternalServerErrorException("something went wrong");
+            if(e instanceof HttpException)
+                {
+                throw e;
             }
+
+            throw new InternalServerErrorException('something went wrong');
         }
     }
 
@@ -103,7 +99,7 @@ export class AuthService {
         const OTP = randomInt(100000, 999999).toString();
 
         try {
-            this.prisma.users.update(
+            await this.prisma.users.update(
                 {
                     data: {
                         otp: OTP,
@@ -114,23 +110,26 @@ export class AuthService {
                     }
                 }
             );
-
-        await this.emailTransporter.sendMail({
-        from: process.env.SENDER_EMAIL,
-        to: email,
-        subject: 'OTP for password resetting',
-        text: `Your OTP is ${OTP}`,
-        html: `<p>Your OTP is <strong>${OTP}</strong></p>`,
-      });
+        
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send(
+            {
+                from: 'onboarding@resend.dev',
+                to: email,
+                subject: 'OTP for resetting paassword',
+                html: `<p>Your OTP is <strong>${OTP}</strong> </p> `
+            }
+        );
 
         }
         catch(e) {
+            console.log(e);
             throw new InternalServerErrorException('something went wrong');
         }
 
     }
 
-    
+
     async verifyOTP(otp: string, email: string) {
         try {
             const user = await this.prisma.users.findUnique(
