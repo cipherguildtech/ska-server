@@ -7,6 +7,54 @@ import { Project_status } from "@prisma/client";
 export class ProjectsService {
     constructor(private readonly prisma: PrismaService) {}
 
+    async getActiveProjects() {
+        try {
+            return await this.prisma.projects.findMany(
+                {
+                    where: {
+                        deadline: {
+                            lte: new Date()
+                        }
+                    },
+                    orderBy: {
+                        deadline: "asc"
+                    },
+                    select: {
+                        id: true,
+                        customer: true,
+                        service_type: true,
+                        deadline: true,
+                        description: true,
+                        project_code: true, 
+                    },
+                }
+            )
+        }
+        catch(e) {
+            throw new InternalServerErrorException("something went wrong");
+        }
+    }
+
+    async getActiveProjectCount() {
+        try {
+            const activeProjectCount =  await this.prisma.projects.count(
+                {
+                    where: {
+                       deadline: {
+                        lte: new Date(),
+                       }
+                    }
+                }
+            );
+            return {
+                "count": activeProjectCount
+            }
+        }
+        catch(e) {
+            throw new InternalServerErrorException("something went wrong");
+        }
+    }
+
     async createProject(requestBody) {
         try {
             return await this.prisma.projects.create(
@@ -20,7 +68,18 @@ export class ProjectsService {
 
     async getProjects() {
         try {
-            return await this.prisma.projects.findMany();
+            return await this.prisma.projects.findMany(
+                {
+                    select: {
+                        id: true,
+                        project_code: true,
+                        deadline: true,
+                        description: true,
+                        customer: true,
+                        service_type: true,
+                    }
+                }
+            );
         }
         catch(e) {
             throw new InternalServerErrorException("something went wrong");

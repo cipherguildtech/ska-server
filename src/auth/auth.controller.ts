@@ -30,7 +30,6 @@ export class AuthController {
 
     @Post('verify_otp')
     async verifyOtp(@Body() requestBody: VerifyOtpDto) {
-        console.log(requestBody);
         return await this.authService.verifyOTP(requestBody);
     }
 }

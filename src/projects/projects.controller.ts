@@ -4,6 +4,16 @@ import { ProjectsService } from "./projects.service";
 @Controller('projects')
 export class ProjectsController {
     constructor(private readonly projectService: ProjectsService) {}
+    @Get('active_projects')
+    async getActiveProjects () {
+        return await this.projectService.getActiveProjects();
+    }
+
+    @Get('active_projects_count')
+    async getActiveProjectCount() {
+        return await this.projectService.getActiveProjectCount();
+    }
+
     @Post()
     async createProject(@Body() requestBody: {}) {
         return await this.projectService.createProject(requestBody);
