@@ -5,15 +5,26 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { RegisterDto } from './DTO/registerDto';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
-import { randomInt } from 'crypto';
-import * as dotenv from 'dotenv';
-import { Resend } from 'resend';
+import { randomInt, Verify } from 'crypto';
+import { VerifyOtpDto } from './DTO/verifyOtpDto';
 
 const saltOrRounds = 10
 
 @Injectable()
 export class AuthService {
-    constructor( private readonly prisma: PrismaService ) {}
+    private readonly emailTransporter;
+    constructor( private readonly prisma: PrismaService ) {
+        this.emailTransporter = nodemailer.createTransport({
+            host: process.env.SENDER_EMAIL_HOST,
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.SENDER_EMAIL,
+                pass: process.env.SENDER_APP_PASSWORD
+            }
+
+        });
+    }
 
     async logIn( {email, password}: LoginDto) {
         try {
@@ -87,7 +98,9 @@ export class AuthService {
                     where: {email: email}
                 }
             );
-            throw new HttpException('password updated', HttpStatus.OK)
+            return {
+                message: "password updated"
+            }
         }
         catch(e) {
             throw new InternalServerErrorException('something went wrong');
@@ -97,7 +110,6 @@ export class AuthService {
 
     async sendOTP(email: string) {
         const OTP = randomInt(100000, 999999).toString();
-
         try {
             await this.prisma.users.update(
                 {
@@ -110,16 +122,14 @@ export class AuthService {
                     }
                 }
             );
-        
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send(
-            {
-                from: 'onboarding@resend.dev',
-                to: email,
-                subject: 'OTP for resetting paassword',
-                html: `<p>Your OTP is <strong>${OTP}</strong> </p> `
-            }
-        );
+
+        await this.emailTransporter.sendMail({
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: 'OTP for password resetting',
+        text: `Your OTP is ${OTP}`,
+        html: `<p>Your OTP is <strong>${OTP}</strong></p>`,
+      });
 
         }
         catch(e) {
@@ -130,12 +140,12 @@ export class AuthService {
     }
 
 
-    async verifyOTP(otp: string, email: string) {
+    async verifyOTP({otp, email}: VerifyOtpDto) {
         try {
             const user = await this.prisma.users.findUnique(
                 {
                     where: {
-                        email: email
+                       email: email
                     }
                 }
             );
@@ -143,19 +153,24 @@ export class AuthService {
             if(user !== null) {
                 if(user.otp === otp) {
                     if(new Date() > user.otp_expiry!) {
-                        throw new HttpException('otp expired', HttpStatus.UNAUTHORIZED);
+                        throw new HttpException('OTP expired', HttpStatus.UNAUTHORIZED);
                     }
                     else {
-                        throw new HttpException('otp verified', HttpStatus.OK);
+                        return {
+                            message: "OTP verified"
+                        }
                     }
                 }
                 else {
-                    throw new HttpException('wrong otp', HttpStatus.UNAUTHORIZED);
+                    throw new HttpException('wrong OTP', HttpStatus.UNAUTHORIZED);
                 }
             }
         }
 
         catch(e) {
+            if(e instanceof HttpException) {
+                throw e;
+            }
             throw new InternalServerErrorException('something went wrong');
         }
     }

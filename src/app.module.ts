@@ -9,6 +9,9 @@ import { ProjectsModule } from './projects/projects.module';
 import { PaymentModule } from './payments/payment.module';
 import { ProjectHistoryModule } from './project_history/project_history.module';
 import { AuthModule } from './auth/auth.module';
+import { UsersService } from './users/users.service';
+import { UsersController } from './users/users.controller';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [PrismaModule,
@@ -18,9 +21,10 @@ import { AuthModule } from './auth/auth.module';
     QuotationModule,
     PaymentModule,
     ProjectHistoryModule,
-    AuthModule
+    AuthModule,
+    UsersModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, UsersController],
+  providers: [AppService, UsersService],
 })
 export class AppModule { }

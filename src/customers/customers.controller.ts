@@ -1,10 +1,20 @@
 import { Controller , Get, Post, Param, Put, Body, Delete} from "@nestjs/common";
 import {CustomersService} from "./customers.service";
-import { request } from "node:https";
+import { customerCreationDto } from "./DTO/customerCreationDTO";
 
 @Controller('customers')
 export class CustomersContoller {
     constructor( private readonly customersService: CustomersService) { }
+
+    @Get('count')
+    async getCustomersCount() {
+        return await this.customersService.getCustomersCount();
+    }
+
+    @Get('recent_customers')
+    async getRecentCustomers() {
+        return await this.customersService.getRecentCustomers();
+    }
 
     @Get()
     async getCustomers(){
@@ -12,7 +22,7 @@ export class CustomersContoller {
     }
 
     @Post()
-    async createCustomer(@Body() requestBody: {}) {
+    async createCustomer(@Body() requestBody: customerCreationDto) {
         return await this.customersService.createCustomer(requestBody);
     }
 

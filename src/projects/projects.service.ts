@@ -2,25 +2,85 @@ import { Injectable, InternalServerErrorException, NotFoundException } from "@ne
 import { PrismaService } from "../prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { Project_status } from "@prisma/client";
+import { projectCreationDTO } from "./DTO/project_creation_DTO";
 
 @Injectable()
 export class ProjectsService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async createProject(requestBody) {
+    async getActiveProjects() {
+        try {
+            return await this.prisma.projects.findMany(
+                {
+                    where: {
+                        deadline: {
+                            lte: new Date()
+                        }
+                    },
+                    orderBy: {
+                        deadline: "asc"
+                    },
+                    select: {
+                        id: true,
+                        customer: true,
+                        service_type: true,
+                        deadline: true,
+                        description: true,
+                        project_code: true, 
+                    },
+                }
+            )
+        }
+        catch(e) {
+            throw new InternalServerErrorException("something went wrong");
+        }
+    }
+
+    async getActiveProjectCount() {
+        try {
+            const activeProjectCount =  await this.prisma.projects.count(
+                {
+                    where: {
+                       deadline: {
+                        lte: new Date(),
+                       }
+                    }
+                }
+            );
+            return {
+                "count": activeProjectCount
+            }
+        }
+        catch(e) {
+            throw new InternalServerErrorException("something went wrong");
+        }
+    }
+
+    async createProject(requestBody: projectCreationDTO) {
         try {
             return await this.prisma.projects.create(
                 {data: requestBody}
             )
         }
         catch(e) {
-
+            throw new InternalServerErrorException('something went wrong');
         }
     }
 
     async getProjects() {
         try {
-            return await this.prisma.projects.findMany();
+            return await this.prisma.projects.findMany(
+                {
+                    select: {
+                        id: true,
+                        project_code: true,
+                        deadline: true,
+                        description: true,
+                        customer: true,
+                        service_type: true,
+                    }
+                }
+            );
         }
         catch(e) {
             throw new InternalServerErrorException("something went wrong");
@@ -29,14 +89,22 @@ export class ProjectsService {
 
     async getProject(id: string) {
         try {
-            return await this.prisma.projects.findFirstOrThrow(
-                {where: {id}}
+            return await this.prisma.projects.findUniqueOrThrow(
+                {
+                    where: {id},
+                    select:{
+                        service_type: true,
+                        deadline: true,
+                        description: true,
+                        current_stage: true,
+                    }
+                },
             )
         }
         catch(e) {
             if( e instanceof PrismaClientKnownRequestError) {
                 if(e.code == 'P2025') {
-                    throw new NotFoundException('customer not exsists')
+                    throw new NotFoundException('project not exsists')
                 }
             }
             else {
@@ -56,23 +124,40 @@ export class ProjectsService {
             )
         }
         catch(e) {
-
+            throw new InternalServerErrorException('something went wrong')
         }
     }
 
-    async updateProjectStatus(id: string, requestBody: {status: string}) {
-
+    async updateProjectStatus(id: string, requestBody: {status: Project_status}) {
         try {
-            const Status = requestBody.status as Project_status
             return await this.prisma.projects.update(
                 {
-                    data: {status: Status},
+                    data: {status: requestBody.status},
                     where: {id}
                 }
             )
         }
         catch(e) {
+            throw new InternalServerErrorException("something went wrong");
             
+        }
+    }
+
+    async incrementProjectCurrentStage(id: string) {
+        try {
+            await this.prisma.projects.update(
+                {
+                    where: {id},
+                    data: {
+                        current_stage: {
+                            increment: 1
+                        }
+                    }
+                }
+            )
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
         }
     }
 }
