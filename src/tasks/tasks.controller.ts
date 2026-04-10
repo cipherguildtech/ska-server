@@ -40,26 +40,31 @@ export class TasksController {
     return this.tasksService.updateNotes(id, body);
   }
 
-  // @Get('all_project/:project_id')
-  // getAllByProjectId(@Param('project_id')  project_id :string ) {
-  //   return this.tasksService.getAllByProjectId(project_id);
-  // }
+  @Put('update_status/:id/:status/:completed_at')
+  updateStatus(@Param('id') id: string, @Param('status') status: string, @Param('completed_at') completed_at: string) {
+    return this.tasksService.updateStatus(id, status, completed_at);
+  }
 
-  // @Get('all/:assigned_by')
-  // getAllByAssignedBy(@Param('assigned_by')  assigned_by :string ) {
-  //   return this.tasksService.getAll();
-  // }
-  // @Get('all/:department')
-  // getAllByDepartment(@Param('department')  department :string ) {
-  //   return this.tasksService.getAll();
-  // }
-  // @Get('all/:title')
-  // getAllByTitle(@Param('title')  title :string ) {
-  //   return this.tasksService.getAll();
-  // }
-  // @Get('all/:status')
-  // getAllByStatus(@Param('status')  status :string ) {
-  //   return this.tasksService.getAll();
-  // }
+  @Get('all_project/:project_id')
+  getAllByProjectId(@Param('project_id')  project_id :string ) {
+    return this.tasksService.getAllByProjectId(project_id);
+  }
+
+  @Get('all_assigned_by/:assigned_by')
+  getAllByAssignedBy(@Param('assigned_by')  assigned_by :string ) {
+    return this.tasksService.getAllAssignedBy(assigned_by);
+  }
+  @Get('all_by_department/:department')
+  getAllByDepartment(@Param('department')  department :string ) {
+    return this.tasksService.getAllByDept(department);
+  }
+  @Get('all_by_title/:title')
+  getAllByTitle(@Param('title')  title :string ) {
+    return this.tasksService.getAllByTitle(title);
+  }
+  @Get('all_by_status/:status')
+  getAllByStatus(@Param('status')  status :string ) {
+    return this.tasksService.getAllByStatus(status);
+  }
 
 }
