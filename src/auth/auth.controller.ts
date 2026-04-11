@@ -19,7 +19,7 @@ export class AuthController {
     }
 
     @Put('reset_password')
-    async resetPassword(@Body() requestBody: LoginDto) {
+    async resetPassword(@Body() requestBody: {email: string, password: string}) {
         return await this.authService.resetPassword(requestBody);
     }
 
