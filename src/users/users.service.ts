@@ -33,7 +33,9 @@ export class UsersService {
         try {
             return await this.prisma.users.findUniqueOrThrow(
                 {
-                    where: {phone},
+                    where: {
+                        phone
+                    },
 
                     omit: {
                         id: true,
@@ -57,6 +59,7 @@ export class UsersService {
                 }
             }
             else {
+                console.log(e);
                 throw new InternalServerErrorException("something went wrong");
             }
         }
