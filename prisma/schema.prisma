@@ -16,7 +16,7 @@ model Users {
   otp            String?
   otp_expiry DateTime?
   role           Users_role
-  department     Users_dept
+  department     Users_dept?
   is_active      Boolean          @default(true)
   created_at     DateTime         @default(now())
   updated_at     DateTime         @updatedAt

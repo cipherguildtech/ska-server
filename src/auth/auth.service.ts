@@ -60,7 +60,7 @@ export class AuthService {
                 {
                 throw e;
             }
-
+            
             throw new InternalServerErrorException('something went wrong');
         }
     }

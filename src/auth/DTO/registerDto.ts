@@ -19,6 +19,5 @@ export class RegisterDto {
     @IsNotEmpty()
     role!: Users_role
 
-    @IsNotEmpty()
     department!: Users_dept
 }
