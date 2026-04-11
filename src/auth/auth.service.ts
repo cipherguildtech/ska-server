@@ -60,7 +60,7 @@ export class AuthService {
                 {
                 throw e;
             }
-            
+
             throw new InternalServerErrorException('something went wrong');
         }
     }
@@ -93,7 +93,7 @@ export class AuthService {
     }
 
 
-    async resetPassword({phone, password}: LoginDto) 
+    async resetPassword({email, password}: {email: string, password: string}) 
     {
         var newPassword = password;
 
@@ -101,7 +101,7 @@ export class AuthService {
             await this.prisma.users.update(
                 {
                     data: {password_hash: await bcrypt.hash(newPassword, saltOrRounds)},
-                    where: {email: phone}
+                    where: {email: email}
                 }
             );
             return {

@@ -65,5 +65,19 @@ export class UsersService {
         }
     }
 
+    async updateUser(phone: string, {email} = {} as {email: string}){
+        try{
+        return this.prisma.users.update(
+            {
+                where: {phone: phone},
+                data: {email: email}
+            }
+        )
+    }
+    catch(e) {
+        console.log(e)
+    }
+    }
+
 
 }
