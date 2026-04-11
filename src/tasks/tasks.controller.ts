@@ -67,4 +67,9 @@ export class TasksController {
     return this.tasksService.getAllByStatus(status);
   }
 
+
+  @Get('hr_dashboard')
+  getHrDashboard(){
+    return this.tasksService.getHrDashboard();
+  }
 }

@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, ServiceUnavailableException, Body } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Task_status, Users_dept } from '@prisma/client';
+import { Approval_status, Project_status, Task_status, Users_dept } from '@prisma/client';
 import { log } from 'console';
 
 
@@ -417,11 +417,11 @@ export class TasksService {
     }
   }
 
-   async getAllByStatus(status: string) {
+  async getAllByStatus(status: string) {
     try {
       return await this.prisma.tasks.findMany({
         where: {
-          status:status.toUpperCase() as Task_status
+          status: status.toUpperCase() as Task_status
         },
         include: {
           assignee: true,
@@ -442,6 +442,133 @@ export class TasksService {
         );
       }
       throw error;
+    }
+  }
+
+
+  async getHrDashboard() {
+
+    const pendingTasks = await this.prisma.tasks.count
+      ({
+        where: {
+
+          status: Task_status.PENDING
+        }
+      });
+    const inProgressTasks = await this.prisma.tasks.count
+      ({
+        where: {
+
+          status: Task_status.IN_PROGRESS
+        }
+      });
+    const completedTasks = await this.prisma.tasks.count
+      ({
+        where: {
+
+          status: Task_status.COMPLETED
+        }
+      });
+    const cancelledTasks = await this.prisma.tasks.count
+      ({
+        where: {
+
+          status: Task_status.CANCELLED
+        }
+      });
+    const reviewTasks = await this.prisma.tasks.count
+      ({
+        where: {
+
+          status: Task_status.REVIEW
+        }
+      });
+
+    const draftQuotation = await this.prisma.quotations.count({
+      where: {
+        approval_status: Approval_status.DRAFT
+      }
+    });
+    const sentQuotation = await this.prisma.quotations.count({
+      where: {
+        approval_status: Approval_status.SENT
+      }
+    });
+    const approvedQuotation = await this.prisma.quotations.count({
+      where: {
+        approval_status: Approval_status.APPROVED
+      }
+    });
+    const rejectedQuotation = await this.prisma.quotations.count({
+      where: {
+        approval_status: Approval_status.REJECTED
+      }
+    });
+    const delayedTasks = await this.prisma.tasks.count({
+      where: {
+
+        due_at: {
+          //if completed_at is null and due_at is less than current date then it is delayed
+          lt: new Date(),
+        },
+        completed_at: null,
+        status: {
+          not: 'COMPLETED',
+        },
+
+      },
+    });
+    const completedProjects = await this.prisma.projects.count({
+      where: {
+        status: Project_status.COMPLETED
+      }
+    });
+    const notCompletedProjects = await this.prisma.projects.count({
+      where: {
+        status: {
+          notIn: [Project_status.COMPLETED, Project_status.CANCELLED],
+        },
+      },
+    });
+
+const projectWithoutAnyTask = await this.prisma.projects.count({
+
+  where:{
+    tasks:{
+      none:{}
+    }
+  }
+});
+const taskInProgress = await this.prisma.tasks.findMany
+      ({
+        where: {
+
+          status: Task_status.IN_PROGRESS
+        }
+      });
+      const taskForReview = await this.prisma.tasks.findMany
+      ({
+        where: {
+
+          status: Task_status.REVIEW
+        }
+      });
+    return {
+      pendingTasks,
+      inProgressTasks,
+      completedTasks,
+      cancelledTasks,
+      reviewTasks,
+      delayedTasks,
+      draftQuotation,
+      sentQuotation,
+      approvedQuotation,
+      rejectedQuotation,
+      completedProjects,
+      notCompletedProjects,
+      projectWithoutAnyTask,
+      taskInProgress,
+      taskForReview,
     }
   }
 }

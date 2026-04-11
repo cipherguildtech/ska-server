@@ -76,6 +76,8 @@ model Tasks {
   status       Task_status @default(PENDING)
   files         Json?      
   history      String?     @db.LongText
+  work_details Json?
+  is_quotation Boolean @default(false)
   due_at       DateTime
   completed_at DateTime?
   created_at   DateTime    @default(now())
@@ -196,6 +198,7 @@ enum Task_status {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+  REVIEW
 }
 
 enum Approval_status {
