@@ -14,28 +14,41 @@ export class PaymentServices {
         return payments;
     }
     async create(paymentData: any) {
-        const data= paymentData.paid_at?{
-                quotation_id: paymentData.quotation_id,
-                project_id: paymentData.project_id,
-                amount: paymentData.amount,
-                type: paymentData.type,
-                reference: paymentData.reference,
-                paid_at: paymentData.paid_at,
-            }:{
-                quotation_id: paymentData.quotation_id,
-                project_id: paymentData.project_id,
-                amount: paymentData.amount,
-                type: paymentData.type,
-                reference: paymentData.reference,
-                paid_at: null,
-            };
+        const data = paymentData.paid_at ? {
+            quotation_id: paymentData.quotation_id,
+            project_id: paymentData.project_id,
+            amount: paymentData.amount,
+            type: paymentData.type,
+            reference: paymentData.reference,
+            paid_at: paymentData.paid_at,
+        } : {
+            quotation_id: paymentData.quotation_id,
+            project_id: paymentData.project_id,
+            amount: paymentData.amount,
+            type: paymentData.type,
+            reference: paymentData.reference,
+            paid_at: null,
+        };
         const payments = await this.prisma.payments.create({
             data
         });
         return payments;
 
-        
-  
-  
+
+
+
+    }
+
+    async getAllByProject(id: string) {
+        const payments = await this.prisma.payments.findMany({
+            where: {
+                project_id: id
+            },
+            include: {
+                quotation: true,
+                project: true
+            }
+        });
+        return payments;
     }
 }

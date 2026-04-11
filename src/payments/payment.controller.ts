@@ -12,5 +12,9 @@ export class PaymentController {
     create(@Body() paymentData: any) {
         return this.paymentService.create(paymentData);
     }
-    
+    @Get('all_by_project/:id')
+    getAllByProject(@Param('id') id: string) {
+        return this.paymentService.getAllByProject(id);
+    }
+
 }

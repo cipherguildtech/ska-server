@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, ServiceUnavailableException, Body } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Users_dept } from '@prisma/client';
+import { Task_status, Users_dept } from '@prisma/client';
 import { log } from 'console';
 
 
@@ -33,54 +33,11 @@ export class TasksService {
   async getAll() {
     try {
       return await this.prisma.tasks.findMany({
-        select: {
-          id: true,
-          project_id: true,
-          assigned_to: true,
-          assigned_by: true,
-          department: true,
-          title: true,
-          notes: true,
-          status: true,
-          files: true,
-          history: true,
-          due_at: true,
-          assignee: {
-            select: {
-              id: true,
-              full_name: true,
-              email: true,
-              phone: true,
-              role: true,
-              department: true,
-              is_active: true,
-            },
-          },
-          assigner: {
-            select: {
-              id: true,
-              full_name: true,
-              email: true,
-              phone: true,
-              role: true,
-              department: true,
-              is_active: true,
-            },
-          },
-          project: {
-            select: {
-              id: true,
-              project_code: true,
-              customer_id: true,
-              service_type: true,
-              description: true,
-              status: true,
-              current_stage: true,
-              paid: true,
-              balance: true,
-            },
-          },
-        },
+        include: {
+          assignee: true,
+          assigner: true,
+          project: true
+        }
       });
     } catch (error) {
       if (isDbHourlyConnectionLimitError(error)) {
@@ -294,15 +251,15 @@ export class TasksService {
       }
     });
     if (!existing) return "Task not available";
-    const 
-          data=body.files ?{
-            notes: body.notes,
-            history: body.history,
-            files: body.files
-        }:{
-          notes: body.notes,
-          history: body.history
-        };
+    const
+      data = body.files ? {
+        notes: body.notes,
+        history: body.history,
+        files: body.files
+      } : {
+        notes: body.notes,
+        history: body.history
+      };
     const tasks = await this.prisma.tasks.update(
       {
         where: {
@@ -311,76 +268,180 @@ export class TasksService {
         data
       }
     );
-    
+
     return tasks;
   }
-  //   async getAllByProjectId(project_id:string) {
-  //     try {
-  //       return await this.prisma.tasks.findMany({
-  //         where:{
-  // project_id
-  //         },
-  //         select: {
-  //           id: true,
-  //           project_id: true,
-  //           assigned_to: true,
-  //           assigned_by: true,
-  //           department: true,
-  //           title: true,
-  //           notes: true,
-  //           status: true,
-  //           file: true,
-  //           history: true,
-  //           assignee: {
-  //             select: {
-  //               id: true,
-  //               full_name: true,
-  //               email: true,
-  //               phone: true,
-  //               role: true,
-  //               department: true,
-  //               is_active: true,
-  //             },
-  //           },
-  //           assigner: {
-  //             select: {
-  //               id: true,
-  //               full_name: true,
-  //               email: true,
-  //               phone: true,
-  //               role: true,
-  //               department: true,
-  //               is_active: true,
-  //             },
-  //           },
-  //           project: {
-  //             select: {
-  //               id: true,
-  //               project_code: true,
-  //               customer_id: true,
-  //               service_type: true,
-  //               description: true,
-  //               status: true,
-  //               current_stage: true,
-  //               paid: true,
-  //               balance: true,
-  //             },
-  //           },
-  //         },
-  //       });
-  //     } catch (error) {
-  //       if (isDbHourlyConnectionLimitError(error)) {
-  //         throw new ServiceUnavailableException(
-  //           'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
-  //         );
-  //       }
 
-  //       if (error instanceof RangeError && error.message === 'Invalid time value') {
-  //         throw new InternalServerErrorException(
-  //           'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
-  //         );
-  //       }
-  //       throw error;
-  //     }
-  //   }
+
+  async updateStatus(id: string, status: string, completed_at: string) {
+    const existing = await this.prisma.tasks.findUnique({
+      where: {
+        id
+      }
+    });
+    if (!existing) return "Task not available";
+    if (status.toUpperCase() != Task_status.PENDING && status.toUpperCase() != Task_status.IN_PROGRESS && status.toUpperCase() != Task_status.COMPLETED && status.toUpperCase() != Task_status.CANCELLED) {
+      return "Invalid status";
+    }
+    const data = completed_at && completed_at !== 'null' ? {
+      status: status.toUpperCase() as Task_status,
+      completed_at: new Date(completed_at)
+    } : {
+      status: status.toUpperCase() as Task_status,
+    };
+    const tasks = await this.prisma.tasks.update(
+      {
+        where: {
+          id
+        },
+        data
+      }
+    );
+
+    return tasks;
+  }
+  async getAllByProjectId(project_id: string) {
+    try {
+      return await this.prisma.tasks.findMany({
+        where: {
+          project_id
+        },
+        include: {
+          assignee: true,
+          assigner: true,
+          project: true
+        }
+      });
+    } catch (error) {
+      if (isDbHourlyConnectionLimitError(error)) {
+        throw new ServiceUnavailableException(
+          'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
+        );
+      }
+
+      if (error instanceof RangeError && error.message === 'Invalid time value') {
+        throw new InternalServerErrorException(
+          'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
+        );
+      }
+      throw error;
+    }
+  }
+
+  //GET ALL TASKS BY ASSIGNED BY
+  async getAllAssignedBy(assigned_by: string) {
+
+
+    try {
+      return await this.prisma.tasks.findMany({
+        where: {
+          assigned_by
+        },
+
+        include: {
+          assignee: true,
+          assigner: true,
+          project: true
+        }
+      });
+    } catch (error) {
+      if (isDbHourlyConnectionLimitError(error)) {
+        throw new ServiceUnavailableException(
+          'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
+        );
+      }
+
+      if (error instanceof RangeError && error.message === 'Invalid time value') {
+        throw new InternalServerErrorException(
+          'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
+        );
+      }
+      throw error;
+    }
+  }
+
+  //GET ALL TASKS
+  async getAllByDept(dept: string) {
+    try {
+      return await this.prisma.tasks.findMany({
+        where: {
+          department: dept.toLowerCase() as Users_dept
+        },
+        include: {
+          assignee: true,
+          assigner: true,
+          project: true
+        }
+      });
+    } catch (error) {
+      if (isDbHourlyConnectionLimitError(error)) {
+        throw new ServiceUnavailableException(
+          'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
+        );
+      }
+
+      if (error instanceof RangeError && error.message === 'Invalid time value') {
+        throw new InternalServerErrorException(
+          'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
+        );
+      }
+      throw error;
+    }
+  }
+
+  async getAllByTitle(title: string) {
+    try {
+      return await this.prisma.tasks.findMany({
+        where: {
+          title
+        },
+        include: {
+          assignee: true,
+          assigner: true,
+          project: true
+        }
+      });
+    } catch (error) {
+      if (isDbHourlyConnectionLimitError(error)) {
+        throw new ServiceUnavailableException(
+          'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
+        );
+      }
+
+      if (error instanceof RangeError && error.message === 'Invalid time value') {
+        throw new InternalServerErrorException(
+          'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
+        );
+      }
+      throw error;
+    }
+  }
+
+   async getAllByStatus(status: string) {
+    try {
+      return await this.prisma.tasks.findMany({
+        where: {
+          status:status.toUpperCase() as Task_status
+        },
+        include: {
+          assignee: true,
+          assigner: true,
+          project: true
+        }
+      });
+    } catch (error) {
+      if (isDbHourlyConnectionLimitError(error)) {
+        throw new ServiceUnavailableException(
+          'Database connection quota is temporarily exhausted. Please retry after the provider quota window resets.',
+        );
+      }
+
+      if (error instanceof RangeError && error.message === 'Invalid time value') {
+        throw new InternalServerErrorException(
+          'Invalid DATETIME value found in database rows. Clean invalid datetime values (for example 0000-00-00 00:00:00) and retry.',
+        );
+      }
+      throw error;
+    }
+  }
 }
