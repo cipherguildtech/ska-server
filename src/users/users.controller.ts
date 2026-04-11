@@ -16,7 +16,7 @@ export class UsersController {
     }
 
     @Put(':phone')
-    async updateUser(@Param('phone') phone: string, @Body() requestBody: {email: string}) {
+    async updateUser(@Param('phone') phone: string, @Body() requestBody: {name: string, email: string}) {
         return await this.usersService.updateUser(phone, requestBody)
     }
 }
