@@ -5,7 +5,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { RegisterDto } from './DTO/registerDto';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
-import { randomInt, Verify } from 'crypto';
+import { randomInt} from 'crypto';
 import { VerifyOtpDto } from './DTO/verifyOtpDto';
 
 const saltOrRounds = 10
@@ -39,7 +39,13 @@ export class AuthService {
             }
             else {
                 return {
-                message: "login success"
+                message: "login success",
+                "user": {
+                    "name": user.full_name,
+                    "role": user.role,
+                    "phone": user.phone,
+                    "department": user.department
+                }
                };
             }
         }
