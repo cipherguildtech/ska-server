@@ -531,28 +531,63 @@ export class TasksService {
       },
     });
 
-const projectWithoutAnyTask = await this.prisma.projects.count({
+    const projectWithoutAnyTask = await this.prisma.projects.count({
 
-  where:{
-    tasks:{
-      none:{}
-    }
-  }
-});
-const taskInProgress = await this.prisma.tasks.findMany
+      where: {
+        tasks: {
+          none: {}
+        }
+      }
+    });
+    const taskInProgress = await this.prisma.tasks.findMany
       ({
         where: {
 
           status: Task_status.IN_PROGRESS
+        },
+        select: {
+          department: true,
+          title: true,
+          notes: true,
+          status: true,
         }
       });
-      const taskForReview = await this.prisma.tasks.findMany
+    const taskForReview = await this.prisma.tasks.findMany
       ({
         where: {
 
           status: Task_status.REVIEW
+        },
+        select: {
+          department: true,
+          title: true,
+          notes: true,
+          status: true,
         }
       });
+
+// teams = [
+//         {"name": "Designing", "tasks": 2},
+//         {"name": "Sales", "tasks": 4},
+//         {"name": "Marketing", "tasks": 3},
+//       ];
+
+const teamsData = await this.prisma.tasks.groupBy({
+  where: {
+    status: {
+      notIn: ['CANCELLED', 'COMPLETED'],
+    },
+  },
+  by: ['department'],
+  _count: {
+    department: true,
+  },
+});
+const teams = teamsData.map((item) => ({
+  name: item.department,
+  tasks: item._count.department,
+}));
+
     return {
       pendingTasks,
       inProgressTasks,
@@ -569,6 +604,7 @@ const taskInProgress = await this.prisma.tasks.findMany
       projectWithoutAnyTask,
       taskInProgress,
       taskForReview,
+      teams,
     }
   }
 }
