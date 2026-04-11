@@ -26,11 +26,11 @@ export class AuthService {
         });
     }
 
-    async logIn( {email, password}: LoginDto) {
+    async logIn( {phone, password}: LoginDto) {
         try {
             const user = await this.prisma.users.findUniqueOrThrow(
                 {
-                    where: {email: email}
+                    where: {phone}
                 }
             )
 
@@ -87,7 +87,7 @@ export class AuthService {
     }
 
 
-    async resetPassword({email, password}: LoginDto) 
+    async resetPassword({phone, password}: LoginDto) 
     {
         var newPassword = password;
 
@@ -95,7 +95,7 @@ export class AuthService {
             await this.prisma.users.update(
                 {
                     data: {password_hash: await bcrypt.hash(newPassword, saltOrRounds)},
-                    where: {email: email}
+                    where: {email: phone}
                 }
             );
             return {
