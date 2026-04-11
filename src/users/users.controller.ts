@@ -11,7 +11,7 @@ export class UsersController {
     }
 
     @Get(':email')
-    async getUser(@Param() email: string) {
-        return await this.usersService.getUser(email);
+    async getUser(@Param() phone: string) {
+        return await this.usersService.getUser(phone);
     }
 }

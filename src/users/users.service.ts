@@ -29,11 +29,11 @@ export class UsersService {
         }
     }
 
-    async getUser(email: string) {
+    async getUser(phone: string) {
         try {
             return await this.prisma.users.findUniqueOrThrow(
                 {
-                    where: {email},
+                    where: {phone},
 
                     omit: {
                         id: true,
