@@ -587,7 +587,19 @@ export class TasksService {
       name: item.department,
       tasks: item._count.department,
     }));
-
+ const tasksToAssign = await this.prisma.projects.findMany({
+  where: {
+        tasks: {
+          none: {}
+        }
+      },
+      select:{
+        id:true,
+        project_code:true,
+        description:true,
+        service_type:true
+      }
+    });
     return {
       pendingTasks,
       inProgressTasks,
@@ -605,6 +617,7 @@ export class TasksService {
       taskInProgress,
       taskForReview,
       teams,
+      tasksToAssign
     }
   }
 
