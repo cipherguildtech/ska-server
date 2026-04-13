@@ -78,6 +78,15 @@ export class TasksController {
   }
    @Get('taskboard')
   taskboard(){
-    return this.tasksService.getHrDashboard();
+    return this.tasksService.taskboard();
   }
+  @Get('teams')
+  teams(){
+    return this.tasksService.teams();
+  }
+  @Get('elabrate_teams')
+  elabrateTeams(){
+    return this.tasksService.elabrateTeams();
+  }
+   
 }

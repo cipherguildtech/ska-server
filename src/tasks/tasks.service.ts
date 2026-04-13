@@ -643,4 +643,144 @@ export class TasksService {
     return tasks;
   }
 
+
+  async taskboard() {
+    const taskInProgress = await this.prisma.tasks.findMany
+      ({
+        where: {
+          status: Task_status.IN_PROGRESS
+        },
+        select: {
+          id: true,
+          project_id: true,
+          department: true,
+          title: true,
+          notes: true,
+          status: true,
+        }
+      });
+    const taskForReview = await this.prisma.tasks.findMany
+      ({
+        where: {
+          status: Task_status.REVIEW
+        },
+        select: {
+          id: true,
+          project_id: true,
+          department: true,
+          title: true,
+          notes: true,
+          status: true,
+        }
+      });
+    const tasksToAssign = await this.prisma.projects.findMany({
+      where: {
+        tasks: {
+          none: {}
+        }
+      },
+      select: {
+        id: true,
+        project_code: true,
+        description: true,
+        service_type: true
+      }
+    });
+    return {
+      taskInProgress, 
+      taskForReview,
+      tasksToAssign
+    }
+  }
+async teams() {
+  const allDepartments = Users_dept ? Object.values(Users_dept) : []; 
+
+  const teamsData = await this.prisma.tasks.groupBy({
+    where: {
+      status: {
+        notIn: ['CANCELLED', 'COMPLETED'],
+      },
+    },
+    by: ['department'],
+    _count: {
+      department: true,
+    },
+  });
+
+  const map = new Map(
+    teamsData.map((item) => [item.department, item._count.department])
+  );
+
+  return allDepartments.map((dept) => ({
+    name: dept,
+    tasks: map.get(dept as Users_dept) || 0,
+  }));
+}
+async elabrateTeams() {
+  const allUsers = await this.prisma.users.findMany({
+    select: {
+      id: true,
+      full_name: true,
+      department: true,
+    },
+  });
+
+  const allDepartments = Users_dept ? Object.values(Users_dept) : [];
+
+  const tasks = await this.prisma.tasks.findMany({
+    where: {
+      status: {
+        notIn: ['CANCELLED', 'COMPLETED'],
+      },
+    },
+    select: {
+      department: true,
+      assigner: {
+        select: {
+          id: true,
+          full_name: true,
+        },
+      },
+    },
+  });
+
+  const deptMap: any = {};
+
+  // ✅ Step 1: Initialize departments + ALL users with count 0
+  for (const dept of allDepartments) {
+    deptMap[dept] = {
+      name: dept,
+      tasks: 0,
+    };
+
+    const usersInDept = allUsers.filter((u) => u.department === dept);
+
+    for (const user of usersInDept) {
+      deptMap[dept][user.id] = {
+        count: 0,
+        name: user.full_name,
+      };
+    }
+  }
+
+  // ✅ Step 2: Aggregate task counts
+  for (const task of tasks) {
+    const dept = task.department;
+    const user = task.assigner;
+
+    if (!deptMap[dept]) continue;
+
+    deptMap[dept].tasks += 1;
+
+    if (user && deptMap[dept][user.id]) {
+      deptMap[dept][user.id].count += 1;
+    }
+  }
+
+  // ✅ Step 3: return result
+  return Object.values(deptMap);
+}
+
+ 
+
 }
