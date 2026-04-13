@@ -447,39 +447,33 @@ export class TasksService {
 
 
   async getHrDashboard() {
-
     const pendingTasks = await this.prisma.tasks.count
       ({
         where: {
-
           status: Task_status.PENDING
         }
       });
     const inProgressTasks = await this.prisma.tasks.count
       ({
         where: {
-
           status: Task_status.IN_PROGRESS
         }
       });
     const completedTasks = await this.prisma.tasks.count
       ({
         where: {
-
           status: Task_status.COMPLETED
         }
       });
     const cancelledTasks = await this.prisma.tasks.count
       ({
         where: {
-
           status: Task_status.CANCELLED
         }
       });
     const reviewTasks = await this.prisma.tasks.count
       ({
         where: {
-
           status: Task_status.REVIEW
         }
       });
@@ -532,7 +526,6 @@ export class TasksService {
     });
 
     const projectWithoutAnyTask = await this.prisma.projects.count({
-
       where: {
         tasks: {
           none: {}
@@ -542,10 +535,11 @@ export class TasksService {
     const taskInProgress = await this.prisma.tasks.findMany
       ({
         where: {
-
           status: Task_status.IN_PROGRESS
         },
         select: {
+          id: true,
+          project_id: true,
           department: true,
           title: true,
           notes: true,
@@ -555,10 +549,11 @@ export class TasksService {
     const taskForReview = await this.prisma.tasks.findMany
       ({
         where: {
-
           status: Task_status.REVIEW
         },
         select: {
+          id: true,
+          project_id: true,
           department: true,
           title: true,
           notes: true,
@@ -587,17 +582,17 @@ export class TasksService {
       name: item.department,
       tasks: item._count.department,
     }));
- const tasksToAssign = await this.prisma.projects.findMany({
-  where: {
+    const tasksToAssign = await this.prisma.projects.findMany({
+      where: {
         tasks: {
           none: {}
         }
       },
-      select:{
-        id:true,
-        project_code:true,
-        description:true,
-        service_type:true
+      select: {
+        id: true,
+        project_code: true,
+        description: true,
+        service_type: true
       }
     });
     return {
@@ -626,7 +621,7 @@ export class TasksService {
       select: {
         title: true,
         department: true,
-        status:true,
+        status: true,
         assignee: {
           select: {
             full_name: true,

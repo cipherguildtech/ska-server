@@ -76,5 +76,8 @@ export class TasksController {
   taskAssign(){
     return this.tasksService.taskAssign();
   }
-  
+   @Get('taskboard')
+  taskboard(){
+    return this.tasksService.getHrDashboard();
+  }
 }
