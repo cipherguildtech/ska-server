@@ -1,5 +1,5 @@
-import { Service_type } from "@prisma/client";
-import { IsNotEmpty, IsString } from "class-validator";
+import { Customer, Service_type, Users } from "@prisma/client";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class projectCreationDTO{
     @IsNotEmpty()
@@ -20,4 +20,8 @@ export class projectCreationDTO{
 
     @IsNotEmpty()
     deadline!: Date
+
+    @IsNotEmpty()
+    @IsEmail()
+    created_user_email!: string
 }

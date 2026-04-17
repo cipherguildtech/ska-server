@@ -22,7 +22,7 @@ model Users {
   history_logs   ProjectHistory[]
   created_tasks  Tasks[]          @relation("CreatedTasks")
   assigned_tasks Tasks[]          @relation("AssignedTasks")
-  projects       Projects?
+  projects       Projects[]
 
   @@index([department])
 }
@@ -60,9 +60,9 @@ model Projects {
   customer        Customer         @relation(fields: [customer_id], references: [id])
   quotations      Quotations[]
   tasks           Tasks[]
-  created_user_id String           @unique
-  created_by      Users            @relation(fields: [created_user_id], references: [id])
-  
+  created_user_email String        
+  created_by      Users            @relation(fields: [created_user_email], references: [email])
+
   @@index([customer_id])
   @@index([status])
 }
