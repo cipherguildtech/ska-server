@@ -67,4 +67,26 @@ export class TasksController {
     return this.tasksService.getAllByStatus(status);
   }
 
+
+  @Get('hr_dashboard')
+  getHrDashboard(){
+    return this.tasksService.getHrDashboard();
+  }
+  @Get('task_assign')
+  taskAssign(){
+    return this.tasksService.taskAssign();
+  }
+   @Get('taskboard')
+  taskboard(){
+    return this.tasksService.taskboard();
+  }
+  @Get('teams')
+  teams(){
+    return this.tasksService.teams();
+  }
+  @Get('elabrate_teams')
+  elabrateTeams(){
+    return this.tasksService.elabrateTeams();
+  }
+   
 }
