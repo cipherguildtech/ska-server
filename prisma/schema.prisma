@@ -62,7 +62,7 @@ model Projects {
   tasks           Tasks[]
   created_user_id String           @unique
   created_by      Users            @relation(fields: [created_user_id], references: [id])
-
+  
   @@index([customer_id])
   @@index([status])
 }
