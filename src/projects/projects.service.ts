@@ -72,12 +72,10 @@ export class ProjectsService {
             return await this.prisma.projects.findMany(
                 {
                     select: {
-                        id: true,
                         project_code: true,
                         status: true,
                         deadline: true,
                         description: true,
-                        customer: true,
                     }
                 }
             );
@@ -93,7 +91,12 @@ export class ProjectsService {
                 {
                     where: {id},
                     select:{
-                        
+                        tasks: {
+                            omit: {
+                                id: true,
+                            },
+                        },
+                        project_code: true,
                         status: true,
                         service_type: true,
                         deadline: true,
