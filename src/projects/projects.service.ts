@@ -102,6 +102,7 @@ export class ProjectsService {
                         deadline: true,
                         description: true,
                         current_stage: true,
+                        created_by: true,
                     },
     
                 },

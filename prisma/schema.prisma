@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
- 
 }
 
 model Users {
@@ -14,7 +13,7 @@ model Users {
   phone          String           @unique
   password_hash  String
   otp            String?
-  otp_expiry DateTime?
+  otp_expiry     DateTime?
   role           Users_role
   department     Users_dept?
   is_active      Boolean          @default(true)
@@ -23,6 +22,7 @@ model Users {
   history_logs   ProjectHistory[]
   created_tasks  Tasks[]          @relation("CreatedTasks")
   assigned_tasks Tasks[]          @relation("AssignedTasks")
+  projects       Projects?
 
   @@index([department])
 }
@@ -43,25 +43,25 @@ model Customer {
 }
 
 model Projects {
-  id            String           @id @default(uuid())
-  project_code  String           @unique
-  customer_id   String
-  service_type  Service_type
-  description   String
-  status        Project_status   @default(ACTIVE)
-  current_stage Int              @default(1)
-  paid          Decimal          @default(0.00) @db.Decimal(10, 2)
-  balance       Decimal          @default(0.00) @db.Decimal(10, 2)
-  deadline      DateTime
-  created_at    DateTime         @default(now())
-  updated_at    DateTime         @updatedAt
-  payments      Payments[]
-  history       ProjectHistory[]
-  customer      Customer         @relation(fields: [customer_id], references: [id])
-  quotations    Quotations[]
-  tasks         Tasks[]
-  created_user_id String         @unique
-  created_by   Users             @relation(fields: [created_user_id], references: [id])
+  id              String           @id @default(uuid())
+  project_code    String           @unique
+  customer_id     String
+  service_type    Service_type
+  description     String
+  status          Project_status   @default(ACTIVE)
+  current_stage   Int              @default(1)
+  paid            Decimal          @default(0.00) @db.Decimal(10, 2)
+  balance         Decimal          @default(0.00) @db.Decimal(10, 2)
+  deadline        DateTime
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  payments        Payments[]
+  history         ProjectHistory[]
+  customer        Customer         @relation(fields: [customer_id], references: [id])
+  quotations      Quotations[]
+  tasks           Tasks[]
+  created_user_id String           @unique
+  created_by      Users            @relation(fields: [created_user_id], references: [id])
 
   @@index([customer_id])
   @@index([status])
@@ -76,10 +76,10 @@ model Tasks {
   title        String
   notes        String?
   status       Task_status @default(PENDING)
-  files         Json?      
+  files        Json?
   history      String?     @db.LongText
   work_details Json?
-  is_quotation Boolean @default(false)
+  is_quotation Boolean     @default(false)
   due_at       DateTime
   completed_at DateTime?
   created_at   DateTime    @default(now())
@@ -179,11 +179,10 @@ enum Service_type {
   INVITATION
   CARD
   DESIGN
-PAMPLET
-VISITING_CARD
-OTHERS
-BRANDING
-
+  PAMPLET
+  VISITING_CARD
+  OTHERS
+  BRANDING
 }
 
 enum Project_status {
