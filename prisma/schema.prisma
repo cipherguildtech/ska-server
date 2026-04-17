@@ -60,6 +60,7 @@ model Projects {
   customer      Customer         @relation(fields: [customer_id], references: [id])
   quotations    Quotations[]
   tasks         Tasks[]
+  created_by   @relation
 
   @@index([customer_id])
   @@index([status])

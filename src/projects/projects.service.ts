@@ -74,10 +74,10 @@ export class ProjectsService {
                     select: {
                         id: true,
                         project_code: true,
+                        status: true,
                         deadline: true,
                         description: true,
                         customer: true,
-                        service_type: true,
                     }
                 }
             );
@@ -93,11 +93,14 @@ export class ProjectsService {
                 {
                     where: {id},
                     select:{
+                        
+                        status: true,
                         service_type: true,
                         deadline: true,
                         description: true,
                         current_stage: true,
-                    }
+                    },
+    
                 },
             )
         }
