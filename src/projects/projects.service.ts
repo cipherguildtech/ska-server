@@ -59,10 +59,20 @@ export class ProjectsService {
     async createProject(requestBody: projectCreationDTO) {
         try {
             return await this.prisma.projects.create(
-                {data: requestBody}
+                {
+                    data: {
+                        project_code: requestBody.project_code,
+                        description: requestBody.description,
+                        deadline: new Date(requestBody.deadline),
+                        created_user_email: requestBody.created_user_email,
+                        customer_email: requestBody.customer_email,
+                        service_type: requestBody.service_type,
+                }
+            }
             )
         }
         catch(e) {
+            console.log(e);
             throw new InternalServerErrorException('something went wrong');
         }
     }

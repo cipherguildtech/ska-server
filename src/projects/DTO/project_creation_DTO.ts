@@ -7,8 +7,8 @@ export class projectCreationDTO{
     project_code!: string
 
     @IsNotEmpty()
-    @IsString()
-    customer_id!: string
+    @IsEmail()
+    customer_email!: string
 
     @IsNotEmpty()
     @IsString()

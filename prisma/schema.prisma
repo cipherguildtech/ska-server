@@ -45,7 +45,7 @@ model Customer {
 model Projects {
   id              String           @id @default(uuid())
   project_code    String           @unique
-  customer_id     String
+  customer_email     String
   service_type    Service_type
   description     String
   status          Project_status   @default(ACTIVE)
@@ -57,13 +57,13 @@ model Projects {
   updated_at      DateTime         @updatedAt
   payments        Payments[]
   history         ProjectHistory[]
-  customer        Customer         @relation(fields: [customer_id], references: [id])
+  customer        Customer         @relation(fields: [customer_email], references: [email])
   quotations      Quotations[]
   tasks           Tasks[]
   created_user_email String        
   created_by      Users            @relation(fields: [created_user_email], references: [email])
 
-  @@index([customer_id])
+  @@index([customer_email])
   @@index([status])
 }
 
