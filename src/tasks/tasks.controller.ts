@@ -14,6 +14,7 @@ export class TasksController {
 //get single task by id;
 @Get(':id') 
   async getTask(@Param('id') id: string) {
+    console.log("entered")
   return await this.tasksService.getTask(id);
 }
 // CREATE TASK
@@ -74,8 +75,9 @@ export class TasksController {
   }
 
 
-  @Get('hr_dashboard')
+  @Get('dashboard/hr')
   getHrDashboard(){
+    console.log('entered');
     return this.tasksService.getHrDashboard();
   }
   @Get('task_assign')
