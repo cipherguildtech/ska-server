@@ -42,6 +42,7 @@ export class UsersService {
                         otp: true,
                         otp_expiry: true,
                         password_hash: true,
+                        created_at: true,
                     },
                     
                     include: {

@@ -53,7 +53,7 @@ export class AuthService {
             console.log(e);
             if( e instanceof PrismaClientKnownRequestError) {
                 if(e.code == 'P2025') {
-                    throw new NotFoundException('user not exsists');
+                    throw new NotFoundException('user not exists');
                 }
             }
             if(e instanceof HttpException)

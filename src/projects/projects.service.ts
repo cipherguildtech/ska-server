@@ -49,6 +49,7 @@ export class ProjectsService {
             );
             return {
                 "count": activeProjectCount
+
             }
         }
         catch(e) {
