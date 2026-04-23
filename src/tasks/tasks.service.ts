@@ -313,13 +313,15 @@ export class TasksService {
   }
 
 
-  async updateStatus(id: string, status: string, completed_at: string) {
+  async updateStatus(id: string, status: string, completed_at: string, reason: string, by: string) {
     const existing = await this.prisma.tasks.findUnique({
       where: {
         id
       }
     });
+
     if (!existing) return "Task not available";
+
     if (status.toUpperCase() != Task_status.PENDING && status.toUpperCase() != Task_status.IN_PROGRESS && status.toUpperCase() != Task_status.COMPLETED && status.toUpperCase() != Task_status.CANCELLED) {
       return "Invalid status";
     }
@@ -338,7 +340,23 @@ export class TasksService {
       }
     );
 
-    return tasks;
+    if (status == Task_status.CANCELLED || status == Task_status.COMPLETED) {
+        await this.prisma.projectHistory.create(
+          {
+            data: {
+              project_id: tasks.project_id,
+              changed_by: by,
+              changed_at: new Date(),
+              note: reason,
+              
+            }
+          }
+        );
+
+      }
+
+
+   return tasks;
   }
 
 

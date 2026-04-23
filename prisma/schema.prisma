@@ -20,9 +20,9 @@ model Users {
   created_at     DateTime         @default(now())
   updated_at     DateTime         @updatedAt
   history_logs   ProjectHistory[]
+  projects       Projects[]
   created_tasks  Tasks[]          @relation("CreatedTasks")
   assigned_tasks Tasks[]          @relation("AssignedTasks")
-  projects       Projects[]
 
   @@index([department])
 }
@@ -43,28 +43,29 @@ model Customer {
 }
 
 model Projects {
-  id              String           @id @default(uuid())
-  project_code    String           @unique
+  id                 String           @id @default(uuid())
+  project_code       String           @unique
+  service_type       Service_type
+  description        String
+  status             Project_status   @default(ACTIVE)
+  current_stage      Int              @default(1)
+  paid               Decimal          @default(0.00) @db.Decimal(10, 2)
+  balance            Decimal          @default(0.00) @db.Decimal(10, 2)
+  deadline           DateTime
+  created_at         DateTime         @default(now())
+  updated_at         DateTime?        @updatedAt
+  created_user_email String
   customer_email     String
-  service_type    Service_type
-  description     String
-  status          Project_status   @default(ACTIVE)
-  current_stage   Int              @default(1)
-  paid            Decimal          @default(0.00) @db.Decimal(10, 2)
-  balance         Decimal          @default(0.00) @db.Decimal(10, 2)
-  deadline        DateTime
-  created_at      DateTime         @default(now())
-  updated_at      DateTime?         @updatedAt
-  payments        Payments[]
-  history         ProjectHistory[]
-  customer        Customer         @relation(fields: [customer_email], references: [email])
-  quotations      Quotations[]
-  tasks           Tasks[]
-  created_user_email String        
-  created_by      Users            @relation(fields: [created_user_email], references: [email])
+  payments           Payments[]
+  history            ProjectHistory[]
+  created_by         Users            @relation(fields: [created_user_email], references: [email])
+  customer           Customer         @relation(fields: [customer_email], references: [email])
+  quotations         Quotations[]
+  tasks              Tasks[]
 
   @@index([customer_email])
   @@index([status])
+  @@index([created_user_email], map: "Projects_created_user_email_fkey")
 }
 
 model Tasks {
@@ -73,12 +74,13 @@ model Tasks {
   assigned_to  String
   assigned_by  String
   department   Users_dept
+  taskHistory ProjectHistory[]
   title        String
   notes        String?
   status       Task_status @default(PENDING)
-  files        Json?
+  files        String?     @db.LongText
   history      String?     @db.LongText
-  work_details Json?
+  work_details String?     @db.LongText
   is_quotation Boolean     @default(false)
   due_at       DateTime
   completed_at DateTime?
@@ -127,6 +129,7 @@ model Payments {
 
 model ProjectHistory {
   id         String   @id @default(uuid())
+  task_id    String
   project_id String
   changed_by String
   stages     String?  @db.LongText
@@ -135,7 +138,7 @@ model ProjectHistory {
   changed_at DateTime @default(now())
   user       Users    @relation(fields: [changed_by], references: [id])
   project    Projects @relation(fields: [project_id], references: [id])
-
+  task       Tasks    @relation(fields: [task_id], references: [id])
   @@index([project_id])
   @@index([changed_by], map: "ProjectHistory_changed_by_fkey")
 }
