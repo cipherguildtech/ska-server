@@ -447,15 +447,6 @@ export class TasksService {
 
 
   async getHrDashboard() {
-    const taskNotAssignedProjects = await this.prisma.projects.count(
-      {
-        where: {
-          tasks: {
-            none: {}
-          }
-        }
-      }
-    )
     const pendingTasks = await this.prisma.tasks.count
       ({
         where: {
@@ -604,6 +595,7 @@ export class TasksService {
         service_type: true
       }
     });
+
     return {
       pendingTasks,
       inProgressTasks,
@@ -622,7 +614,6 @@ export class TasksService {
       taskForReview,
       teams,
       tasksToAssign,
-      taskNotAssignedProjects
     }
   }
 
