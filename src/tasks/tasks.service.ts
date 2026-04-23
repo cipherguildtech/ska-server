@@ -30,7 +30,7 @@ function isDbHourlyConnectionLimitError(error: unknown): boolean {
 export class TasksService {
   constructor(private prisma: PrismaService) { }
 
-  /*async getTask(id: string) {
+  async getTask(id: string) {
     try {
       return await this.prisma.tasks.findUniqueOrThrow(
         {
@@ -67,7 +67,7 @@ export class TasksService {
         throw new InternalServerErrorException("something went wrong");
       }
     }
-  } */
+  } 
 
   //GET ALL TASKS
   async getAll() {

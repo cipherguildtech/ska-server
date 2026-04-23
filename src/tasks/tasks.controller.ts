@@ -11,12 +11,9 @@ export class TasksController {
     return this.tasksService.getAll();
   }
 
-//get single task by id;
-/* @Get(':id') 
-  async getTask(@Param('id') id: string) {
-    console.log("entered")
-  return await this.tasksService.getTask(id);
-} */
+
+
+
 // CREATE TASK
   @Post('create')
   createTasks(@Body() body: any) {
@@ -80,14 +77,17 @@ export class TasksController {
     console.log('entered');
     return this.tasksService.getHrDashboard();
   }
+
   @Get('task_assign')
   taskAssign(){
     return this.tasksService.taskAssign();
   }
+
    @Get('taskboard')
   taskboard(){
     return this.tasksService.taskboard();
   }
+
   @Get('teams')
   teams(){
     return this.tasksService.teams();
@@ -96,5 +96,12 @@ export class TasksController {
   elabrateTeams(){
     return this.tasksService.elabrateTeams();
   }
+
+  //get single task by id;
+@Get(':id') 
+  async getTask(@Param('id') id: string) {
+    console.log("entered")
+  return await this.tasksService.getTask(id);
+} 
    
 }
