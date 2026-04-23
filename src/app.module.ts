@@ -13,9 +13,11 @@ import { UsersService } from './users/users.service';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { EventsGateway } from './gateway/events.gateway';
+import { EventsGatewayModule } from './gateway/events.module';
 
 @Module({
-  imports: [PrismaModule,
+  imports: [EventsGatewayModule,
+    PrismaModule,
     CustomersModule,
     TasksModule,
     ProjectsModule,
@@ -26,6 +28,6 @@ import { EventsGateway } from './gateway/events.gateway';
     UsersModule
   ],
   controllers: [AppController, UsersController],
-  providers: [AppService, UsersService, EventsGateway],
+  providers: [AppService, UsersService],
 })
 export class AppModule { }
