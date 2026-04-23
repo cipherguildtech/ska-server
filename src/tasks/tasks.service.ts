@@ -447,6 +447,16 @@ export class TasksService {
 
 
   async getHrDashboard() {
+    const incompleteTasks = await this.prisma.tasks.count(
+      {
+        where: {
+          status: {
+            in: [Task_status.IN_PROGRESS, Task_status.PENDING]
+          }
+        }
+      }
+    )
+
     const pendingTasks = await this.prisma.tasks.count
       ({
         where: {
@@ -614,6 +624,7 @@ export class TasksService {
       taskForReview,
       teams,
       tasksToAssign,
+      incompleteTasks
     }
   }
 
