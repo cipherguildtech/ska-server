@@ -102,6 +102,6 @@ export class TasksController {
   async getTask(@Param('id') id: string) {
     console.log("entered")
   return await this.tasksService.getTask(id);
-} 
-   
+  }
+
 }

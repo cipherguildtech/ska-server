@@ -109,7 +109,7 @@ export class TasksService {
           status: body.status,
           files: body.files,
           history: body.history,
-          due_at: body.due_at,
+          due_at: new Date(body.due_at),
         }
       }
     );
