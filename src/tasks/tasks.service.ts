@@ -773,6 +773,7 @@ export class TasksService {
       tasksToAssign
     }
   }
+
 async teams() {
   const allDepartments = Users_dept ? Object.values(Users_dept) : []; 
 
@@ -825,43 +826,76 @@ async elabrateTeams() {
     },
   });
 
-  const deptMap: any = {};
+  // ✅ Types
+  type UserEntry = {
+    userId: string;
+    name: string;
+    count: number;
+  };
 
-  // ✅ Step 1: Initialize departments + ALL users with count 0
+  type DeptEntry = {
+    name: string;
+    tasks: number;
+    users: Record<string, UserEntry>;
+  };
+
+  const deptMap: Record<string, DeptEntry> = {};
+
+  // 🔹 Step 1: Initialize departments
   for (const dept of allDepartments) {
+    if (!dept) continue;
+
     deptMap[dept] = {
       name: dept,
       tasks: 0,
+      users: {},
     };
-
-    const usersInDept = allUsers.filter((u) => u.department === dept);
-
-    for (const user of usersInDept) {
-      deptMap[dept][user.id] = {
-        count: 0,
-        name: user.full_name,
-      };
-    }
   }
 
-  // ✅ Step 2: Aggregate task counts
+  // 🔹 Step 2: Add all users (count = 0)
+  for (const user of allUsers) {
+    const dept = user.department;
+
+    if (!dept || !deptMap[dept]) continue;
+
+    deptMap[dept].users[user.id] = {
+      userId: user.id,
+      name: user.full_name,
+      count: 0,
+    };
+  }
+
+  // 🔹 Step 3: Aggregate tasks
   for (const task of tasks) {
     const dept = task.department;
     const user = task.assigner;
 
-    if (!deptMap[dept]) continue;
+    if (!dept || !deptMap[dept]) continue;
 
     deptMap[dept].tasks += 1;
 
-    if (user && deptMap[dept][user.id]) {
-      deptMap[dept][user.id].count += 1;
+    if (user) {
+      // create user if missing
+      if (!deptMap[dept].users[user.id]) {
+        deptMap[dept].users[user.id] = {
+          userId: user.id,
+          name: user.full_name,
+          count: 0,
+        };
+      }
+
+      deptMap[dept].users[user.id].count += 1;
     }
   }
 
-  // ✅ Step 3: return result
-  return Object.values(deptMap);
-}
+  // 🔹 Step 4: Convert users object → array
+  const result = Object.values(deptMap).map((dept) => ({
+    name: dept.name,
+    tasks: dept.tasks,
+    users: Object.values(dept.users),
+  }));
 
- 
+  return result;
+}
 
 }

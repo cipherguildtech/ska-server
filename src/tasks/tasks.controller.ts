@@ -90,7 +90,7 @@ export class TasksController {
   teams(){
     return this.tasksService.teams();
   }
-  @Get('elabrate_teams')
+  @Get('elaborate_teams')
   elabrateTeams(){
     return this.tasksService.elabrateTeams();
   }
