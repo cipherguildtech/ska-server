@@ -12,11 +12,11 @@ export class TasksController {
   }
 
 //get single task by id;
-@Get(':id') 
+/* @Get(':id') 
   async getTask(@Param('id') id: string) {
     console.log("entered")
   return await this.tasksService.getTask(id);
-}
+} */
 // CREATE TASK
   @Post('create')
   createTasks(@Body() body: any) {
