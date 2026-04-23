@@ -157,12 +157,14 @@ export class ProjectsService {
 
     async updateProjectStatus(id: string, requestBody: {status: Project_status}) {
         try {
-            return await this.prisma.projects.update(
+            const projectStatus = await this.prisma.projects.update(
                 {
                     data: {status: requestBody.status},
                     where: {id}
                 }
             )
+            this.eventsGateway.emit("project_status:updated");
+            return projectStatus;
         }
         catch(e) {
             throw new InternalServerErrorException("something went wrong");
@@ -181,7 +183,8 @@ export class ProjectsService {
                         }
                     }
                 }
-            )
+            );
+            this.eventsGateway.emit("project_stage:updated")
         }
         catch(e) {
             throw new InternalServerErrorException('something went wrong');

@@ -22,6 +22,7 @@ import { EventsGateway } from "../gateway/events.gateway";
             return projectHistory;
         }
 
+        
         async update(id: string, data: any) {
                 const projectHistory = this.prisma.projectHistory.update({
                 where: { id },

@@ -5,6 +5,7 @@ import { EventsGateway } from "../gateway/events.gateway";
 @Injectable()
 export class PaymentServices {
     constructor(private prisma: PrismaService, private readonly eventsGateWay: EventsGateway ) { }
+    
     async getAll() {
         const payments = await this.prisma.payments.findMany({
             include: {
@@ -36,9 +37,6 @@ export class PaymentServices {
         });
         this.eventsGateWay.emit("payment:created");
         return payments;
-
-
-
 
     }
 
