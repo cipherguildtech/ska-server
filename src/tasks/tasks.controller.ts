@@ -98,7 +98,7 @@ export class TasksController {
   }
 
   //get single task by id;
-@Get(':id') 
+@Get('single/:id') 
   async getTask(@Param('id') id: string) {
     console.log("entered")
   return await this.tasksService.getTask(id);
