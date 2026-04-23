@@ -348,14 +348,12 @@ export class TasksService {
               changed_by: by,
               changed_at: new Date(),
               note: reason,
-              
+              task_id: id,
             }
           }
         );
 
       }
-
-
    return tasks;
   }
 
