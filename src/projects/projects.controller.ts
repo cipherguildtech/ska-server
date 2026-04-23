@@ -26,9 +26,9 @@ export class ProjectsController {
         return await this.projectService.getProjects();
     }
 
-    @Get(':id')
-    async getProject(@Param('id') id: string) {
-        return await this.projectService.getProject(id);
+    @Get(':project_code')
+    async getProject(@Param('project_code') project_code: string) {
+        return await this.projectService.getProject(project_code);
     }
 
     @Get(':id/history')

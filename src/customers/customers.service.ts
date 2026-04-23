@@ -2,10 +2,11 @@ import { ConflictException, Injectable, InternalServerErrorException, NotFoundEx
 import { PrismaService } from "../prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { customerCreationDto } from "./DTO/customerCreationDTO";
+import { EventsGateway } from "../gateway/events.gateway";
  
 @Injectable()
 export class CustomersService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, private readonly eventsGateway: EventsGateway) {}
 
     async getRecentCustomers() {
         try {
@@ -62,7 +63,9 @@ export class CustomersService {
 
     async createCustomer(requestBody: customerCreationDto) {
         try {
-            return await this.prisma.customer.create({data: requestBody});
+            const customer = await this.prisma.customer.create({data: requestBody});
+            this.eventsGateway.emit("customer:created");
+            return customer;
         }
         catch(e) {
             if(e instanceof PrismaClientKnownRequestError) {
@@ -98,12 +101,14 @@ export class CustomersService {
 
     async updateCustomer(id: string, requestBody) {
         try {
-            return await this.prisma.customer.update(
+            const customer = await this.prisma.customer.update(
                 {
                     data: requestBody,
                     where: {id}
                 }
             )
+            this.eventsGateway.emit("customer:updated");
+            return customer;
         }
         catch(e) {
             if(e instanceof PrismaClientKnownRequestError) {

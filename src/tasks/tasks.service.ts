@@ -1,7 +1,8 @@
-import { Injectable, InternalServerErrorException, ServiceUnavailableException, Body } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, ServiceUnavailableException, Body, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Approval_status, Project_status, Task_status, Users_dept } from '@prisma/client';
 import { log } from 'console';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 
 function isDbHourlyConnectionLimitError(error: unknown): boolean {
@@ -28,6 +29,45 @@ function isDbHourlyConnectionLimitError(error: unknown): boolean {
 @Injectable()
 export class TasksService {
   constructor(private prisma: PrismaService) { }
+
+  async getTask(id: string) {
+    try {
+      return await this.prisma.tasks.findUniqueOrThrow(
+        {
+          where: {id},
+          include: {
+            project: {
+              select: {
+                id: true,
+                customer_email: true,
+                project_code: true,
+                balance: true,
+                created_at: true,
+                updated_at: true,
+                created_user_email: true,
+                current_stage: true,
+                deadline: true,
+                service_type: true,
+                description: true,
+                status: true,
+              }
+            }
+          }
+        }
+      )
+    }
+    catch(e) {
+      if( e instanceof PrismaClientKnownRequestError) {
+        if(e.code == 'P2025') {
+          throw new NotFoundException('task not exists')
+        }
+      }
+      else {
+        console.log(e);
+        throw new InternalServerErrorException("something went wrong");
+      }
+    }
+  }
 
   //GET ALL TASKS
   async getAll() {
@@ -300,6 +340,8 @@ export class TasksService {
 
     return tasks;
   }
+
+
   async getAllByProjectId(project_id: string) {
     try {
       return await this.prisma.tasks.findMany({
@@ -537,11 +579,25 @@ export class TasksService {
 
     const projectWithoutAnyTask = await this.prisma.projects.count({
       where: {
-        tasks: {
-          none: {}
+        OR: [
+          {
+            tasks: {
+              none: {}
+            }
+          },
+          {
+            tasks: {
+              every: {
+                status: {
+                  in: [Task_status.CANCELLED, Task_status.COMPLETED, Task_status.REVIEW]
+                }
+              }
+            }
+          }
+        ]
         }
-      }
-    });
+      });
+
     const taskInProgress = await this.prisma.tasks.findMany
       ({
         where: {
@@ -594,9 +650,22 @@ export class TasksService {
     }));
     const tasksToAssign = await this.prisma.projects.findMany({
       where: {
-        tasks: {
-          none: {}
-        }
+        OR: [
+          {
+            tasks: {
+              none: {}
+            }
+          },
+          {
+            tasks: {
+              every: {
+                status: {
+                  in: [Task_status.CANCELLED, Task_status.COMPLETED, Task_status.REVIEW]
+                }
+              }
+            }
+          }
+        ]
       },
       select: {
         id: true,

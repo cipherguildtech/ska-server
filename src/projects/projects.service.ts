@@ -3,10 +3,11 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { Project_status } from "@prisma/client";
 import { projectCreationDTO } from "./DTO/project_creation_DTO";
+import { EventsGateway } from "../gateway/events.gateway";
 
 @Injectable()
 export class ProjectsService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService, private readonly eventsGateway: EventsGateway) {}
 
     async getActiveProjects() {
         try {
@@ -59,7 +60,7 @@ export class ProjectsService {
 
     async createProject(requestBody: projectCreationDTO) {
         try {
-            return await this.prisma.projects.create(
+            const project = await this.prisma.projects.create(
                 {
                     data: {
                         project_code: requestBody.project_code,
@@ -70,7 +71,10 @@ export class ProjectsService {
                         service_type: requestBody.service_type,
                 }
             }
-            )
+            );
+            this.eventsGateway.emit("project:created");
+            return project;
+
         }
         catch(e) {
             console.log(e);
@@ -96,11 +100,11 @@ export class ProjectsService {
         }
     }
 
-    async getProject(id: string) {
+    async getProject(project_code: string) {
         try {
             return await this.prisma.projects.findUniqueOrThrow(
                 {
-                    where: {id},
+                    where: {project_code},
                     select:{
                         tasks: {
                             omit: {

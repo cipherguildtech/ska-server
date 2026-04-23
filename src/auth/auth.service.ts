@@ -7,13 +7,14 @@ import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import { randomInt} from 'crypto';
 import { VerifyOtpDto } from './DTO/verifyOtpDto';
+import { EventsGateway } from '../gateway/events.gateway';
 
 const saltOrRounds = 10
 
 @Injectable()
 export class AuthService {
     private readonly emailTransporter;
-    constructor( private readonly prisma: PrismaService ) {
+    constructor( private readonly prisma: PrismaService , private readonly eventsGateway: EventsGateway) {
         this.emailTransporter = nodemailer.createTransport({
             host: process.env.SENDER_EMAIL_HOST,
             port: 587,
@@ -78,7 +79,8 @@ export class AuthService {
                         role: requestBody.role
                     },
                 }
-            )
+            );
+            this.eventsGateway.emit("user:created");
         }
         catch(e) {
             if(e instanceof PrismaClientKnownRequestError) {

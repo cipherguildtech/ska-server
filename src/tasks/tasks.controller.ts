@@ -10,6 +10,12 @@ export class TasksController {
   getAllTasks() {
     return this.tasksService.getAll();
   }
+
+//get single task by id;
+@Get(':id') 
+  async getTask(@Param('id') id: string) {
+  return await this.tasksService.getTask(id);
+}
 // CREATE TASK
   @Post('create')
   createTasks(@Body() body: any) {

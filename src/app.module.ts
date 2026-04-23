@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersService } from './users/users.service';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
+import { EventsGateway } from './gateway/events.gateway';
 
 @Module({
   imports: [PrismaModule,
@@ -25,6 +26,6 @@ import { UsersModule } from './users/users.module';
     UsersModule
   ],
   controllers: [AppController, UsersController],
-  providers: [AppService, UsersService],
+  providers: [AppService, UsersService, EventsGateway],
 })
 export class AppModule { }

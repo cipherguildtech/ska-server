@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { EventsGateway } from "../gateway/events.gateway";
 
 @Injectable()
 export class PaymentServices {
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService, private readonly eventsGateWay: EventsGateway ) { }
     async getAll() {
         const payments = await this.prisma.payments.findMany({
             include: {
@@ -13,6 +14,7 @@ export class PaymentServices {
         });
         return payments;
     }
+
     async create(paymentData: any) {
         const data = paymentData.paid_at ? {
             quotation_id: paymentData.quotation_id,
@@ -32,6 +34,7 @@ export class PaymentServices {
         const payments = await this.prisma.payments.create({
             data
         });
+        this.eventsGateWay.emit("payment:created");
         return payments;
 
 
