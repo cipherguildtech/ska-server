@@ -349,7 +349,7 @@ export class TasksService {
               changed_at: new Date(),
               note: reason,
               task_id: id,
-            }
+            } as any
           }
         );
 
