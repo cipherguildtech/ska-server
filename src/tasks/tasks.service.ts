@@ -114,7 +114,7 @@ export class TasksService {
     }
   }
 
-  
+
   async getTask(id: string) {
     console.log('e');
     try {
@@ -188,9 +188,6 @@ export class TasksService {
     const project = body.project_code
       ? await this.prisma.projects.findUnique({ where: { project_code: body.project_code }, select: { id: true } })
       : null;
-    const assignee = body.assigned_to_phone
-      ? await this.prisma.users.findUnique({ where: { phone: body.assigned_to_phone }, select: { id: true } })
-      : null;
     const assigner = body.assigned_by_phone
       ? await this.prisma.users.findUnique({ where: { phone: body.assigned_by_phone }, select: { id: true } })
       : null;
@@ -199,23 +196,50 @@ export class TasksService {
       {
         data: {
           project_id: project?.id ?? body.project_id,
-          assigned_to: assignee?.id ?? body.assigned_to,
-          assigned_by: assigner?.id ?? body.assigned_by,
+          assigned_to: body.assigned_to,
+          assigned_by: assigner?.id ,
           department: body.department,
           title: body.title,
           notes: body.notes,
-          status: body.status,
-          files: body.files,
-          history: body.history,
-          work_details: body.work_details,
+          description: body.description,
           is_quotation: body.is_quotation,
           due_at: new Date(body.due_at),
-          completed_at: body.completed_at ? new Date(body.completed_at) : undefined,
         }
       }
     );
 
-    return tasks;
+    const project_history = await this.prisma.projectHistory.create(
+      {
+        data: {
+          project_id: body.project_id,
+          changed_by: body.assigned_by_phone,
+          task_id: tasks.id,
+          changed_at: new Date(),
+          note: "created",
+          task_new_status: "PENDING",
+          task_old_status: "PENDING",
+          detail: {
+          },
+        }
+      }
+    );
+
+    const projects = await this.prisma.projects.update(
+     {
+      data: {
+        status: 'IN_PROGRESS',
+      },
+      where: {
+        id: body.project_id
+      }
+     }
+    );
+
+   if(tasks != null && project_history != null && projects != null) {
+    return {
+      "message": "task assigned"
+    }
+   }
   }
 
   //UPDATE TASK BY ID
@@ -799,31 +823,12 @@ export class TasksService {
     }
   }
 
-  async taskAssign() {
-    const tasks = await this.prisma.tasks.findMany({
-      select: {
-        title: true,
-        department: true,
-        status: true,
-        assignee: {
-          select: {
-            full_name: true,
-            email: true,
-            role: true,
-            department: true,
-          }
-        },
-        assigner: {
-          select: {
-            full_name: true,
-            email: true,
-            role: true,
-            department: true,
-          }
-        },
-      }
-    });
-    return tasks;
+  async assignTask(project_id: string, assigned_to: string, assigned_by: string, department: string, title: string, description: string, notes: string, due_at: string, is_quotation: boolean) {
+
+    try {
+      await this.prisma.tasks.update
+    }
+
   }
 
 
