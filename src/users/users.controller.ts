@@ -19,4 +19,9 @@ export class UsersController {
     async updateUser(@Param('phone') phone: string, @Body() requestBody: {name: string, email: string}) {
         return await this.usersService.updateUser(phone, requestBody)
     }
+
+    @Get('tasks')
+    async getUserTasks() {
+        return await this.usersService.getUserTasks();
+    }
 }

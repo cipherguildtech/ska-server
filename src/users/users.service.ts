@@ -29,6 +29,33 @@ export class UsersService {
         }
     }
     
+    async getUserTasks() {
+        try {
+            const usersWithTasks = await this.prisma.users.findMany(
+                {
+                    where: {
+                       role: {
+                        in: ['SALES','TEAM']
+                       }
+                    },
+                    select: {
+                        full_name: true,
+                        assigned_tasks: {
+                            where: {
+                                status: {
+                                    in:['IN_PROGRESS','PENDING']
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+            return usersWithTasks;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
 
     async getUser(phone: string) {
         try {
