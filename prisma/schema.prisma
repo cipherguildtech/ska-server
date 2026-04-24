@@ -156,7 +156,7 @@ enum Users_role {
 enum Users_dept {
   DESIGNING
   SITE_VISITING
-  MARKETTING
+  MARKETING
   WELDING
   FITTING
   TRANSPORT
