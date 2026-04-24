@@ -5,14 +5,16 @@ import { TasksService } from './tasks.service';
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
+
+  @Post('accept_or_reject')
+  async acceptOrReject(task_id: string, action: string, phone: string, reason: string | null) {
+    await this.tasksService.acceptOrReject(task_id, action, phone, reason);
+  }
 //GET ALL TASKS
   @Get('all')
   getAllTasks() {
     return this.tasksService.getAll();
   }
-
-
-
 
 // CREATE TASK
   @Post('create')
@@ -46,7 +48,7 @@ export class TasksController {
 
   @Put('update_status/:id/:status/:completed_at')
   updateStatus(@Param('id') id: string, @Param('status') status: string, @Param('completed_at') completed_at: string, @Body() requestBody) {
-    return this.tasksService.updateStatus(id, status, completed_at, requestBody.reason, requestBody.by);
+    return this.tasksService.updateStatus(id, status, completed_at);
   }
 
   @Get('all_project/:project_id')
