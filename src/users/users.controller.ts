@@ -10,7 +10,7 @@ export class UsersController {
         return await this.usersService.getUsers();
     }
 
-    @Get(':phone')
+    @Get('detail/:phone')
     async getUser(@Param('phone') phone: string) {
         return await this.usersService.getUser(phone);
     }
