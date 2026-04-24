@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common';
 import { TasksService } from './tasks.service';
+import { request } from 'http';
 
 
 @Controller('tasks')
@@ -7,8 +8,8 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
   @Post('accept_or_reject')
-  async acceptOrReject(task_id: string, action: string, phone: string, reason: string | null) {
-    await this.tasksService.acceptOrReject(task_id, action, phone, reason);
+  async acceptOrReject(@Body() requestBody) {
+    await this.tasksService.acceptOrReject(requestBody.task_id, requestBody.action, requestBody.phone, requestBody.reason);
   }
 //GET ALL TASKS
   @Get('all')
