@@ -28,6 +28,7 @@ export class UsersService {
             throw new InternalServerErrorException('something went wrong')
         }
     }
+    
 
     async getUser(phone: string) {
         try {

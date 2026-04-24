@@ -114,8 +114,9 @@ export class TasksService {
     }
   }
   async getTask(id: string) {
+    console.log('e');
     try {
-      return await this.prisma.tasks.findUniqueOrThrow(
+      const task = await this.prisma.tasks.findUniqueOrThrow(
         {
           where: {id},
           include: {
@@ -137,7 +138,9 @@ export class TasksService {
             }
           }
         }
-      )
+      );
+      console.log(task);
+      return task;
     }
     catch(e) {
       if( e instanceof PrismaClientKnownRequestError) {
