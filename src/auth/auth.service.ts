@@ -68,7 +68,7 @@ export class AuthService {
 
     async register(requestBody : RegisterDto) {
         try {
-            await this.prisma.users.create(
+            const user = await this.prisma.users.create(
                 {
                     data: {
                         full_name: requestBody.full_name,
@@ -78,9 +78,15 @@ export class AuthService {
                         department: requestBody.department,
                         role: requestBody.role
                     },
+                    omit: {
+                        password_hash: true,
+                        otp: true,
+                        otp_expiry: true,
+                    },
                 }
             );
             this.eventsGateway.emit("user:created");
+            return user;
         }
         catch(e) {
             if(e instanceof PrismaClientKnownRequestError) {

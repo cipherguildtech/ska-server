@@ -8,22 +8,39 @@ import { EventsGateway } from "../gateway/events.gateway";
         async getAll() {
             return this.prisma.projectHistory.findMany();
         }
-        /*async create(data: any) {
-            const projectHistory = this.prisma.projectHistory.create({
+        async create(data: any) {
+            const project = data.project_code
+                ? await this.prisma.projects.findUnique({ where: { project_code: data.project_code }, select: { id: true } })
+                : null;
+            const task = data.task_title && (project?.id ?? data.project_id)
+                ? await this.prisma.tasks.findFirst({
+                    where: {
+                        project_id: project?.id ?? data.project_id,
+                        title: data.task_title,
+                    },
+                    orderBy: { created_at: 'desc' },
+                    select: { id: true },
+                })
+                : null;
+            const projectHistory = await this.prisma.projectHistory.create({
                 data:{
-
-                    project_id: data.project_id,
+                    task_id: task?.id ?? data.task_id,
+                    project_id: project?.id ?? data.project_id,
                     changed_by: data.changed_by,
-                    note:data.note,
+                    task_old_status: data.task_old_status,
+                    task_new_status: data.task_new_status,
+                    detail: data.detail,
+                    note: data.note,
+                    changed_at: data.changed_at ? new Date(data.changed_at) : new Date(),
                 }
             });
             this.eventsGateway.emit("project_history:created");
             return projectHistory;
-        } */
+        }
 
         
         async update(id: string, data: any) {
-                const projectHistory = this.prisma.projectHistory.update({
+                const projectHistory = await this.prisma.projectHistory.update({
                 where: { id },
                 data: {
                     changed_by: data.changed_by,
