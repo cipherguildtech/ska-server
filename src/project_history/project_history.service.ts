@@ -8,19 +8,18 @@ import { EventsGateway } from "../gateway/events.gateway";
         async getAll() {
             return this.prisma.projectHistory.findMany();
         }
-        async create(data: any) {
+        /*async create(data: any) {
             const projectHistory = this.prisma.projectHistory.create({
                 data:{
+
                     project_id: data.project_id,
                     changed_by: data.changed_by,
-                    stages:data.stages,
-                    statuses:data.statuses,
                     note:data.note,
                 }
             });
             this.eventsGateway.emit("project_history:created");
             return projectHistory;
-        }
+        } */
 
         
         async update(id: string, data: any) {
@@ -28,8 +27,6 @@ import { EventsGateway } from "../gateway/events.gateway";
                 where: { id },
                 data: {
                     changed_by: data.changed_by,
-                    stages:data.stages,
-                    statuses:data.statuses,
                     note:data.note,
                 }
             });

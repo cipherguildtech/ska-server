@@ -297,7 +297,7 @@ export class TasksService {
     try {
       if (dept.toUpperCase() != Users_dept.CNC_CUTTING && dept.toUpperCase() != Users_dept.DESIGNING && dept.toUpperCase() != Users_dept.ERRACTON
         && dept.toUpperCase() != Users_dept.FITTING && dept.toUpperCase() != Users_dept.LASER && dept.toUpperCase() != Users_dept.LETTER_MAKING
-        && dept.toUpperCase() != Users_dept.MARKETTING && dept.toUpperCase() != Users_dept.ORDER && dept.toUpperCase() != Users_dept.PRINTING
+        && dept.toUpperCase() != Users_dept.MARKETING && dept.toUpperCase() != Users_dept.ORDER && dept.toUpperCase() != Users_dept.PRINTING
         && dept.toUpperCase() != Users_dept.SITE_VISITING && dept.toUpperCase() != Users_dept.TRANSPORT && dept.toUpperCase() != Users_dept.WELDING) {
         return ("Invalid department");
       }
