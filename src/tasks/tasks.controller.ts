@@ -46,7 +46,7 @@ export class TasksController {
 
   @Put('update_status/:id/:status/:completed_at')
   updateStatus(@Param('id') id: string, @Param('status') status: string, @Param('completed_at') completed_at: string, @Body() requestBody) {
-    return this.tasksService.updateStatus(id, status, completed_at, requestBody.reason, requestBody.by);
+    return this.tasksService.updateStatus(id, status, completed_at);
   }
 
   @Get('all_project/:project_id')

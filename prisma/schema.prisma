@@ -132,11 +132,12 @@ model ProjectHistory {
   task_id    String
   project_id String
   changed_by String
-  stages     String?  @db.LongText
-  statuses   String?  @db.LongText
+  task_old_status     Task_status
+  task_new_status     Task_status
+  detail     Json?
   note       String?
   changed_at DateTime @default(now())
-  user       Users    @relation(fields: [changed_by], references: [id])
+  user       Users    @relation(fields: [changed_by], references: [phone])
   project    Projects @relation(fields: [project_id], references: [id])
   task       Tasks    @relation(fields: [task_id], references: [id])
   @@index([project_id])
@@ -155,7 +156,7 @@ enum Users_role {
 enum Users_dept {
   DESIGNING
   SITE_VISITING
-  MARKEING
+  MARKETTING
   WELDING
   FITTING
   TRANSPORT

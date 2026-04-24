@@ -30,6 +30,89 @@ function isDbHourlyConnectionLimitError(error: unknown): boolean {
 export class TasksService {
   constructor(private prisma: PrismaService) { }
 
+  async acceptOrReject(task_id: string, action: string, phone: string, reason: string | null) {
+    if(action == "accept") {
+      try {
+        await this.updateStatus(task_id, Task_status.COMPLETED, new Date().toString());
+
+        const task = await this.prisma.tasks.findUnique(
+          {
+            where: {
+              id: task_id
+            },
+            select: {
+              project_id: true,
+              work_details:true,
+            }
+          }
+        );
+
+        const project_history = await this.prisma.projectHistory.create(
+          {
+            data: {
+              changed_by: phone,
+              project_id: task!.project_id,
+              task_id: task_id,
+              task_old_status: Task_status.REVIEW,
+              task_new_status: Task_status.COMPLETED,
+              note: "accepted",
+              detail:{
+                "work detail": task!.work_details,
+                "reason": reason
+              },
+              changed_at: new Date(),
+            }
+          }
+        )
+        return project_history;
+      }
+      catch(e) {
+        console.log(e);
+        throw new InternalServerErrorException('something went wrong');
+      }
+    }
+    else {
+      try {
+        await this.updateStatus(task_id, Task_status.PENDING, new Date().toString());
+
+        const task = await this.prisma.tasks.findUnique(
+          {
+            where: {
+              id: task_id
+            },
+            select: {
+              project_id: true,
+              work_details:true,
+            }
+          }
+        );
+
+        const project_history = await this.prisma.projectHistory.create(
+          {
+            data: {
+              changed_by: phone,
+              project_id: task!.project_id,
+              task_id: task_id,
+              task_old_status: Task_status.REVIEW,
+              task_new_status: Task_status.PENDING,
+              note: "rejected",
+              detail:{
+                "work detail": task!.work_details,
+                "reason": reason
+              },
+              changed_at: new Date(),
+            }
+          }
+        )
+        return project_history;
+
+      }
+      catch(e) {
+        console.log(e);
+        throw new InternalServerErrorException("something went wrong");
+      }
+    }
+  }
   async getTask(id: string) {
     try {
       return await this.prisma.tasks.findUniqueOrThrow(
@@ -214,7 +297,7 @@ export class TasksService {
     try {
       if (dept.toUpperCase() != Users_dept.CNC_CUTTING && dept.toUpperCase() != Users_dept.DESIGNING && dept.toUpperCase() != Users_dept.ERRACTON
         && dept.toUpperCase() != Users_dept.FITTING && dept.toUpperCase() != Users_dept.LASER && dept.toUpperCase() != Users_dept.LETTER_MAKING
-        && dept.toUpperCase() != Users_dept.MARKEING && dept.toUpperCase() != Users_dept.ORDER && dept.toUpperCase() != Users_dept.PRINTING
+        && dept.toUpperCase() != Users_dept.MARKETTING && dept.toUpperCase() != Users_dept.ORDER && dept.toUpperCase() != Users_dept.PRINTING
         && dept.toUpperCase() != Users_dept.SITE_VISITING && dept.toUpperCase() != Users_dept.TRANSPORT && dept.toUpperCase() != Users_dept.WELDING) {
         return ("Invalid department");
       }
@@ -313,7 +396,7 @@ export class TasksService {
   }
 
 
-  async updateStatus(id: string, status: string, completed_at: string, reason: string, by: string) {
+  async updateStatus(id: string, status: string, completed_at: string) {
     const existing = await this.prisma.tasks.findUnique({
       where: {
         id
@@ -339,21 +422,6 @@ export class TasksService {
         data
       }
     );
-
-    if (status == Task_status.CANCELLED || status == Task_status.COMPLETED) {
-        await this.prisma.projectHistory.create(
-          {
-            data: {
-              project_id: tasks.project_id,
-              changed_by: by,
-              changed_at: new Date(),
-              note: reason,
-              task_id: id,
-            } as any
-          }
-        );
-
-      }
    return tasks;
   }
 
@@ -910,8 +978,7 @@ async elabrateTeams() {
     tasks: dept.tasks,
     users: Object.values(dept.users),
   }));
-
   return result;
+ }
 }
 
-}
