@@ -180,19 +180,32 @@ export class TasksService {
 
   //CREATE TASK
   async createTasks(body: any) {
+    const project = body.project_code
+      ? await this.prisma.projects.findUnique({ where: { project_code: body.project_code }, select: { id: true } })
+      : null;
+    const assignee = body.assigned_to_phone
+      ? await this.prisma.users.findUnique({ where: { phone: body.assigned_to_phone }, select: { id: true } })
+      : null;
+    const assigner = body.assigned_by_phone
+      ? await this.prisma.users.findUnique({ where: { phone: body.assigned_by_phone }, select: { id: true } })
+      : null;
+
     const tasks = await this.prisma.tasks.create(
       {
         data: {
-          project_id: body.project_id,
-          assigned_to: body.assigned_to,
-          assigned_by: body.assigned_by,
+          project_id: project?.id ?? body.project_id,
+          assigned_to: assignee?.id ?? body.assigned_to,
+          assigned_by: assigner?.id ?? body.assigned_by,
           department: body.department,
           title: body.title,
           notes: body.notes,
           status: body.status,
           files: body.files,
           history: body.history,
+          work_details: body.work_details,
+          is_quotation: body.is_quotation,
           due_at: new Date(body.due_at),
+          completed_at: body.completed_at ? new Date(body.completed_at) : undefined,
         }
       }
     );

@@ -10,9 +10,10 @@ export class ProjectHistoryController {
     return this.projectHistoryService.getAll();
   }
   @Post('create')
-  /*create(@Body() data: any) {
+  create(@Body() data: any) {
     return this.projectHistoryService.create(data);
-  }*/
+  }
+
   @Put('update/:id')
   update(@Param('id') id: string, @Body() data: any) {
     return this.projectHistoryService.update(id, data);

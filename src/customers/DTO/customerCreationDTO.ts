@@ -21,6 +21,6 @@ export class customerCreationDto {
     @IsNotEmpty()
     customer_type!: Customer_type
 
-    referral!: string
+    referal!: string
 
 }

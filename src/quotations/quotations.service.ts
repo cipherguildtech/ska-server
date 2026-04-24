@@ -15,9 +15,12 @@ export class QuotationServices {
         return quotations;
     }
     async create(body: any) {
+        const project = body.project_code
+            ? await this.prisma.projects.findUnique({ where: { project_code: body.project_code }, select: { id: true } })
+            : null;
         const quotations = await this.prisma.quotations.create({
             data: {
-                project_id: body.project_id,
+                project_id: project?.id ?? body.project_id,
                 amount: body.amount,
                 advance_paid: body.advance_paid,
                 approval_status: body.approval_status,

@@ -157,10 +157,19 @@ export class ProjectsService {
 
     async updateProjectStatus(id: string, requestBody: {status: Project_status}) {
         try {
+            const project = await this.prisma.projects.findFirst({
+                where: {
+                    OR: [
+                        { id },
+                        { project_code: id },
+                    ],
+                },
+                select: { id: true },
+            });
             const projectStatus = await this.prisma.projects.update(
                 {
                     data: {status: requestBody.status},
-                    where: {id}
+                    where: {id: project?.id ?? id}
                 }
             )
             this.eventsGateway.emit("project_status:updated");

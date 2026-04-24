@@ -17,16 +17,31 @@ export class PaymentServices {
     }
 
     async create(paymentData: any) {
+        const project = paymentData.project_code
+            ? await this.prisma.projects.findUnique({
+                where: { project_code: paymentData.project_code },
+                select: { id: true }
+            })
+            : null;
+        const project_id = project?.id ?? paymentData.project_id;
+        const quotation = paymentData.project_code && !paymentData.quotation_id
+            ? await this.prisma.quotations.findFirst({
+                where: { project_id },
+                orderBy: { created_at: 'desc' },
+                select: { id: true }
+            })
+            : null;
+        const quotation_id = paymentData.quotation_id ?? quotation?.id;
         const data = paymentData.paid_at ? {
-            quotation_id: paymentData.quotation_id,
-            project_id: paymentData.project_id,
+            quotation_id,
+            project_id,
             amount: paymentData.amount,
             type: paymentData.type,
             reference: paymentData.reference,
             paid_at: paymentData.paid_at,
         } : {
-            quotation_id: paymentData.quotation_id,
-            project_id: paymentData.project_id,
+            quotation_id,
+            project_id,
             amount: paymentData.amount,
             type: paymentData.type,
             reference: paymentData.reference,
