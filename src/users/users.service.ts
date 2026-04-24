@@ -40,10 +40,17 @@ export class UsersService {
                     },
                     select: {
                         full_name: true,
-                        assigned_tasks: {
-                            where: {
-                                status: {
-                                    in:['IN_PROGRESS','PENDING']
+                        role: true,
+                        department: true,
+                        id: true,
+                        _count: {
+                            select: {
+                                assigned_tasks: {
+                                    where: {
+                                        status: {
+                                            in: ['IN_PROGRESS', 'PENDING']
+                                        }
+                                    }
                                 }
                             }
                         }
