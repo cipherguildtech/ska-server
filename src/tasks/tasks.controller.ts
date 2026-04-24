@@ -5,14 +5,16 @@ import { TasksService } from './tasks.service';
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
+
+  @Post('accept_or_reject')
+  async acceptOrReject(task_id: string, action: string, phone: string, reason: string | null) {
+    await this.tasksService.acceptOrReject(task_id, action, phone, reason);
+  }
 //GET ALL TASKS
   @Get('all')
   getAllTasks() {
     return this.tasksService.getAll();
   }
-
-
-
 
 // CREATE TASK
   @Post('create')
