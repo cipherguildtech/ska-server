@@ -197,7 +197,7 @@ export class TasksService {
         data: {
           project_id: project?.id ?? body.project_id,
           assigned_to: body.assigned_to,
-          assigned_by: assigner?.id ,
+          assigned_by: assigner!.id ,
           department: body.department,
           title: body.title,
           notes: body.notes,
@@ -823,13 +823,6 @@ export class TasksService {
     }
   }
 
-  async assignTask(project_id: string, assigned_to: string, assigned_by: string, department: string, title: string, description: string, notes: string, due_at: string, is_quotation: boolean) {
-
-    try {
-      await this.prisma.tasks.update
-    }
-
-  }
 
 
   async taskboard() {

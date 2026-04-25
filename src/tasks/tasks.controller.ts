@@ -81,10 +81,10 @@ export class TasksController {
     return this.tasksService.getHrDashboard();
   }
 
-  @Get('task_assign')
+ /* @Get('task_assign')
   taskAssign(){
     return this.tasksService.taskAssign();
-  }
+  } */
 
    @Get('taskboard')
   taskboard(){
