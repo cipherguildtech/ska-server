@@ -6,6 +6,13 @@ import { Project_status } from "@prisma/client";
 @Controller('projects')
 export class ProjectsController {
     constructor(private readonly projectService: ProjectsService) {}
+
+    @Get('project_details/:id')
+    async getProjectDetails (@Param('id') id: string) {
+        return await this.projectService.getProjectDetails(id);
+    }
+
+
     @Get('active_projects')
     async getActiveProjects () {
         return await this.projectService.getActiveProjects();

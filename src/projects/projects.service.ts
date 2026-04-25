@@ -9,6 +9,89 @@ import { EventsGateway } from "../gateway/events.gateway";
 export class ProjectsService {
     constructor(private readonly prisma: PrismaService, private readonly eventsGateway: EventsGateway) {}
 
+    async getprojectDetails(id: string) {
+        try {
+            const project = await this.prisma.projects.findUniqueOrThrow(
+                {
+                    where: {
+                       id
+                    },
+                    select: {
+                        quotations: true,
+                        project_code: true,
+                        created_at: true,
+                        current_stage: true,
+                        customer: {
+                            select: {
+                                name: true,
+                                phone: true,
+                            }
+                        },
+                        created_by: {
+                            select: {
+                                full_name: true,
+                                phone: true
+                            }
+                        },
+                        description: true,
+                        deadline: true,
+                        status: true,
+                        service_type: true,
+                        tasks:{
+                            select: {
+                                assignee: {
+                                    select: {
+                                        full_name: true,
+                                        phone: true,
+                                    },
+                                },
+                                assigner: {
+                                    select: {
+                                        full_name: true,
+                                        phone: true
+                                    }
+                                },
+                                created_at: true,
+                                department: true,
+                                description: true,
+                                due_at: true,
+                                title: true,
+                                status:true,
+                                notes: true,
+                                work_details: true,
+                                updated_at: true,
+                                taskHistory: {
+                                    select: {
+                                        changed_at: true,
+                                        detail: true,
+                                        note: true,
+                                        task_new_status: true,
+                                        task_old_status: true,
+                                        changed_by: true
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            );
+
+            return project;
+        }
+        catch(e) {
+            if(e instanceof PrismaClientKnownRequestError) {
+                if(e.code == 'P2025') {
+                    throw new NotFoundException('project not exsists')
+                }
+            }
+            else {
+                throw new InternalServerErrorException('something went wrong');
+            }
+        }
+
+    }
+
     async getActiveProjects() {
         try {
             return await this.prisma.projects.findMany(
