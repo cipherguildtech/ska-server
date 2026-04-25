@@ -9,7 +9,7 @@ import { EventsGateway } from "../gateway/events.gateway";
 export class ProjectsService {
     constructor(private readonly prisma: PrismaService, private readonly eventsGateway: EventsGateway) {}
 
-    async getprojectDetails(id: string) {
+    async getProjectDetails(id: string) {
         try {
             const project = await this.prisma.projects.findUniqueOrThrow(
                 {
@@ -69,8 +69,12 @@ export class ProjectsService {
                                         task_old_status: true,
                                         changed_by: true
                                     }
+                                },
+                                quotations: {
+                                    where: {
+                                        is_quotation: true;
+                                    }
                                 }
-
                             }
                         }
                     }

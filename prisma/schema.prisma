@@ -60,7 +60,6 @@ model Projects {
   history            ProjectHistory[]
   created_by         Users            @relation(fields: [created_user_email], references: [email])
   customer           Customer         @relation(fields: [customer_email], references: [email])
-  quotations         Quotations[]
   tasks              Tasks[]
 
   @@index([customer_email])
@@ -87,6 +86,7 @@ model Tasks {
   completed_at DateTime?
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
+  quotations Quotations[]
   assigner     Users       @relation("CreatedTasks", fields: [assigned_by], references: [id])
   assignee     Users       @relation("AssignedTasks", fields: [assigned_to], references: [id])
   project      Projects    @relation(fields: [project_id], references: [id])
@@ -98,7 +98,7 @@ model Tasks {
 
 model Quotations {
   id              String          @id @default(uuid())
-  project_id      String
+  task_id         String
   amount          Decimal         @db.Decimal(10, 2)
   advance_paid    Decimal?        @db.Decimal(10, 2)
   approval_status Approval_status @default(DRAFT)
@@ -107,9 +107,10 @@ model Quotations {
   created_at      DateTime        @default(now())
   updated_at      DateTime        @updatedAt
   payments        Payments[]
-  project         Projects        @relation(fields: [project_id], references: [id])
+  task            Tasks       @relation(fields: [task_id], references: [id])
 
-  @@index([project_id])
+
+  @@index([task_id])
 }
 
 model Payments {
