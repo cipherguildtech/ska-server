@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Approval_status } from "@prisma/client";
 
@@ -18,9 +18,26 @@ export class QuotationServices {
         const project = body.project_code
             ? await this.prisma.projects.findUnique({ where: { project_code: body.project_code }, select: { id: true } })
             : null;
+        const project_id = project?.id ?? body.project_id;
+        const task = body.task_id
+            ? { id: body.task_id }
+            : await this.prisma.tasks.findFirst({
+                where: {
+                    project_id,
+                    ...(body.task_title ? { title: body.task_title } : {}),
+                },
+                orderBy: [
+                    { is_quotation: 'desc' },
+                    { created_at: 'asc' },
+                ],
+                select: { id: true },
+            });
+        if (!task?.id) {
+            throw new NotFoundException("quotation task not found for project");
+        }
         const quotations = await this.prisma.quotations.create({
             data: {
-                task_id: body.task_id,
+                task_id: task?.id,
                 amount: body.amount,
                 advance_paid: body.advance_paid,
                 approval_status: body.approval_status,

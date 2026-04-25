@@ -188,22 +188,33 @@ export class TasksService {
     const project = body.project_code
       ? await this.prisma.projects.findUnique({ where: { project_code: body.project_code }, select: { id: true } })
       : null;
+    const assignee = body.assigned_to_phone
+      ? await this.prisma.users.findUnique({ where: { phone: body.assigned_to_phone }, select: { id: true } })
+      : null;
     const assigner = body.assigned_by_phone
       ? await this.prisma.users.findUnique({ where: { phone: body.assigned_by_phone }, select: { id: true } })
       : null;
+    const project_id = project?.id ?? body.project_id;
+    const assigned_to = assignee?.id ?? body.assigned_to;
+    const assigned_by = assigner?.id ?? body.assigned_by;
 
     const tasks = await this.prisma.tasks.create(
       {
         data: {
-          project_id: project?.id ?? body.project_id,
-          assigned_to: body.assigned_to,
-          assigned_by: assigner!.id ,
+          project_id,
+          assigned_to,
+          assigned_by,
           department: body.department,
           title: body.title,
           notes: body.notes,
           description: body.description,
+          status: body.status,
+          files: body.files,
+          history: body.history,
+          work_details: body.work_details,
           is_quotation: body.is_quotation,
           due_at: new Date(body.due_at),
+          completed_at: body.completed_at ? new Date(body.completed_at) : undefined,
         }
       }
     );
@@ -211,7 +222,7 @@ export class TasksService {
     const project_history = await this.prisma.projectHistory.create(
       {
         data: {
-          project_id: body.project_id,
+          project_id,
           changed_by: body.assigned_by_phone,
           task_id: tasks.id,
           changed_at: new Date(),
@@ -230,7 +241,7 @@ export class TasksService {
         status: 'IN_PROGRESS',
       },
       where: {
-        id: body.project_id
+        id: project_id
       }
      }
     );

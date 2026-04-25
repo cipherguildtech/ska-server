@@ -23,10 +23,14 @@ export class PaymentServices {
                 select: { id: true }
             })
             : null;
-        const task_id =  paymentData.task_id;
-        const quotation = paymentData.project_code && !paymentData.quotation_id
+        const project_id = project?.id ?? paymentData.project_id;
+        const quotation = project_id && !paymentData.quotation_id
             ? await this.prisma.quotations.findFirst({
-                where: { task_id: task_id},
+                where: {
+                    task: {
+                        project_id,
+                    },
+                },
                 orderBy: { created_at: 'desc' },
                 select: { id: true }
             })
@@ -34,14 +38,14 @@ export class PaymentServices {
         const quotation_id = paymentData.quotation_id ?? quotation?.id;
         const data = paymentData.paid_at ? {
             quotation_id,
-            project_id: paymentData.project_id,
+            project_id,
             amount: paymentData.amount,
             type: paymentData.type,
             reference: paymentData.reference,
             paid_at: paymentData.paid_at,
         } : {
             quotation_id,
-            project_id: paymentData.project_id,
+            project_id,
             amount: paymentData.amount,
             type: paymentData.type,
             reference: paymentData.reference,
