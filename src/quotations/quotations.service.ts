@@ -9,7 +9,7 @@ export class QuotationServices {
         const quotations = await this.prisma.quotations.findMany({
             include: {
                 payments: true,
-                project: true
+                task: true
             }
         });
         return quotations;
@@ -20,7 +20,7 @@ export class QuotationServices {
             : null;
         const quotations = await this.prisma.quotations.create({
             data: {
-                project_id: project?.id ?? body.project_id,
+                task_id: body.task_id,
                 amount: body.amount,
                 advance_paid: body.advance_paid,
                 approval_status: body.approval_status,
@@ -30,13 +30,14 @@ export class QuotationServices {
         });
         return quotations;
     }
+
     async update(id:string ,body: any) {
         const quotations = await this.prisma.quotations.update({
             where: {
                 id: id
             },
             data: {
-                project_id: body.project_id,
+                task_id: body.task_id,
                 amount: body.amount,
                 advance_paid: body.advance_paid,
                 approval_status: body.approval_status,

@@ -23,10 +23,10 @@ export class PaymentServices {
                 select: { id: true }
             })
             : null;
-        const project_id = project?.id ?? paymentData.project_id;
+        const task_id =  paymentData.task_id;
         const quotation = paymentData.project_code && !paymentData.quotation_id
             ? await this.prisma.quotations.findFirst({
-                where: { project_id },
+                where: { task_id: task_id},
                 orderBy: { created_at: 'desc' },
                 select: { id: true }
             })
@@ -34,14 +34,14 @@ export class PaymentServices {
         const quotation_id = paymentData.quotation_id ?? quotation?.id;
         const data = paymentData.paid_at ? {
             quotation_id,
-            project_id,
+            project_id: paymentData.project_id,
             amount: paymentData.amount,
             type: paymentData.type,
             reference: paymentData.reference,
             paid_at: paymentData.paid_at,
         } : {
             quotation_id,
-            project_id,
+            project_id: paymentData.project_id,
             amount: paymentData.amount,
             type: paymentData.type,
             reference: paymentData.reference,
@@ -52,7 +52,6 @@ export class PaymentServices {
         });
         this.eventsGateWay.emit("payment:created");
         return payments;
-
     }
 
     async getAllByProject(id: string) {

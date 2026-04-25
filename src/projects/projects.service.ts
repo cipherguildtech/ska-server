@@ -70,9 +70,12 @@ export class ProjectsService {
                                         changed_by: true
                                     }
                                 },
+
                                 quotations: {
                                     where: {
-                                        is_quotation: true
+                                        task: {
+                                            is_quotation: true
+                                        }
                                     }
                                 }
                             }
