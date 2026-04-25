@@ -72,7 +72,7 @@ export class ProjectsService {
                                 },
                                 quotations: {
                                     where: {
-                                        is_quotation: true;
+                                        is_quotation: true
                                     }
                                 }
                             }
