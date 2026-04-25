@@ -53,11 +53,11 @@ export class QuotationServices {
         }
         const quotations = await this.prisma.quotations.findMany({
             where: {
-                project_id:id,
+                task_id:id,
                 approval_status:status.toUpperCase() as Approval_status
             },
             include:{
-                project:true,
+                task:true,
                 payments:true
             }});
         return quotations;
@@ -88,7 +88,7 @@ export class QuotationServices {
                 approval_status:status.toUpperCase() as Approval_status
             },
             include:{
-                project:true,
+                task:true,
                 payments:true
             }});
         return quotations;

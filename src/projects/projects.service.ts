@@ -17,7 +17,6 @@ export class ProjectsService {
                        id
                     },
                     select: {
-                        quotations: true,
                         project_code: true,
                         created_at: true,
                         current_stage: true,
