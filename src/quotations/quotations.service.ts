@@ -25,7 +25,6 @@ export class QuotationServices {
                 advance_paid: body.advance_paid,
                 approval_status: body.approval_status,
                 pdf_url: body.pdf_url,
-
             }
         });
         return quotations;

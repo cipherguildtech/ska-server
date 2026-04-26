@@ -762,7 +762,7 @@ export class TasksService {
     const teamsData = await this.prisma.tasks.groupBy({
       where: {
         status: {
-          notIn: ['CANCELLED', 'COMPLETED'],
+          notIn: ['CANCELLED', 'COMPLETED', 'REVIEW'],
         },
       },
       by: ['department'],
