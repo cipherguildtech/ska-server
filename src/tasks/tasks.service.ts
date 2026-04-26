@@ -1,7 +1,6 @@
 import { Injectable, InternalServerErrorException, ServiceUnavailableException, Body, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Approval_status, Project_status, Task_status, Users_dept } from '@prisma/client';
-import { log } from 'console';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 

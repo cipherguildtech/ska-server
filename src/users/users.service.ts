@@ -6,6 +6,163 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/wasm-compi
 export class UsersService {
     constructor(private prisma: PrismaService) {}
 
+    async getUserTasksDetail(phone: string) {
+        try {
+            const user = await this.prisma.users.findUnique(
+                {
+                    where: {phone},
+                    select: {
+                        full_name: true,
+                        role: true,
+                        department: true,
+                        assigned_tasks: {
+                            select: {
+                                assigned_by: true,
+                                completed_at: true,
+                                created_at: true,
+                                description: true,
+                                due_at: true,
+                                notes: true,
+                                status: true,
+                                title: true,
+                                work_details: true,
+                                updated_at: true,
+                                taskHistory: {
+                                    select: {
+                                        changed_at: true,
+                                        changed_by: true,
+                                        detail: true,
+                                        note: true,
+                                        project_id: true,
+                                        task_new_status: true,
+                                        task_old_status: true
+                                    }
+                                },
+                                project: {
+                                    select: {
+                                        created_at: true,
+                                        created_by: true,
+                                        balance: true,
+                                        created_user_email: true,
+                                        current_stage: true,
+                                        customer_email: true,
+                                        deadline: true,
+                                        description: true,
+                                        service_type: true,
+                                        project_code: true,
+                                        status: true,
+                                        paid: true,
+                                    }
+                                },
+                                quotations: {
+                                    select: {
+                                        advance_paid: true,
+                                        amount: true,
+                                        approval_status: true,
+                                        approved_at: true,
+                                        created_at: true,
+                                        payments: {
+                                            select: {
+                                                amount: true,
+                                                created_at: true,
+                                                paid_at: true,
+                                                type: true,
+                                                reference: true
+                                            }
+                                        },
+                                        updated_at: true,
+                                    },
+                                },
+                            }
+                        },
+                    }
+                }
+            );
+
+            const completedTasksCount = await this.prisma.users.count(
+                {
+                    where: {
+                        assigned_tasks: {
+                          every: {
+                            status: {
+                                equals: 'COMPLETED'
+                            }
+                          }  
+                        }
+                    }
+                }
+            );
+
+            const cancelledTasksCount = await this.prisma.users.count(
+                {
+                    where: {
+                        assigned_tasks: {
+                          every: {
+                            status: {
+                                equals: 'CANCELLED'
+                            }
+                          }  
+                        }
+                    }
+                }
+            );
+
+            const pendingTasksCount = await this.prisma.users.count(
+                {
+                    where: {
+                        assigned_tasks: {
+                          every: {
+                            status: {
+                                equals: 'PENDING'
+                            }
+                          }  
+                        }
+                    }
+                }
+            );
+
+            const inProgressTasksCount = await this.prisma.users.count(
+                {
+                    where: {
+                        assigned_tasks: {
+                          every: {
+                            status: {
+                                equals: 'IN_PROGRESS'
+                            }
+                          }  
+                        }
+                    }
+                }
+            );
+
+            const reviewTasksCount = await this.prisma.users.count(
+                {
+                    where: {
+                        assigned_tasks: {
+                          every: {
+                            status: {
+                                equals: 'REVIEW'
+                            }
+                          }  
+                        }
+                    }
+                }
+            );
+
+            return {
+                user,
+                "completed_tasks_count": completedTasksCount,
+                "cancelled_tasks_count": cancelledTasksCount,
+                "pending_tasks_count": pendingTasksCount,
+                "inprogress_tasks_count": inProgressTasksCount,
+                "review_tasks_count": reviewTasksCount,
+            }
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
+
     async getUsers() {
         try {
             return await this.prisma.users.findMany(
@@ -39,6 +196,7 @@ export class UsersService {
                        }
                     },
                     select: {
+                        phone: true,
                         full_name: true,
                         role: true,
                         department: true,
