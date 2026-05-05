@@ -1,9 +1,10 @@
 generator client {
   provider = "prisma-client-js"
+  
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model Users {
@@ -58,8 +59,8 @@ model Projects {
   customer_email     String
   payments           Payments[]
   history            ProjectHistory[]
-  created_by         Users            @relation(fields: [created_user_email], references: [email])
-  customer           Customer         @relation(fields: [customer_email], references: [email])
+  created_by  Users  @relation(fields: [created_user_email], references: [email], map: "Projects_created_user_email_fkey_1")
+  customer    Customer @relation(fields: [customer_email], references: [email], map: "Projects_customer_email_fkey")
   tasks              Tasks[]
 
   @@index([customer_email])
@@ -76,19 +77,19 @@ model Tasks {
   taskHistory ProjectHistory[]
   title        String
   notes        String?
-  description  String?     @db.LongText
+  description  String?    
   status       Task_status @default(PENDING)
-  files        String?     @db.LongText
-  history      String?     @db.LongText
-  work_details String?     @db.LongText
+  files        String?     
+  history      String?     
+  work_details String?     
   is_quotation Boolean     @default(false)
   due_at       DateTime
   completed_at DateTime?
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
   quotations Quotations[]
-  assigner     Users       @relation("CreatedTasks", fields: [assigned_by], references: [id])
-  assignee     Users       @relation("AssignedTasks", fields: [assigned_to], references: [id])
+  assigner  Users  @relation("CreatedTasks", fields: [assigned_by], references: [id], map: "fkey_tasks_assigner")
+  assignee  Users  @relation( "AssignedTasks", fields: [assigned_to], references: [id], map: "fkey_tasks_assignee")
   project      Projects    @relation(fields: [project_id], references: [id])
 
   @@index([project_id])
@@ -139,7 +140,7 @@ model ProjectHistory {
   detail     Json?
   note       String?
   changed_at DateTime @default(now())
-  user       Users    @relation(fields: [changed_by], references: [phone])
+  user  Users  @relation( fields: [changed_by], references: [phone], map: "fkey_projecthistory_user")
   project    Projects @relation(fields: [project_id], references: [id])
   task       Tasks    @relation(fields: [task_id], references: [id])
   @@index([project_id])

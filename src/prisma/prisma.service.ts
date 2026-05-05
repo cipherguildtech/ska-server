@@ -1,5 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit, Logger } from '@nestjs/common';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import {PrismaPg} from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 
 function addDefaultPoolParams(databaseUrl: string): string {
@@ -45,7 +46,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     const logger = new Logger(PrismaService.name);
     const normalizedDatabaseUrl = addDefaultPoolParams(databaseUrl);
 
-    const adapter = new PrismaMariaDb(normalizedDatabaseUrl, {
+    const adapter = new PrismaPg(normalizedDatabaseUrl, {
       onConnectionError: (err) => {
         if (err.message.includes('max_connections_per_hour') || err.message.includes('no: 1226')) {
           logger.error(
