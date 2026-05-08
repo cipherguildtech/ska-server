@@ -5,6 +5,54 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/wasm-compi
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) {}
+    async getUserProjectsAndTasks(phone: string) {
+        try {
+            const userWithProjectsTasks = await this.prisma.users.findUnique(
+                {
+                    where: {phone},
+                    select: {
+                        full_name: true,
+                        is_active: true,
+                        assigned_tasks: true,
+                        department: true,
+                        role: true,
+                        projects: {
+                            select: {
+                                customer_email: true,
+                                created_at: true,
+                                created_by: true,
+                                deadline: true,
+                                current_stage: true,
+                                description: true,
+                                project_code: true,
+                                service_type: true,
+                                status: true,
+                                tasks: {
+                                    select: {
+                                        assigned_by: true,
+                                        completed_at: true,
+                                        created_at: true,
+                                        department: true,
+                                        description: true,
+                                        due_at: true,
+                                        notes: true,
+                                        work_details: true,
+                                        title: true,
+                                        taskHistory: true,
+                                        updated_at: true,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+        return userWithProjectsTasks;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
 
     async getUserTasksDetail(phone: string) {
         try {

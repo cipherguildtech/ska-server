@@ -28,4 +28,9 @@ export class UsersController {
     async getUserTasks() {
         return await this.usersService.getUserTasks();
     }
+
+    @Get('projects_and_tasks/:phone')
+    async getUserProjectsAndTasks(@Param('phone') phone: string) {
+        return await this.usersService.getUserProjectsAndTasks(phone);
+    }
 }

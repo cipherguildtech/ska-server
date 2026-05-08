@@ -7,8 +7,8 @@ import { Project_status } from "@prisma/client";
 export class ProjectsController {
     constructor(private readonly projectService: ProjectsService) {}
 
-    @Get('project_details/:id')
-    async getProjectDetails (@Param('id') id: string) {
+    @Get('project_details/:project_code')
+    async getProjectDetails (@Param('project_code') id: string) {
         return await this.projectService.getProjectDetails(id);
     }
 
