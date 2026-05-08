@@ -14,6 +14,8 @@ import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { EventsGateway } from './gateway/events.gateway';
 import { EventsGatewayModule } from './gateway/events.module';
+import { SalesService } from './sales/sales.service';
+import { SalesModule } from './sales/sales.module';
 
 @Module({
   imports: [EventsGatewayModule,
@@ -25,9 +27,10 @@ import { EventsGatewayModule } from './gateway/events.module';
     PaymentModule,
     ProjectHistoryModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    SalesModule
   ],
   controllers: [AppController, UsersController],
-  providers: [AppService, UsersService],
+  providers: [AppService, UsersService, SalesService],
 })
 export class AppModule { }

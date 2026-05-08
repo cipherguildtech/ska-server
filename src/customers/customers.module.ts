@@ -5,7 +5,8 @@ import {CustomersService } from "./customers.service";
 @Module (
     {
         controllers: [CustomersContoller],
-        providers: [CustomersService]
+        providers: [CustomersService],
+         exports: [CustomersService],
     }
 )
 
