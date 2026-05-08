@@ -9,12 +9,12 @@ import { EventsGateway } from "../gateway/events.gateway";
 export class ProjectsService {
     constructor(private readonly prisma: PrismaService, private readonly eventsGateway: EventsGateway) {}
 
-    async getProjectDetails(id: string) {
+    async getProjectDetails(project_code: string) {
         try {
             const project = await this.prisma.projects.findUniqueOrThrow(
                 {
                     where: {
-                       id
+                       project_code
                     },
                     select: {
                         project_code: true,
