@@ -8,8 +8,8 @@ export class ProjectsController {
     constructor(private readonly projectService: ProjectsService) {}
 
     @Get('project_details/:project_code')
-    async getProjectDetails (@Param('project_code') id: string) {
-        return await this.projectService.getProjectDetails(id);
+    async getProjectDetails (@Param('project_code') project_code: string) {
+        return await this.projectService.getProjectDetails(project_code);
     }
 
 

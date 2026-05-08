@@ -12,7 +12,7 @@ export class ProjectsService {
     async getProjectDetails(project_code: string) {
         try {
             const project = await this.prisma.projects.findUniqueOrThrow(
-                {
+              {
                     where: {
                        project_code
                     },
@@ -95,7 +95,6 @@ export class ProjectsService {
                 throw new InternalServerErrorException('something went wrong');
             }
         }
-
     }
 
     async getActiveProjects() {
@@ -195,11 +194,6 @@ export class ProjectsService {
                 {
                     where: {project_code},
                     select:{
-                        tasks: {
-                            omit: {
-                                id: true,
-                            },
-                        },
                         project_code: true,
                         status: true,
                         service_type: true,
@@ -210,8 +204,18 @@ export class ProjectsService {
                             select: {
                                 full_name: true,
                                 email: true,
+                            }, 
+                        },
+                        balance: true,
+                        created_at: true,
+                        customer: {
+                            select: {
+                                name: true,
+                                email: true,
                             }
                         },
+                        paid: true,
+                        updated_at: true,
                     },
     
                 },
