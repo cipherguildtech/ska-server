@@ -48,4 +48,9 @@ export class UsersController {
     async getUserInCompleteTasks(@Param('phone') phone: string) {
         return await this.usersService.getUserIncompleteTasks(phone);
     }
+
+    @Get('team/active_tasks/:phone')
+    async getUserActiveTasks(@Param('phone') phone: string) {
+        return await this.usersService.getUserActiveTasks(phone);
+    }
 }

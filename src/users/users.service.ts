@@ -480,5 +480,30 @@ export class UsersService {
         }
     }
 
+    async getUserActiveTasks(phone: string) {
+        try {
+            const userActiveTasks = await this.prisma.tasks.findMany(
+                {
+                    take: 3,
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            in: ['PENDING','IN_PROGRESS']
+                        }
+                    },
+                    orderBy: {
+                        due_at: 'desc'
+                    }
+                }
+            );
+            return userActiveTasks;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
+
 
 }
