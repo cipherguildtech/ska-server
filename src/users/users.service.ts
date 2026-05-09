@@ -449,5 +449,36 @@ export class UsersService {
         }
     }
 
+    async getUserIncompleteTasks(phone: string) {
+        try {
+            const userInCompleteTasks = await this.prisma.tasks.findMany(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            in: ['PENDING','IN_PROGRESS']
+                        }
+                    },
+                    select: {
+                        project: {
+                            select: {
+                                project_code: true,
+                            },
+                        },
+                        title: true,
+                        description: true,
+                        due_at: true,
+                    }
+                }
+            );
+            return userInCompleteTasks;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('Something went wrong');
+        }
+    }
+
 
 }
