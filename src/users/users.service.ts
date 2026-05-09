@@ -159,6 +159,8 @@ export class UsersService {
                         assigned_tasks: {
                             select: {
                                 assigned_by: true,
+                                files: true,
+                                is_quotation: true,
                                 completed_at: true,
                                 created_at: true,
                                 description: true,
@@ -181,8 +183,16 @@ export class UsersService {
                                 },
                                 project: {
                                     select: {
+                                        id: true,
                                         created_at: true,
-                                        created_by: true,
+                                        updated_at: true,
+                                        created_by: {
+                                            select: {
+                                                id: true,
+                                                full_name: true,
+                                                phone: true,
+                                            }
+                                        },
                                         balance: true,
                                         created_user_email: true,
                                         current_stage: true,
@@ -197,6 +207,7 @@ export class UsersService {
                                 },
                                 quotations: {
                                     select: {
+                                        pdf_url: true,
                                         advance_paid: true,
                                         amount: true,
                                         approval_status: true,
@@ -220,74 +231,72 @@ export class UsersService {
                 }
             );
 
-            const completedTasksCount = await this.prisma.users.count(
+            const completedTasksCount = await this.prisma.tasks.count(
                 {
                     where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'COMPLETED'
-                            }
-                          }  
+                         assignee: {
+                            phone
+                         },
+                         status: {
+                            equals: 'COMPLETED'
+                         }
+                        },
+                      
+                    }
+
+            );
+
+            const cancelledTasksCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'CANCELLED'
                         }
                     }
                 }
             );
 
-            const cancelledTasksCount = await this.prisma.users.count(
+            const pendingTasksCount = await this.prisma.tasks.count(
                 {
                     where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'CANCELLED'
-                            }
-                          }  
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'PENDING'
+                        }
+
+                    }
+                }
+            );
+
+            const inProgressTasksCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'IN_PROGRESS'
                         }
                     }
                 }
             );
 
-            const pendingTasksCount = await this.prisma.users.count(
+            const reviewTasksCount = await this.prisma.tasks.count(
                 {
                     where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'PENDING'
-                            }
-                          }  
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'REVIEW'
                         }
-                    }
                 }
-            );
-
-            const inProgressTasksCount = await this.prisma.users.count(
-                {
-                    where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'IN_PROGRESS'
-                            }
-                          }  
-                        }
-                    }
-                }
-            );
-
-            const reviewTasksCount = await this.prisma.users.count(
-                {
-                    where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'REVIEW'
-                            }
-                          }  
-                        }
-                    }
-                }
+            }
             );
 
             return {
