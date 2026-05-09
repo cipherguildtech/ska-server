@@ -518,7 +518,8 @@ export class UsersService {
                         },
                         title: true,
                         status: true,
-                        due_at: true
+                        due_at: true,
+                        id: true,
 
                     }
                 }

@@ -130,7 +130,7 @@ export class TasksService {
             department: true,
             due_at: true,
             work_details: true,
-            files: true,
+            files: true
           }
         }
       );
