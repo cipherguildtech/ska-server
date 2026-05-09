@@ -418,5 +418,36 @@ export class UsersService {
     }
     }
 
+    async getUserCompletedTasks(phone: string) {
+        try {
+            const userCompletedTasks = await this.prisma.tasks.findMany(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status:{
+                            equals: 'COMPLETED'
+                        }
+                    },
+                    select: {
+                        project: {
+                            select: {
+                                project_code: true,
+                            }
+                        },
+                        title: true,
+                        description: true,
+                        due_at: true
+                    }
+                }
+            );
+            return userCompletedTasks;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('Something went wrong');
+        }
+    }
+
 
 }

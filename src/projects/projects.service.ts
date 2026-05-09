@@ -218,6 +218,8 @@ export class ProjectsService {
                             select: {
                                 name: true,
                                 email: true,
+                                address: true,
+                                phone: true,
                             }
                         },
                         paid: true,
