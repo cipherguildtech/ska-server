@@ -158,6 +158,7 @@ export class UsersService {
                         department: true,
                         assigned_tasks: {
                             select: {
+                                id: true,
                                 assigned_by: true,
                                 files: true,
                                 is_quotation: true,
