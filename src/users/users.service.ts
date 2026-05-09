@@ -53,7 +53,7 @@ export class UsersService {
                             phone
                         },
                         status: {
-                            notIn: ['COMPLETED','CANCELLED']
+                            notIn: ['COMPLETED','CANCELLED','REVIEW']
                         }
                     }
                 }
