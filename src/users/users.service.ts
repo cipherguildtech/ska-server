@@ -438,7 +438,8 @@ export class UsersService {
                         },
                         title: true,
                         description: true,
-                        due_at: true
+                        due_at: true,
+                        status: true,
                     }
                 }
             );
@@ -470,6 +471,7 @@ export class UsersService {
                         title: true,
                         description: true,
                         due_at: true,
+                        status: true,
                     }
                 }
             );
@@ -495,6 +497,17 @@ export class UsersService {
                     },
                     orderBy: {
                         due_at: 'desc'
+                    },
+                    select: {
+                        project: {
+                            select: {
+                                project_code: true,
+                            }
+                        },
+                        title: true,
+                        status: true,
+                        due_at: true
+
                     }
                 }
             );
