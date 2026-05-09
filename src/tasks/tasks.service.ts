@@ -129,6 +129,8 @@ export class TasksService {
             description: true,
             department: true,
             due_at: true,
+            work_details: true,
+            files: true,
           }
         }
       );
