@@ -38,4 +38,9 @@ export class UsersController {
     async getUserTaskTypeCount(@Param('phone') phone: string) {
         return await this.usersService.getUserTaskTypeCounts(phone);
     }
+
+    @Get('team/completed_tasks/:phone')
+    async getUserCompletedTasks(@Param('phone') phone: string) {
+        return await this.usersService.getUserCompletedTasks(phone);
+    }
 }
