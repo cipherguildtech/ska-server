@@ -115,28 +115,20 @@ export class TasksService {
 
 
   async getTask(id: string) {
-    console.log('e');
     try {
       const task = await this.prisma.tasks.findUniqueOrThrow(
         {
           where: {id},
-          include: {
+          select: {
+            title: true,
             project: {
               select: {
-                id: true,
-                customer_email: true,
-                project_code: true,
-                balance: true,
-                created_at: true,
-                updated_at: true,
-                created_user_email: true,
-                current_stage: true,
-                deadline: true,
-                service_type: true,
-                description: true,
-                status: true,
+                project_code: true
               }
-            }
+            },
+            description: true,
+            department: true,
+            due_at: true,
           }
         }
       );

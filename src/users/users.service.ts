@@ -450,6 +450,7 @@ export class UsersService {
                         description: true,
                         due_at: true,
                         status: true,
+                        id: true
                     }
                 }
             );

@@ -36,6 +36,15 @@ export class ProjectsService {
                         deadline: true,
                         status: true,
                         service_type: true,
+                        payments: {
+                            select: {
+                                amount: true,
+                                created_at: true,
+                                paid_at: true,
+                                reference: true,
+                                type: true
+                            }
+                        },
                         tasks:{
                             select: {
                                 assignee: {
@@ -69,6 +78,7 @@ export class ProjectsService {
                                         changed_by: true
                                     }
                                 },
+                        
 
                                 quotations: {
                                     where: {
