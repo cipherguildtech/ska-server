@@ -5,54 +5,147 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/wasm-compi
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) {}
-    async getUserProjectsAndTasks(phone: string) {
+    async getUserTaskTypeCounts(phone: string) {
+        try {
+            const completedTaskCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                            assignee: {
+                                phone
+                            },
+                            status: {
+                                equals: 'COMPLETED'
+                            }
+                    },
+                }
+            );
+
+            const pendingTaskCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'PENDING'
+                        }
+                    }
+                }
+            );
+
+            const inProgressTaskCount = await this.prisma.tasks.count(
+               {
+                where: {
+                    assignee: {
+                        phone
+                    },
+                    status: {
+                        equals: 'IN_PROGRESS'
+                    }
+                }
+               }
+            );
+
+            const totalTaskCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            notIn: ['COMPLETED','CANCELLED']
+                        }
+                    }
+                }
+            );
+
+            const delayedTasksCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        due_at: {
+                            lt: new Date()
+                        }
+                    }
+                }
+            );
+
+            const incompleteTaskCount = await this.prisma.tasks.count(
+                {
+                   where: {
+                    assignee: {
+                        phone
+                    },
+                    status: {
+                        in: ['IN_PROGRESS', 'PENDING']
+                    }
+                   } 
+                }
+            );
+
+           var countData = {
+            'total_task_count': totalTaskCount,
+            'pending_task_count': pendingTaskCount,
+            'in_progress_task_count': inProgressTaskCount,
+            'completed_task_count': completedTaskCount,
+            'incomplete_task_count': incompleteTaskCount,
+            'delayed_task_count': delayedTasksCount,
+           };
+
+         return countData;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
+
+    
+    /*async getUserProjectsAndTasks(phone: string) {
         try {
             const userWithProjectsTasks = await this.prisma.users.findUnique(
                 {
                     where: {phone},
                     select: {
                         full_name: true,
-                        is_active: true,
-                        assigned_tasks: true,
-                        department: true,
                         role: true,
-                        projects: {
+                        department: true,
+                        assigned_tasks: {
                             select: {
-                                customer_email: true,
-                                created_at: true,
-                                created_by: true,
-                                deadline: true,
-                                current_stage: true,
-                                description: true,
-                                project_code: true,
-                                service_type: true,
-                                status: true,
-                                tasks: {
+                                 assigned_by: true,
+                                 completed_at: true,
+                                 created_at: true,
+                                 department: true,
+                                 description: true,
+                                 due_at: true,
+                                 taskHistory: true,
+                                 notes: true,
+                                 project: {
                                     select: {
-                                        assigned_by: true,
-                                        completed_at: true,
-                                        created_at: true,
-                                        department: true,
+                                        project_code: true,
+                                        status: true,
+                                        service_type: true,
                                         description: true,
-                                        due_at: true,
-                                        notes: true,
-                                        work_details: true,
-                                        title: true,
-                                        taskHistory: true,
-                                        updated_at: true,
-                                    }
-                                }
+                                        current_stage: true,
+                                        deadline: true,
+                                    },
+                                },
+                                title: true,
+                                status: true,
+                                work_details: true,
                             }
                         }
                     }
                 }
             );
+        const 
         return userWithProjectsTasks;
         }
         catch(e) {
             throw new InternalServerErrorException('something went wrong');
         }
-    }
+    } */
 
     async getUserTasksDetail(phone: string) {
         try {

@@ -29,8 +29,13 @@ export class UsersController {
         return await this.usersService.getUserTasks();
     }
 
-    @Get('projects_and_tasks/:phone')
+    /*@Get('projects_and_tasks/:phone')
     async getUserProjectsAndTasks(@Param('phone') phone: string) {
         return await this.usersService.getUserProjectsAndTasks(phone);
+    }*/
+
+    @Get('team/task_type_count/:phone')
+    async getUserTaskTypeCount(@Param('phone') phone: string) {
+        return await this.usersService.getUserTaskTypeCounts(phone);
     }
 }
