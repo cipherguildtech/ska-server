@@ -3,10 +3,10 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { customerCreationDto } from "./DTO/customerCreationDTO";
 import { EventsGateway } from "../gateway/events.gateway";
- 
+
 @Injectable()
 export class CustomersService {
-    constructor(private prisma: PrismaService, private readonly eventsGateway: EventsGateway) {}
+    constructor(private prisma: PrismaService, private readonly eventsGateway: EventsGateway) { }
 
     async getRecentCustomers() {
         try {
@@ -15,10 +15,10 @@ export class CustomersService {
             return await this.prisma.customer.findMany(
                 {
                     where: {
-                       created_at: {
-                        lte: new Date(),
-                        gte: sevenDaysAgo,
-                       } 
+                        created_at: {
+                            lte: new Date(),
+                            gte: sevenDaysAgo,
+                        }
                     },
                     orderBy: {
                         created_at: "desc"
@@ -31,11 +31,38 @@ export class CustomersService {
                 }
             )
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException("something went wrong");
         }
     }
-
+    async getRecentCustomers1() {
+        try {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const customers = await this.prisma.customer.findMany(
+                {
+                    where: {
+                        created_at: {
+                            lte: new Date(),
+                            gte: sevenDaysAgo,
+                        }
+                    },
+                    orderBy: {
+                        created_at: "desc"
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        phone: true
+                    }
+                }
+            );
+            return customers.slice(-5);
+        }
+        catch (e) {
+            throw new InternalServerErrorException("something went wrong");
+        }
+    }
     async getCustomersCount() {
         try {
             const customerCount = await this.prisma.customer.count();
@@ -43,33 +70,33 @@ export class CustomersService {
                 "count": customerCount
             }
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException("something went wrong");
         }
     }
 
 
     async getCustomers() {
-       try {
-        return await this.prisma.customer.findMany(
-            {omit: {created_at: true, updated_at: true}}
-        );
-       }
-       catch(e) {
-        console.log(e);
-        throw new InternalServerErrorException("something went wrong");
-       }
+        try {
+            return await this.prisma.customer.findMany(
+                { omit: { created_at: true, updated_at: true } }
+            );
+        }
+        catch (e) {
+            console.log(e);
+            throw new InternalServerErrorException("something went wrong");
+        }
     }
 
     async createCustomer(requestBody: customerCreationDto) {
         try {
-            const customer = await this.prisma.customer.create({data: requestBody});
+            const customer = await this.prisma.customer.create({ data: requestBody });
             this.eventsGateway.emit("customer:created");
             return customer;
         }
-        catch(e) {
-            if(e instanceof PrismaClientKnownRequestError) {
-                if(e.code === 'P2002') {
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                if (e.code === 'P2002') {
                     throw new ConflictException("customer with these details already exists");
                 }
             }
@@ -82,20 +109,20 @@ export class CustomersService {
     async getCustomer(id: string) {
         try {
             return await this.prisma.customer.findUniqueOrThrow({
-            where: {id},
-            include: {projects: true},
-            omit: {created_at: true, updated_at: true}
-        })
+                where: { id },
+                include: { projects: true },
+                omit: { created_at: true, updated_at: true }
+            })
         }
-        catch(e) {
-            if( e instanceof PrismaClientKnownRequestError) {
-                if(e.code == 'P2025') {
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                if (e.code == 'P2025') {
                     throw new NotFoundException('customer not exsists')
                 }
             }
-           else {
-            throw new InternalServerErrorException("something went wrong");
-           }
+            else {
+                throw new InternalServerErrorException("something went wrong");
+            }
         }
     }
 
@@ -104,15 +131,15 @@ export class CustomersService {
             const customer = await this.prisma.customer.update(
                 {
                     data: requestBody,
-                    where: {id}
+                    where: { id }
                 }
             )
             this.eventsGateway.emit("customer:updated");
             return customer;
         }
-        catch(e) {
-            if(e instanceof PrismaClientKnownRequestError) {
-                if(e.code === 'P2025') {
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
                     throw new NotFoundException("customer not exsists");
                 }
                 else if (e.code === 'P2002') {

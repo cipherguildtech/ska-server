@@ -7,7 +7,7 @@ export class SalesController {
     constructor(private readonly salesService: SalesService) { }
     @Get('dashboard')
     async getDashboard() {
-        log('Fetching dashboard data...');
+        
         return await this.salesService.getDashboard();
     }
 }
