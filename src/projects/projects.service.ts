@@ -180,6 +180,7 @@ export class ProjectsService {
                         status: true,
                         deadline: true,
                         description: true,
+                        service_type: true,
                         customer:{
                             select:{
                                 name: true,
