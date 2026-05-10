@@ -81,7 +81,8 @@ model Tasks {
   status       Task_status @default(PENDING)
   files        String?     
   history      String?     
-  work_details String?     
+  work_details String?  
+  notes_work   String?   
   is_quotation Boolean     @default(false)
   due_at       DateTime
   completed_at DateTime?

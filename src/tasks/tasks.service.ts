@@ -123,9 +123,12 @@ export class TasksService {
             title: true,
             project: {
               select: {
-                project_code: true
+                project_code: true,
+                id: true,
               }
             },
+            status: true,
+            assigned_to: true,
             description: true,
             department: true,
             due_at: true,
@@ -456,9 +459,11 @@ export class TasksService {
     }
     const data = completed_at && completed_at !== 'null' ? {
       status: status.toUpperCase() as Task_status,
-      completed_at: new Date(completed_at)
+      completed_at: new Date(completed_at),
+      updated_at: new Date(completed_at)
     } : {
       status: status.toUpperCase() as Task_status,
+      updated_at: new Date(completed_at),
     };
     const tasks = await this.prisma.tasks.update(
       {

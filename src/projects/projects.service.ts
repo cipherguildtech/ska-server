@@ -17,12 +17,16 @@ export class ProjectsService {
                        project_code
                     },
                     include: {
-                        payments: {
+                        tasks:{
                             include: {
-                                quotation: true
+                                quotations: {
+                                    include: {
+                                        payments: true
+                                    }
+                                },
+                                taskHistory: true,
                             }
                         },
-                        tasks: true,
                         history: true,
                         customer: {
                             select: {
