@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, ServiceUnavailableException, 
 import { PrismaService } from '../prisma/prisma.service';
 import { Approval_status, Project_status, Task_status, Users_dept } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import { cloudinary } from '../../cloundinary_config';
 
 
 function isDbHourlyConnectionLimitError(error: unknown): boolean {
@@ -128,7 +129,11 @@ export class TasksService {
               }
             },
             status: true,
-            assigned_to: true,
+            assignee: {
+              select: {
+                phone: true
+              }
+            },
             description: true,
             department: true,
             due_at: true,
@@ -258,31 +263,17 @@ export class TasksService {
       }
     });
     if (!existing) return "Task not available";
-    const data = body.completed_at ? {
-      assigned_to: body.assigned_to,
-      assigned_by: body.assigned_by,
-      notes: body.notes,
-      status: body.status,
-      file: body.file,
-      history: body.history,
-      due_at: body.due_at,
-      completed_at: body.completed_at,
-    } : {
-      assigned_to: body.assigned_to,
-      assigned_by: body.assigned_by,
-      notes: body.notes,
-      status: body.status,
-      file: body.file,
-      history: body.history,
-      due_at: body.due_at,
-
-    };
+  
     const tasks = await this.prisma.tasks.update(
       {
         where: {
           id
         },
-        data
+        data: {
+          ...body,
+          updated_at: new Date()
+        }
+        
       }
     );
 
@@ -1007,11 +998,47 @@ async elabrateTeams() {
   return result;
  }
 
- async saveTaskFiles(id: string, files: Array<File>) {
+ async saveTaskFiles(id: string, files: string[]) {
+  console.log(files);
   try {
+    const urls: string[] = [];
+    let mimeType = 'image/jpeg'; 
+    for (var base64 of files) {
+      if (base64.startsWith('iVBORw0K')) {
+         mimeType = 'image/png';
+      } else if (base64.startsWith('/9j/')) {
+         mimeType = 'image/jpeg';
+      } else if (base64.startsWith('UklGR')) {
+         mimeType = 'image/webp';
+      }
+      const url = await cloudinary.uploader.upload(
+        `data:${mimeType};base64,${base64}`,
+        {
+          folder: 'ska_images',
+          resource_type: 'image',
+        }
 
+      );
+      urls.push(url.secure_url);
+   }
+   if(urls.length != 0) {
+    const task = await this.prisma.tasks.update(
+      {
+        where: {id},
+        data: {
+          files: urls
+        }
+      }
+    );
+    if(task != null) {
+      return {
+        'message': 'files saved'
+      }
+    }
+   }
   }
   catch(e){
+    console.log(e);
     throw new InternalServerErrorException('something went wrong');
   }
  }

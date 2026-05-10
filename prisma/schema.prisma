@@ -79,7 +79,7 @@ model Tasks {
   notes        String?
   description  String?    
   status       Task_status @default(PENDING)
-  files        String?     
+  files        Json?     
   history      String?     
   work_details String?  
   notes_work   String?   

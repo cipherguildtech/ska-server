@@ -8,8 +8,8 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
   @Post('save_files/:id')
-  async saveTaskFiles(@Param('id') id: string, requestBody: any) {
-    await this.tasksService.saveTaskFiles(id, requestBody);
+  async saveTaskFiles(@Param('id') id: string, @Body() requestBody: {images: string[]}) {
+    await this.tasksService.saveTaskFiles(id, requestBody.images);
   }
 
   @Post('accept_or_reject')
