@@ -65,9 +65,12 @@ export class UsersService {
                         assignee: {
                             phone
                         },
+                        status: {
+                            notIn: ['COMPLETED']
+                        },
                         due_at: {
                             lt: new Date()
-                        }
+                        },
                     }
                 }
             );
@@ -159,6 +162,7 @@ export class UsersService {
                         assigned_tasks: {
                             select: {
                                 id: true,
+                                notes_work: true,
                                 assigned_by: true,
                                 files: true,
                                 is_quotation: true,
@@ -449,6 +453,7 @@ export class UsersService {
                         title: true,
                         description: true,
                         due_at: true,
+                        completed_at: true,
                         status: true,
                         id: true
                     }

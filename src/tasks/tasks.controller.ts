@@ -7,6 +7,11 @@ import { request } from 'http';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
+  @Post('save_files/:id')
+  async saveTaskFiles(@Param('id') id: string, requestBody: any) {
+    await this.tasksService.saveTaskFiles(id, requestBody);
+  }
+
   @Post('accept_or_reject')
   async acceptOrReject(@Body() requestBody) {
     await this.tasksService.acceptOrReject(requestBody.task_id, requestBody.action, requestBody.phone, requestBody.reason);

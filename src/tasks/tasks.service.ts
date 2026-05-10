@@ -132,6 +132,7 @@ export class TasksService {
             description: true,
             department: true,
             due_at: true,
+            completed_at: true,
             work_details: true,
             files: true
           }
@@ -1004,6 +1005,15 @@ async elabrateTeams() {
     users: Object.values(dept.users),
   }));
   return result;
+ }
+
+ async saveTaskFiles(id: string, files: Array<File>) {
+  try {
+
+  }
+  catch(e){
+    throw new InternalServerErrorException('something went wrong');
+  }
  }
 }
 
