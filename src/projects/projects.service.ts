@@ -16,7 +16,28 @@ export class ProjectsService {
                     where: {
                        project_code
                     },
-                    select: {
+                    include: {
+                        payments: {
+                            include: {
+                                quotation: true
+                            }
+                        },
+                        tasks: true,
+                        history: true,
+                        customer: {
+                            select: {
+                                name: true,
+                                phone: true,
+                            }
+                        },
+                        created_by: {
+                            select: {
+                                full_name: true,
+                                phone: true,
+                            }
+                        }
+                    }
+                    /*select: {
                         project_code: true,
                         created_at: true,
                         current_stage: true,
@@ -89,7 +110,7 @@ export class ProjectsService {
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
             );
 
