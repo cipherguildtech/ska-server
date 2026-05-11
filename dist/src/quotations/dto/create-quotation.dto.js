@@ -46,7 +46,8 @@ __decorate([
 ], CreateQuotationDto.prototype, "approval_status", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
     __metadata("design:type", Array)
 ], CreateQuotationDto.prototype, "pdf_url", void 0);
 //# sourceMappingURL=create-quotation.dto.js.map

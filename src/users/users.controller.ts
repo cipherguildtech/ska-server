@@ -9,6 +9,11 @@ export class UsersController {
         return await this.usersService.getUserTasksDetail(phone);
     }
 
+    @Get('basic_details')
+    async getUsersBasicDetails() {
+        return await this.usersService.getUsersBasicDetails();
+    }
+
     @Get()
     async getUsers() {
         return await this.usersService.getUsers();

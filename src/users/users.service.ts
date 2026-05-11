@@ -104,6 +104,27 @@ export class UsersService {
         }
     }
 
+    async getUsersBasicDetails() {
+        try {
+            return await this.prisma.users.findMany(
+                {
+                    
+                    select: {
+                        full_name: true,
+                        email: true,
+                        role: true,
+                        phone: true,
+                        is_active: true,
+                        department: true,
+                    }
+                }
+            );
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong')
+        }
+    }
+
     
     /*async getUserProjectsAndTasks(phone: string) {
         try {
@@ -340,6 +361,7 @@ export class UsersService {
             throw new InternalServerErrorException('something went wrong')
         }
     }
+
     
     async getUserTasks() {
         try {
