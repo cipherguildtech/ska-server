@@ -97,6 +97,23 @@ let UsersService = class UsersService {
             throw new common_1.InternalServerErrorException('something went wrong');
         }
     }
+    async getUsersBasicDetails() {
+        try {
+            return await this.prisma.users.findMany({
+                select: {
+                    full_name: true,
+                    email: true,
+                    role: true,
+                    phone: true,
+                    is_active: true,
+                    department: true,
+                }
+            });
+        }
+        catch (e) {
+            throw new common_1.InternalServerErrorException('something went wrong');
+        }
+    }
     async getUserTasksDetail(phone) {
         try {
             const user = await this.prisma.users.findUnique({

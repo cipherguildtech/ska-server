@@ -10,6 +10,14 @@ export declare class UsersService {
         incomplete_task_count: number;
         delayed_task_count: number;
     }>;
+    getUsersBasicDetails(): Promise<{
+        phone: string;
+        email: string | null;
+        department: import("@prisma/client").$Enums.Users_dept | null;
+        full_name: string;
+        role: import("@prisma/client").$Enums.Users_role;
+        is_active: boolean;
+    }[]>;
     getUserTasksDetail(phone: string): Promise<{
         user: {
             department: import("@prisma/client").$Enums.Users_dept | null;

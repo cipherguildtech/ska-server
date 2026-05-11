@@ -23,6 +23,9 @@ let UsersController = class UsersController {
     async getUserTasksDetail(phone) {
         return await this.usersService.getUserTasksDetail(phone);
     }
+    async getUsersBasicDetails() {
+        return await this.usersService.getUsersBasicDetails();
+    }
     async getUsers() {
         return await this.usersService.getUsers();
     }
@@ -56,6 +59,12 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserTasksDetail", null);
+__decorate([
+    (0, common_1.Get)('basic_details'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUsersBasicDetails", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
