@@ -7,6 +7,11 @@ import { request } from 'http';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
+  @Post('save_files/:id')
+  async saveTaskFiles(@Param('id') id: string, @Body() requestBody: {images: string[]}) {
+    await this.tasksService.saveTaskFiles(id, requestBody.images);
+  }
+
   @Post('accept_or_reject')
   async acceptOrReject(@Body() requestBody) {
     await this.tasksService.acceptOrReject(requestBody.task_id, requestBody.action, requestBody.phone, requestBody.reason);
@@ -103,8 +108,7 @@ export class TasksController {
   //get single task by id;
 @Get('single/:id') 
   async getTask(@Param('id') id: string) {
-    console.log("entered")
-  return await this.tasksService.getTask(id);
+    return await this.tasksService.getTask(id);
   }
 
   

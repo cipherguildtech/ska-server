@@ -53,7 +53,7 @@ export class UsersService {
                             phone
                         },
                         status: {
-                            notIn: ['COMPLETED','CANCELLED']
+                            notIn: ['COMPLETED','CANCELLED','REVIEW']
                         }
                     }
                 }
@@ -65,9 +65,12 @@ export class UsersService {
                         assignee: {
                             phone
                         },
+                        status: {
+                            notIn: ['COMPLETED']
+                        },
                         due_at: {
                             lt: new Date()
-                        }
+                        },
                     }
                 }
             );
@@ -158,7 +161,11 @@ export class UsersService {
                         department: true,
                         assigned_tasks: {
                             select: {
+                                id: true,
+                                notes_work: true,
                                 assigned_by: true,
+                                files: true,
+                                is_quotation: true,
                                 completed_at: true,
                                 created_at: true,
                                 description: true,
@@ -181,8 +188,16 @@ export class UsersService {
                                 },
                                 project: {
                                     select: {
+                                        id: true,
                                         created_at: true,
-                                        created_by: true,
+                                        updated_at: true,
+                                        created_by: {
+                                            select: {
+                                                id: true,
+                                                full_name: true,
+                                                phone: true,
+                                            }
+                                        },
                                         balance: true,
                                         created_user_email: true,
                                         current_stage: true,
@@ -197,6 +212,7 @@ export class UsersService {
                                 },
                                 quotations: {
                                     select: {
+                                        pdf_url: true,
                                         advance_paid: true,
                                         amount: true,
                                         approval_status: true,
@@ -220,74 +236,72 @@ export class UsersService {
                 }
             );
 
-            const completedTasksCount = await this.prisma.users.count(
+            const completedTasksCount = await this.prisma.tasks.count(
                 {
                     where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'COMPLETED'
-                            }
-                          }  
+                         assignee: {
+                            phone
+                         },
+                         status: {
+                            equals: 'COMPLETED'
+                         }
+                        },
+                      
+                    }
+
+            );
+
+            const cancelledTasksCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'CANCELLED'
                         }
                     }
                 }
             );
 
-            const cancelledTasksCount = await this.prisma.users.count(
+            const pendingTasksCount = await this.prisma.tasks.count(
                 {
                     where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'CANCELLED'
-                            }
-                          }  
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'PENDING'
+                        }
+
+                    }
+                }
+            );
+
+            const inProgressTasksCount = await this.prisma.tasks.count(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'IN_PROGRESS'
                         }
                     }
                 }
             );
 
-            const pendingTasksCount = await this.prisma.users.count(
+            const reviewTasksCount = await this.prisma.tasks.count(
                 {
                     where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'PENDING'
-                            }
-                          }  
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            equals: 'REVIEW'
                         }
-                    }
                 }
-            );
-
-            const inProgressTasksCount = await this.prisma.users.count(
-                {
-                    where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'IN_PROGRESS'
-                            }
-                          }  
-                        }
-                    }
-                }
-            );
-
-            const reviewTasksCount = await this.prisma.users.count(
-                {
-                    where: {
-                        assigned_tasks: {
-                          every: {
-                            status: {
-                                equals: 'REVIEW'
-                            }
-                          }  
-                        }
-                    }
-                }
+            }
             );
 
             return {
@@ -438,7 +452,10 @@ export class UsersService {
                         },
                         title: true,
                         description: true,
-                        due_at: true
+                        due_at: true,
+                        completed_at: true,
+                        status: true,
+                        id: true
                     }
                 }
             );
@@ -446,6 +463,76 @@ export class UsersService {
         }
         catch(e) {
             throw new InternalServerErrorException('Something went wrong');
+        }
+    }
+
+    async getUserIncompleteTasks(phone: string) {
+        try {
+            const userInCompleteTasks = await this.prisma.tasks.findMany(
+                {
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            in: ['PENDING','IN_PROGRESS']
+                        }
+                    },
+                    select: {
+                        project: {
+                            select: {
+                                project_code: true,
+                            },
+                        },
+                        title: true,
+                        description: true,
+                        due_at: true,
+                        status: true,
+                        id: true,
+                    }
+                }
+            );
+            return userInCompleteTasks;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('Something went wrong');
+        }
+    }
+
+    async getUserActiveTasks(phone: string) {
+        try {
+            const userActiveTasks = await this.prisma.tasks.findMany(
+                {
+                    take: 3,
+                    where: {
+                        assignee: {
+                            phone
+                        },
+                        status: {
+                            in: ['PENDING','IN_PROGRESS']
+                        }
+                    },
+                    orderBy: {
+                        due_at: 'desc'
+                    },
+                    select: {
+                        project: {
+                            select: {
+                                project_code: true,
+                            }
+                        },
+                        title: true,
+                        status: true,
+                        due_at: true,
+                        id: true,
+
+                    }
+                }
+            );
+            return userActiveTasks;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
         }
     }
 

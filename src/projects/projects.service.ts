@@ -16,7 +16,32 @@ export class ProjectsService {
                     where: {
                         project_code
                     },
-                    select: {
+                    include: {
+                        tasks:{
+                            include: {
+                                quotations: {
+                                    include: {
+                                        payments: true
+                                    }
+                                },
+                                taskHistory: true,
+                            }
+                        },
+                        history: true,
+                        customer: {
+                            select: {
+                                name: true,
+                                phone: true,
+                            }
+                        },
+                        created_by: {
+                            select: {
+                                full_name: true,
+                                phone: true,
+                            }
+                        }
+                    }
+                    /*select: {
                         project_code: true,
                         created_at: true,
                         current_stage: true,
@@ -36,7 +61,16 @@ export class ProjectsService {
                         deadline: true,
                         status: true,
                         service_type: true,
-                        tasks: {
+                        payments: {
+                            select: {
+                                amount: true,
+                                created_at: true,
+                                paid_at: true,
+                                reference: true,
+                                type: true
+                            }
+                        },
+                        tasks:{
                             select: {
                                 assignee: {
                                     select: {
@@ -69,6 +103,7 @@ export class ProjectsService {
                                         changed_by: true
                                     }
                                 },
+                        
 
                                 quotations: {
                                     where: {
@@ -79,7 +114,7 @@ export class ProjectsService {
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
             );
 
@@ -180,8 +215,8 @@ export class ProjectsService {
                         status: true,
                         deadline: true,
                         description: true,
-                        customer: {
-                            select: {
+                        customer:{
+                            select:{
                                 name: true,
                             }
                         }

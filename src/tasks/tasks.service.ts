@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, ServiceUnavailableException, 
 import { PrismaService } from '../prisma/prisma.service';
 import { Approval_status, Project_status, Task_status, Users_dept } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import { cloudinary } from '../../cloundinary_config';
 
 
 function isDbHourlyConnectionLimitError(error: unknown): boolean {
@@ -56,8 +57,8 @@ export class TasksService {
               task_new_status: Task_status.COMPLETED,
               note: "accepted",
               detail:{
-                "work detail": task!.work_details,
-                "reason": reason
+                "work detail": reason,
+                "reason": "User accepted after verification",
               },
               changed_at: new Date(),
             }
@@ -96,8 +97,8 @@ export class TasksService {
               task_new_status: Task_status.PENDING,
               note: "rejected",
               detail:{
-                "work detail": task!.work_details,
-                "reason": reason
+                "work detail": reason,
+                "reason": "Rejected due to required modifications",
               },
               changed_at: new Date(),
             }
@@ -115,28 +116,30 @@ export class TasksService {
 
 
   async getTask(id: string) {
-    console.log('e');
     try {
       const task = await this.prisma.tasks.findUniqueOrThrow(
         {
           where: {id},
-          include: {
+          select: {
+            title: true,
             project: {
               select: {
-                id: true,
-                customer_email: true,
                 project_code: true,
-                balance: true,
-                created_at: true,
-                updated_at: true,
-                created_user_email: true,
-                current_stage: true,
-                deadline: true,
-                service_type: true,
-                description: true,
-                status: true,
+                id: true,
               }
-            }
+            },
+            status: true,
+            assignee: {
+              select: {
+                phone: true
+              }
+            },
+            description: true,
+            department: true,
+            due_at: true,
+            completed_at: true,
+            work_details: true,
+            files: true
           }
         }
       );
@@ -229,7 +232,9 @@ export class TasksService {
           task_new_status: "PENDING",
           task_old_status: "PENDING",
           detail: {
-          },
+  reason: `Task "${body.title}" created and assigned to ${body.assigned_to_phone}`,
+  work_detail: body.notes ?? body.description ?? "No additional details",
+}
         }
       }
     );
@@ -260,31 +265,17 @@ export class TasksService {
       }
     });
     if (!existing) return "Task not available";
-    const data = body.completed_at ? {
-      assigned_to: body.assigned_to,
-      assigned_by: body.assigned_by,
-      notes: body.notes,
-      status: body.status,
-      file: body.file,
-      history: body.history,
-      due_at: body.due_at,
-      completed_at: body.completed_at,
-    } : {
-      assigned_to: body.assigned_to,
-      assigned_by: body.assigned_by,
-      notes: body.notes,
-      status: body.status,
-      file: body.file,
-      history: body.history,
-      due_at: body.due_at,
-
-    };
+  
     const tasks = await this.prisma.tasks.update(
       {
         where: {
           id
         },
-        data
+        data: {
+          ...body,
+          updated_at: new Date()
+        }
+        
       }
     );
 
@@ -462,9 +453,11 @@ export class TasksService {
     }
     const data = completed_at && completed_at !== 'null' ? {
       status: status.toUpperCase() as Task_status,
-      completed_at: new Date(completed_at)
+      completed_at: new Date(completed_at),
+      updated_at: new Date(completed_at)
     } : {
       status: status.toUpperCase() as Task_status,
+      updated_at: new Date(completed_at),
     };
     const tasks = await this.prisma.tasks.update(
       {
@@ -1005,6 +998,51 @@ async elabrateTeams() {
     users: Object.values(dept.users),
   }));
   return result;
+ }
+
+ async saveTaskFiles(id: string, files: string[]) {
+  console.log(files);
+  try {
+    const urls: string[] = [];
+    let mimeType = 'image/jpeg'; 
+    for (var base64 of files) {
+      if (base64.startsWith('iVBORw0K')) {
+         mimeType = 'image/png';
+      } else if (base64.startsWith('/9j/')) {
+         mimeType = 'image/jpeg';
+      } else if (base64.startsWith('UklGR')) {
+         mimeType = 'image/webp';
+      }
+      const url = await cloudinary.uploader.upload(
+        `data:${mimeType};base64,${base64}`,
+        {
+          folder: 'ska_images',
+          resource_type: 'image',
+        }
+
+      );
+      urls.push(url.secure_url);
+   }
+   if(urls.length != 0) {
+    const task = await this.prisma.tasks.update(
+      {
+        where: {id},
+        data: {
+          files: urls
+        }
+      }
+    );
+    if(task != null) {
+      return {
+        'message': 'files saved'
+      }
+    }
+   }
+  }
+  catch(e){
+    console.log(e);
+    throw new InternalServerErrorException('something went wrong');
+  }
  }
 }
 
