@@ -141,7 +141,8 @@ export class TasksService {
             quotations: true,
           }
         }
-      )
+      );
+      return task;
     }
     catch(e) {
       if( e instanceof PrismaClientKnownRequestError) {
