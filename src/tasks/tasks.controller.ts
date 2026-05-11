@@ -107,9 +107,13 @@ export class TasksController {
 
   //get single task by id;
 @Get('single/:id') 
-  async getTask(@Param('id') id: string) {
-    return await this.tasksService.getTask(id);
-  }
+async getTask(@Param('id') id: string) {
+  return await this.tasksService.getTask(id);
+}
 
+@Get('task/:id')
+async getTaskSingle(@Param(':id') id: string) {
+  return await this.tasksService.getTaskSingle(id);
+}
   
 }
