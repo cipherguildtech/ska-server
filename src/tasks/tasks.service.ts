@@ -56,8 +56,8 @@ export class TasksService {
               task_new_status: Task_status.COMPLETED,
               note: "accepted",
               detail:{
-                "work detail": task!.work_details,
-                "reason": reason
+                "work detail": reason,
+                "reason": "accepted",
               },
               changed_at: new Date(),
             }
@@ -96,8 +96,8 @@ export class TasksService {
               task_new_status: Task_status.PENDING,
               note: "rejected",
               detail:{
-                "work detail": task!.work_details,
-                "reason": reason
+                "work detail": reason,
+                "reason": "rejected",
               },
               changed_at: new Date(),
             }
