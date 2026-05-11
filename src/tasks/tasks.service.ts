@@ -58,7 +58,7 @@ export class TasksService {
               note: "accepted",
               detail:{
                 "work detail": reason,
-                "reason": "accepted",
+                "reason": "User accepted after verification",
               },
               changed_at: new Date(),
             }
@@ -98,7 +98,7 @@ export class TasksService {
               note: "rejected",
               detail:{
                 "work detail": reason,
-                "reason": "rejected",
+                "reason": "Rejected due to required modifications",
               },
               changed_at: new Date(),
             }
