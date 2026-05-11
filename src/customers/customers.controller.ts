@@ -11,6 +11,16 @@ export class CustomersContoller {
         return await this.customersService.getCustomersCount();
     }
 
+    @Get('projects/:phone')
+    async getCustomerProjects(@Param('phone') phone: string) {
+        return await this.customersService.getCustomerProjects(phone);
+    }
+
+    @Get('customer_with_project_count/:phone') 
+    async getCustomerWithProjectCount(@Param('phone') phone: string) {
+        return await this.customersService.getCustomerWithProjectCount(phone);
+    }
+
     @Get('recent_customers')
     async getRecentCustomers() {
         return await this.customersService.getRecentCustomers();
