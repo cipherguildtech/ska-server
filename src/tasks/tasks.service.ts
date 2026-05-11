@@ -232,7 +232,9 @@ export class TasksService {
           task_new_status: "PENDING",
           task_old_status: "PENDING",
           detail: {
-          },
+  reason: `Task "${body.title}" created and assigned to ${body.assigned_to_phone}`,
+  work_detail: body.notes ?? body.description ?? "No additional details",
+}
         }
       }
     );
