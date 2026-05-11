@@ -63,8 +63,8 @@ export declare class UsersController {
                     customer_email: string;
                     created_by: {
                         id: string;
-                        phone: string;
                         full_name: string;
+                        phone: string;
                     };
                 };
             }[];
@@ -75,6 +75,15 @@ export declare class UsersController {
         inprogress_tasks_count: number;
         review_tasks_count: number;
     }>;
+    getUsersBasicDetails(): Promise<{
+        full_name: string;
+        email: string | null;
+        phone: string;
+        role: import("@prisma/client").$Enums.Users_role;
+        department: import("@prisma/client").$Enums.Users_dept | null;
+        is_active: boolean;
+    }[]>;
+    activateOrDeactivate(phone: string, action: boolean): Promise<void>;
     getUsers(): Promise<({
         history_logs: {
             id: string;
@@ -128,9 +137,9 @@ export declare class UsersController {
             completed_at: Date | null;
         }[];
     } & {
+        full_name: string;
         email: string | null;
         phone: string;
-        full_name: string;
         role: import("@prisma/client").$Enums.Users_role;
         department: import("@prisma/client").$Enums.Users_dept | null;
         is_active: boolean;
@@ -190,9 +199,9 @@ export declare class UsersController {
             completed_at: Date | null;
         }[];
     } & {
+        full_name: string;
         email: string | null;
         phone: string;
-        full_name: string;
         role: import("@prisma/client").$Enums.Users_role;
         department: import("@prisma/client").$Enums.Users_dept | null;
         is_active: boolean;
@@ -203,9 +212,9 @@ export declare class UsersController {
         email: string;
     }): Promise<{
         id: string;
+        full_name: string;
         email: string | null;
         phone: string;
-        full_name: string;
         password_hash: string;
         otp: string | null;
         otp_expiry: Date | null;
@@ -217,8 +226,8 @@ export declare class UsersController {
     } | undefined>;
     getUserTasks(): Promise<{
         id: string;
-        phone: string;
         full_name: string;
+        phone: string;
         role: import("@prisma/client").$Enums.Users_role;
         department: import("@prisma/client").$Enums.Users_dept | null;
         _count: {

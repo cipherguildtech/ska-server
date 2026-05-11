@@ -18,6 +18,21 @@ let UsersService = class UsersService {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async activateOrDeactivate(phone, action) {
+        try {
+            const user = await this.prisma.users.update({
+                where: {
+                    phone: phone
+                },
+                data: {
+                    is_active: action
+                }
+            });
+        }
+        catch (e) {
+            throw new common_1.InternalServerErrorException('something went wrong');
+        }
+    }
     async getUserTaskTypeCounts(phone) {
         try {
             const completedTaskCount = await this.prisma.tasks.count({
@@ -92,6 +107,23 @@ let UsersService = class UsersService {
                 'delayed_task_count': delayedTasksCount,
             };
             return countData;
+        }
+        catch (e) {
+            throw new common_1.InternalServerErrorException('something went wrong');
+        }
+    }
+    async getUsersBasicDetails() {
+        try {
+            return await this.prisma.users.findMany({
+                select: {
+                    full_name: true,
+                    email: true,
+                    role: true,
+                    phone: true,
+                    is_active: true,
+                    department: true,
+                }
+            });
         }
         catch (e) {
             throw new common_1.InternalServerErrorException('something went wrong');
