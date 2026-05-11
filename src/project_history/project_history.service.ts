@@ -31,7 +31,7 @@ import { EventsGateway } from "../gateway/events.gateway";
                     task_new_status: data.task_new_status,
                     detail: data.detail,
                     note: data.note,
-                    changed_at: data.changed_at ? new Date(data.changed_at) : new Date(),
+                    changed_at: new Date(),
                 }
             });
             this.eventsGateway.emit("project_history:created");
