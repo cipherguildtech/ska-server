@@ -5,6 +5,25 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/wasm-compi
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) {}
+
+    async activateOrDeactivate(phone: string, action: boolean) {
+        try {
+            const user = await this.prisma.users.update(
+                 {
+                    where: {
+                        phone: phone
+                    },
+                    data: {
+                        is_active: action
+                    }
+
+                 }
+            )
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
     async getUserTaskTypeCounts(phone: string) {
         try {
             const completedTaskCount = await this.prisma.tasks.count(
