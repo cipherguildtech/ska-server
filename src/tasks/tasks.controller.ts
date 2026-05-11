@@ -7,6 +7,12 @@ import { request } from 'http';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
+@Get('task/details/:id')
+async getTaskSingle(@Param('id') id: string) {
+  console.log(id);
+  return await this.tasksService.getTaskSingle(id);
+}
+
   @Post('save_files/:id')
   async saveTaskFiles(@Param('id') id: string, @Body() requestBody: {images: string[]}) {
     await this.tasksService.saveTaskFiles(id, requestBody.images);
@@ -107,9 +113,10 @@ export class TasksController {
 
   //get single task by id;
 @Get('single/:id') 
-  async getTask(@Param('id') id: string) {
-    return await this.tasksService.getTask(id);
-  }
+async getTask(@Param('id') id: string) {
+  return await this.tasksService.getTask(id);
+}
+
 
   
 }

@@ -114,6 +114,48 @@ export class TasksService {
     }
   }
 
+  async getTaskSingle(id: string) {
+    try {
+      const task = await this.prisma.tasks.findUniqueOrThrow(
+        {
+          where: {id: id},
+          include: {
+            assignee: {
+              select: {
+                phone: true,
+                full_name: true,
+                role: true,
+                department: true
+              }
+            },
+            assigner: {
+              select: {
+                phone: true,
+                full_name: true,
+                role: true,
+                department: true
+              }
+            },
+            project: true,
+            taskHistory: true,
+            quotations: true,
+          }
+        }
+      );
+      return task;
+    }
+    catch(e) {
+      if( e instanceof PrismaClientKnownRequestError) {
+        if(e.code == 'P2025') {
+          throw new NotFoundException('task not exists')
+        }
+      }
+      else {
+        console.log(e);
+        throw new InternalServerErrorException("something went wrong");
+      }
+    }
+  }
 
   async getTask(id: string) {
     try {
@@ -139,7 +181,7 @@ export class TasksService {
             due_at: true,
             completed_at: true,
             work_details: true,
-            files: true
+            files: true,
           }
         }
       );
@@ -158,6 +200,8 @@ export class TasksService {
       }
     }
   } 
+
+
 
   //GET ALL TASKS
   async getAll() {
