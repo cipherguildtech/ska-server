@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Approval_status } from "@prisma/client";
 import { CreateQuotationDto } from "./dto/create-quotation.dto";
-
+import { cloudinary } from '../../cloundinary_config';
 @Injectable()
 export class QuotationServices {
     constructor(private prisma: PrismaService) { }
@@ -62,15 +62,64 @@ export class QuotationServices {
     //     return quotations;
     // }
 
+    // async createQuotation(dto: CreateQuotationDto) {
+
+    //     try {
+    //         const quotation = await this.prisma.quotations.create({
+    //             data: {
+    //                 task_id: dto.task_id,
+    //                 amount: dto.amount,
+    //                 advance_paid: dto.advance_paid,
+    //                 approval_status: dto.approval_status || 'DRAFT',
+    //                 pdf_url: dto.pdf_url,
+    //             },
+    //             include: {
+    //                 task: true,
+    //             },
+    //         });
+
+    //         return {
+    //             success: true,
+    //             message: 'Quotation created successfully',
+    //             data: quotation,
+    //         };
+    //     } catch (error) {
+    //         console.log(error.message);
+            
+    //         throw new BadRequestException(error);
+    //     }
+    // }
+async uploadPdf(base64: string): Promise<string> {
+        const result = await cloudinary.uploader.upload(base64, {
+            resource_type: 'raw', // important for pdf
+            folder: 'quotations',
+            format: 'pdf',
+        });
+
+        return result.secure_url;
+    }
+
     async createQuotation(dto: CreateQuotationDto) {
         try {
+            // dto.pdf_url => array of base64 strings
+            const uploadedPdfUrls: string[] = [];
+
+            if (dto.pdf_url && dto.pdf_url.length > 0) {
+                for (const pdf of dto.pdf_url) {
+                    const url = await this.uploadPdf(pdf);
+                    uploadedPdfUrls.push(url);
+                }
+            }
+
             const quotation = await this.prisma.quotations.create({
                 data: {
                     task_id: dto.task_id,
                     amount: dto.amount,
                     advance_paid: dto.advance_paid,
                     approval_status: dto.approval_status || 'DRAFT',
-                    pdf_url: dto.pdf_url,
+
+                    // store array of urls
+                    pdf_url: uploadedPdfUrls,
                 },
                 include: {
                     task: true,
@@ -83,7 +132,9 @@ export class QuotationServices {
                 data: quotation,
             };
         } catch (error) {
-            throw new BadRequestException(error);
+            console.log(error.message);
+
+            throw new BadRequestException(error.message);
         }
     }
     async update(id: string, body: any) {

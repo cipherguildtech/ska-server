@@ -104,7 +104,7 @@ model Quotations {
   amount          Decimal         @db.Decimal(10, 2)
   advance_paid    Decimal?        @db.Decimal(10, 2)
   approval_status Approval_status @default(DRAFT)
-  pdf_url         String?
+  pdf_url         Json?
   approved_at     DateTime?
   created_at      DateTime        @default(now())
   updated_at      DateTime        @updatedAt
