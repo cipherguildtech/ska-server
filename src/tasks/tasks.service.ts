@@ -501,7 +501,7 @@ export class TasksService {
       updated_at: new Date(completed_at)
     } : {
       status: status.toUpperCase() as Task_status,
-      updated_at: new Date(completed_at),
+      updated_at: new Date(),
     };
     const tasks = await this.prisma.tasks.update(
       {
