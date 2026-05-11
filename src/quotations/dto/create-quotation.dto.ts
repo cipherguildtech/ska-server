@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsEnum,
   IsString,
+  IsArray,
 } from 'class-validator';
 
 export enum ApprovalStatus {
@@ -31,6 +32,7 @@ export class CreateQuotationDto {
   approval_status?: ApprovalStatus;
 
   @IsOptional()
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   pdf_url?: string[];
 }
