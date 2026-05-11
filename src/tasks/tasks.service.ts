@@ -118,7 +118,7 @@ export class TasksService {
     try {
       const task = await this.prisma.tasks.findUniqueOrThrow(
         {
-          where: {id},
+          where: {id: id},
           include: {
             assignee: {
               select: {

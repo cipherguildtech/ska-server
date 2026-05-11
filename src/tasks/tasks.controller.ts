@@ -7,8 +7,9 @@ import { request } from 'http';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
-@Get('task/:id')
-async getTaskSingle(@Param(':id') id: string) {
+@Get('task/details/:id')
+async getTaskSingle(@Param('id') id: string) {
+  console.log(id);
   return await this.tasksService.getTaskSingle(id);
 }
 
