@@ -37,7 +37,9 @@ exports.cloudinary = void 0;
 const cloudinary_1 = require("cloudinary");
 Object.defineProperty(exports, "cloudinary", { enumerable: true, get: function () { return cloudinary_1.v2; } });
 const dotenv = __importStar(require("dotenv"));
-dotenv.config();
+const path = __importStar(require("path"));
+const envPath = path.resolve(process.cwd(), 'prisma', '.env');
+dotenv.config({ path: envPath });
 cloudinary_1.v2.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,

@@ -42,23 +42,28 @@ let QuotationServices = class QuotationServices {
     async uploadPdf(files) {
         try {
             const urls = [];
-            for (const base64 of files) {
-                let mimeType = 'application/pdf';
-                if (!base64.startsWith('JVBER')) {
+            for (let base64 of files) {
+                const mimeType = 'application/pdf';
+                base64 = base64.trim();
+                const dataUrl = base64.startsWith('data:')
+                    ? base64
+                    : `data:${mimeType};base64,${base64}`;
+                if (!dataUrl.includes('JVBER')) {
                     throw new common_1.BadRequestException('Only PDF files are allowed');
                 }
-                const uploaded = await cloundinary_config_1.cloudinary.uploader.upload(`data:${mimeType};base64,${base64}`, {
+                const uploaded = await cloundinary_config_1.cloudinary.uploader.upload(dataUrl, {
                     folder: 'ska_pdfs',
                     resource_type: 'raw',
                     format: 'pdf',
+                    use_filename: true,
                 });
-                urls.push(uploaded.secure_url);
+                urls.push(uploaded.secure_url || uploaded.url);
             }
             return urls;
         }
         catch (e) {
-            console.log(e);
-            throw new common_1.InternalServerErrorException('Something went wrong');
+            console.log('uploadPdf error:', e);
+            throw new common_1.InternalServerErrorException('Something went wrong while uploading PDF files');
         }
     }
     async createQuotation(dto) {

@@ -13,6 +13,7 @@ exports.PaymentServices = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const events_gateway_1 = require("../gateway/events.gateway");
+const client_1 = require("@prisma/client");
 let PaymentServices = class PaymentServices {
     prisma;
     eventsGateWay;
@@ -31,12 +32,17 @@ let PaymentServices = class PaymentServices {
     }
     async createPayment(dto) {
         try {
+            const normalizedType = dto.type?.toString().toUpperCase();
+            const paymentType = normalizedType;
+            if (!Object.values(client_1.Payment_type).includes(paymentType)) {
+                throw new common_1.BadRequestException(`Invalid payment type '${dto.type}'. Valid types: ${Object.values(client_1.Payment_type).join(', ')}`);
+            }
             const payment = await this.prisma.payments.create({
                 data: {
                     project_id: dto.project_id,
-                    quotation_id: dto.quotation_id,
+                    quotation_id: dto.quotation_id ?? null,
                     amount: dto.amount,
-                    type: dto.type,
+                    type: paymentType,
                     reference: dto.reference,
                     paid_at: new Date(dto.paid_at),
                 },
@@ -52,7 +58,8 @@ let PaymentServices = class PaymentServices {
             };
         }
         catch (error) {
-            throw new common_1.BadRequestException(error);
+            console.log(error.message);
+            throw new common_1.BadRequestException(error.message);
         }
     }
     async getAllByProject(id) {
