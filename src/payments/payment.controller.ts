@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
 import { PaymentServices } from './payment.service';
+import { CreatePaymentDto } from './dto/create-payment.dto';
 
 @Controller('payment')
 export class PaymentController {
@@ -8,10 +9,12 @@ export class PaymentController {
     getAll() {
         return this.paymentService.getAll();
     }
-    @Post('create')
-    create(@Body() paymentData: any) {
-        return this.paymentService.create(paymentData);
-    }
+    @Post()
+  async create(
+    @Body() dto: CreatePaymentDto,
+  ) {
+    return this.paymentService.createPayment(dto);
+  }
     @Get('all_by_project/:id')
     getAllByProject(@Param('id') id: string) {
         return this.paymentService.getAllByProject(id);

@@ -7,14 +7,14 @@ import { EventsGateway } from "../gateway/events.gateway";
 
 @Injectable()
 export class ProjectsService {
-    constructor(private readonly prisma: PrismaService, private readonly eventsGateway: EventsGateway) {}
+    constructor(private readonly prisma: PrismaService, private readonly eventsGateway: EventsGateway) { }
 
     async getProjectDetails(project_code: string) {
         try {
             const project = await this.prisma.projects.findUniqueOrThrow(
-              {
+                {
                     where: {
-                       project_code
+                        project_code
                     },
                     select: {
                         project_code: true,
@@ -36,7 +36,7 @@ export class ProjectsService {
                         deadline: true,
                         status: true,
                         service_type: true,
-                        tasks:{
+                        tasks: {
                             select: {
                                 assignee: {
                                     select: {
@@ -55,7 +55,7 @@ export class ProjectsService {
                                 description: true,
                                 due_at: true,
                                 title: true,
-                                status:true,
+                                status: true,
                                 notes: true,
                                 work_details: true,
                                 updated_at: true,
@@ -85,9 +85,9 @@ export class ProjectsService {
 
             return project;
         }
-        catch(e) {
-            if(e instanceof PrismaClientKnownRequestError) {
-                if(e.code == 'P2025') {
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                if (e.code == 'P2025') {
                     throw new NotFoundException('project not exsists')
                 }
             }
@@ -115,24 +115,24 @@ export class ProjectsService {
                         service_type: true,
                         deadline: true,
                         description: true,
-                        project_code: true, 
+                        project_code: true,
                     },
                 }
             )
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException("something went wrong");
         }
     }
 
     async getActiveProjectCount() {
         try {
-            const activeProjectCount =  await this.prisma.projects.count(
+            const activeProjectCount = await this.prisma.projects.count(
                 {
                     where: {
-                       deadline: {
-                        lte: new Date(),
-                       }
+                        deadline: {
+                            lte: new Date(),
+                        }
                     }
                 }
             );
@@ -141,7 +141,7 @@ export class ProjectsService {
 
             }
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException("something went wrong");
         }
     }
@@ -157,14 +157,14 @@ export class ProjectsService {
                         created_user_email: requestBody.created_user_email,
                         customer_email: requestBody.customer_email,
                         service_type: requestBody.service_type,
+                    }
                 }
-            }
             );
             this.eventsGateway.emit("project:created");
             return project;
 
         }
-        catch(e) {
+        catch (e) {
             console.log(e);
             throw new InternalServerErrorException('something went wrong');
         }
@@ -180,8 +180,8 @@ export class ProjectsService {
                         status: true,
                         deadline: true,
                         description: true,
-                        customer:{
-                            select:{
+                        customer: {
+                            select: {
                                 name: true,
                             }
                         }
@@ -189,7 +189,7 @@ export class ProjectsService {
                 }
             );
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException("something went wrong");
         }
     }
@@ -198,8 +198,8 @@ export class ProjectsService {
         try {
             return await this.prisma.projects.findUniqueOrThrow(
                 {
-                    where: {project_code},
-                    select:{
+                    where: { project_code },
+                    select: {
                         project_code: true,
                         status: true,
                         service_type: true,
@@ -210,7 +210,7 @@ export class ProjectsService {
                             select: {
                                 full_name: true,
                                 email: true,
-                            }, 
+                            },
                         },
                         balance: true,
                         created_at: true,
@@ -225,13 +225,13 @@ export class ProjectsService {
                         paid: true,
                         updated_at: true,
                     },
-    
+
                 },
             )
         }
-        catch(e) {
-            if( e instanceof PrismaClientKnownRequestError) {
-                if(e.code == 'P2025') {
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                if (e.code == 'P2025') {
                     throw new NotFoundException('project not exsists')
                 }
             }
@@ -241,22 +241,93 @@ export class ProjectsService {
         }
 
     }
+    async getfullProject(project_code: string) {
+        try {
+            return await this.prisma.projects.findUniqueOrThrow(
+                {
+                    where: { project_code },
+                   
+                        
+                     select: {
+                        project_code: true,
+                        status: true,
+                        service_type: true,
+                        deadline: true,
+                        description: true,
+                        current_stage: true,
+                        created_by: {
+                            select: {
+                                full_name: true,
+                                email: true,
+                            },
+                        },
+                        balance: true,
+                        created_at: true,
+                        customer: {
+                            select: {
+                                name: true,
+                                email: true,
+                                address: true,
+                                phone: true,
+                            }
+                        },
+                        paid: true,
+                        updated_at: true,
+                        tasks: {
+                            where: {
+                                due_at: {
+                                    gte: new Date(),
+                                }
+                            },
+                            select: {
+                                title: true,
+                                due_at: true,
+                                quotations:{
+                                    where:{
+                                        approval_status: {
+                                            notIn: ['REJECTED', "APPROVED"]
+                                        }
+                                    },
+                                    select:{
+                                        created_at: true,
+                                        approval_status: true,
+                                    }
+                                    },
+                                    
+                                }
+                            }
+                        },
 
+                },
+            )
+        }
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                if (e.code == 'P2025') {
+                    throw new NotFoundException('project not exsists')
+                }
+            }
+            else {
+                throw new InternalServerErrorException("something went wrong");
+            }
+        }
+
+    }
     async getProjectHistory(id: string) {
         try {
             return await this.prisma.projects.findUnique(
                 {
-                    where: {id},
-                    select: {history: true}
+                    where: { id },
+                    select: { history: true }
                 }
             )
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException('something went wrong')
         }
     }
 
-    async updateProjectStatus(id: string, requestBody: {status: Project_status}) {
+    async updateProjectStatus(id: string, requestBody: { status: Project_status }) {
         try {
             const project = await this.prisma.projects.findFirst({
                 where: {
@@ -269,16 +340,16 @@ export class ProjectsService {
             });
             const projectStatus = await this.prisma.projects.update(
                 {
-                    data: {status: requestBody.status},
-                    where: {id: project?.id ?? id}
+                    data: { status: requestBody.status },
+                    where: { id: project?.id ?? id }
                 }
             )
             this.eventsGateway.emit("project_status:updated");
             return projectStatus;
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException("something went wrong");
-            
+
         }
     }
 
@@ -286,7 +357,7 @@ export class ProjectsService {
         try {
             await this.prisma.projects.update(
                 {
-                    where: {id},
+                    where: { id },
                     data: {
                         current_stage: {
                             increment: 1
@@ -296,7 +367,7 @@ export class ProjectsService {
             );
             this.eventsGateway.emit("project_stage:updated")
         }
-        catch(e) {
+        catch (e) {
             throw new InternalServerErrorException('something went wrong');
         }
     }
