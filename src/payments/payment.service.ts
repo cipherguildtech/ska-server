@@ -82,7 +82,9 @@ export class PaymentServices {
         data: payment,
       };
     } catch (error) {
-      throw new BadRequestException(error);
+      console.log(error.message);
+      
+      throw new BadRequestException(error.message);
     }
   }
 
