@@ -1,7 +1,9 @@
-import {v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-dotenv.config(); 
+const envPath = path.resolve(process.cwd(), 'prisma', '.env');
+dotenv.config({ path: envPath });
 
 cloudinary.config(
     {
@@ -11,4 +13,4 @@ cloudinary.config(
     }
 );
 
-export {cloudinary};
+export { cloudinary };

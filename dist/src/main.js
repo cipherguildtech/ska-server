@@ -37,6 +37,7 @@ const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
 const dotenv_1 = require("dotenv");
 const core_1 = require("@nestjs/core");
+const common_1 = require("@nestjs/common");
 const app_module_1 = require("./app.module");
 const express = __importStar(require("express"));
 function loadEnvironment() {
@@ -50,10 +51,13 @@ function loadEnvironment() {
 async function bootstrap() {
     loadEnvironment();
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true, transform: true }));
     app.use(express.json({ limit: '50mb' }));
     app.use(express.urlencoded({ limit: '50mb', extended: true }));
     app.enableShutdownHooks();
-    await app.listen(process.env.PORT ?? 3000);
+    const port = Number(process.env.PORT) || 3000;
+    await app.listen(port, '0.0.0.0');
+    console.log(`Nest application listening on port ${port}`);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
