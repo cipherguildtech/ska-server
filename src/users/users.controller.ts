@@ -9,6 +9,16 @@ export class UsersController {
         return await this.usersService.getUserTasksDetail(phone);
     }
 
+    @Get('basic_details')
+    async getUsersBasicDetails() {
+        return await this.usersService.getUsersBasicDetails();
+    }
+
+    @Put('user/:phone/activate_or_deactivate/:action')
+    async activateOrDeactivate(@Param('phone') phone: string, @Param('action') action: boolean) {
+        return await this.usersService.activateOrDeactivate(phone, action);
+    }
+
     @Get()
     async getUsers() {
         return await this.usersService.getUsers();

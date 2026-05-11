@@ -5,6 +5,25 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/wasm-compi
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) {}
+
+    async activateOrDeactivate(phone: string, action: boolean) {
+        try {
+            const user = await this.prisma.users.update(
+                 {
+                    where: {
+                        phone: phone
+                    },
+                    data: {
+                        is_active: action
+                    }
+
+                 }
+            )
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
     async getUserTaskTypeCounts(phone: string) {
         try {
             const completedTaskCount = await this.prisma.tasks.count(
@@ -101,6 +120,27 @@ export class UsersService {
         }
         catch(e) {
             throw new InternalServerErrorException('something went wrong');
+        }
+    }
+
+    async getUsersBasicDetails() {
+        try {
+            return await this.prisma.users.findMany(
+                {
+                    
+                    select: {
+                        full_name: true,
+                        email: true,
+                        role: true,
+                        phone: true,
+                        is_active: true,
+                        department: true,
+                    }
+                }
+            );
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong')
         }
     }
 
@@ -340,6 +380,7 @@ export class UsersService {
             throw new InternalServerErrorException('something went wrong')
         }
     }
+
     
     async getUserTasks() {
         try {
