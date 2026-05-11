@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from "@nestjs/common";
+import { Injectable, BadRequestException,InternalServerErrorException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Approval_status } from "@prisma/client";
 import { CreateQuotationDto } from "./dto/create-quotation.dto";
@@ -89,54 +89,72 @@ export class QuotationServices {
     //         throw new BadRequestException(error);
     //     }
     // }
-async uploadPdf(base64: string): Promise<string> {
-        const result = await cloudinary.uploader.upload(base64, {
-            resource_type: 'raw', // important for pdf
-            folder: 'quotations',
-            format: 'pdf',
-        });
+ 
 
-        return result.secure_url;
+   async uploadPdf(files: string[]) {
+  try {
+    const urls: string[] = [];
+
+    for (const base64 of files) {
+      let mimeType = 'application/pdf';
+
+      // PDF base64 starts with JVBER
+      if (!base64.startsWith('JVBER')) {
+        throw new BadRequestException('Only PDF files are allowed');
+      }
+
+      const uploaded = await cloudinary.uploader.upload(
+        `data:${mimeType};base64,${base64}`,
+        {
+          folder: 'ska_pdfs',
+          resource_type: 'raw',
+          format: 'pdf',
+        },
+      );
+
+      urls.push(uploaded.secure_url);
     }
 
-    async createQuotation(dto: CreateQuotationDto) {
-        try {
-            // dto.pdf_url => array of base64 strings
-            const uploadedPdfUrls: string[] = [];
+    return urls;
+  } catch (e) {
+    console.log(e);
+    throw new InternalServerErrorException('Something went wrong');
+  }
+}
+async createQuotation(dto: CreateQuotationDto) {
+  try {
+    let uploadedPdfUrls: string[] = [];
 
-            if (dto.pdf_url && dto.pdf_url.length > 0) {
-                for (const pdf of dto.pdf_url) {
-                    const url = await this.uploadPdf(pdf);
-                    uploadedPdfUrls.push(url);
-                }
-            }
-
-            const quotation = await this.prisma.quotations.create({
-                data: {
-                    task_id: dto.task_id,
-                    amount: dto.amount,
-                    advance_paid: dto.advance_paid,
-                    approval_status: dto.approval_status || 'DRAFT',
-
-                    // store array of urls
-                    pdf_url: uploadedPdfUrls,
-                },
-                include: {
-                    task: true,
-                },
-            });
-
-            return {
-                success: true,
-                message: 'Quotation created successfully',
-                data: quotation,
-            };
-        } catch (error) {
-            console.log(error.message);
-
-            throw new BadRequestException(error.message);
-        }
+    if (dto.pdf_url && dto.pdf_url.length > 0) {
+      uploadedPdfUrls = await this.uploadPdf(dto.pdf_url);
     }
+
+    const quotation = await this.prisma.quotations.create({
+      data: {
+        task_id: dto.task_id,
+        amount: dto.amount,
+        advance_paid: dto.advance_paid,
+        approval_status: dto.approval_status || 'DRAFT',
+
+        // array of pdf urls
+        pdf_url: uploadedPdfUrls,
+      },
+      include: {
+        task: true,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Quotation created successfully',
+      data: quotation,
+    };
+  } catch (error) {
+    console.log(error.message);
+    throw new BadRequestException(error.message);
+  }
+}
+
     async update(id: string, body: any) {
         const quotations = await this.prisma.quotations.update({
             where: {

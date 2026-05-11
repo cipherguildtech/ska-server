@@ -32,5 +32,5 @@ export class CreateQuotationDto {
 
   @IsOptional()
   @IsString()
-  pdf_url?: string;
+  pdf_url?: string[];
 }
