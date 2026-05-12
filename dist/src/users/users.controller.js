@@ -20,6 +20,12 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
+    async updateUserDetails(phone, requestBody) {
+        return await this.usersService.updateUserDetails(phone, requestBody);
+    }
+    async getUserFullDetail(phone) {
+        return await this.usersService.getUserFullDetail(phone);
+    }
     async getUserTasksDetail(phone) {
         return await this.usersService.getUserTasksDetail(phone);
     }
@@ -55,6 +61,21 @@ let UsersController = class UsersController {
     }
 };
 exports.UsersController = UsersController;
+__decorate([
+    (0, common_1.Put)('update_details/:phone'),
+    __param(0, (0, common_1.Param)('phone')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUserDetails", null);
+__decorate([
+    (0, common_1.Get)('full_detail/:phone'),
+    __param(0, (0, common_1.Param)('phone')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserFullDetail", null);
 __decorate([
     (0, common_1.Get)('tasks/single/:phone'),
     __param(0, (0, common_1.Param)('phone')),

@@ -888,7 +888,7 @@ let TasksService = class TasksService {
                 const task = await this.prisma.tasks.update({
                     where: { id },
                     data: {
-                        files: urls
+                        files: [files, ...urls]
                     }
                 });
                 if (task != null) {

@@ -11,6 +11,16 @@ export class CustomersContoller {
         return await this.customersService.getCustomersCount();
     }
 
+    @Get('projects/:phone')
+    async getCustomerProjects(@Param('phone') phone: string) {
+        return await this.customersService.getCustomerProjects(phone);
+    }
+
+    @Get('customer_with_project_count/:phone') 
+    async getCustomerWithProjectCount(@Param('phone') phone: string) {
+        return await this.customersService.getCustomerWithProjectCount(phone);
+    }
+
     @Get('recent_customers')
     async getRecentCustomers() {
         return await this.customersService.getRecentCustomers();
@@ -26,9 +36,9 @@ export class CustomersContoller {
         return await this.customersService.createCustomer(requestBody);
     }
 
-    @Get(':id')
-    async getCustomer(@Param('id') id: string) {
-        return await this.customersService.getCustomer(id);
+    @Get(':phone')
+    async getCustomer(@Param('phone') phone: string) {
+        return await this.customersService.getCustomer(phone);
     }
 
     @Put(':id')

@@ -8,6 +8,72 @@ import { EventsGateway } from "../gateway/events.gateway";
 export class CustomersService {
     constructor(private prisma: PrismaService, private readonly eventsGateway: EventsGateway) { }
 
+    async getCustomerWithProjectCount(phone: string) {
+        try {
+            const customer = await this.prisma.customer.findUnique(
+                {
+                    where: {
+                        phone: phone
+                    },
+                    select: {
+                        name: true,
+                        phone: true,
+                        address: true,
+                        email: true,
+                        customer_type: true,
+                        }
+                    },
+            );
+
+            const project_count = await this.prisma.projects.count(
+                {
+                    where: {
+                        customer: {
+                            phone: phone
+                        }
+                        
+                    }
+                }
+            );
+            return {
+                ...customer,
+               'project_count': project_count
+            };
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
+
+    async getCustomerProjects(phone: string) {
+        try {
+            const customerProjects = await this.prisma.customer.findUnique(
+                {
+                    where: {
+                        phone
+                    },
+                    include: {
+                        projects: {
+                            select: {
+                                status: true,
+                                created_at: true,
+                                description: true,
+                                project_code: true,
+                                service_type: true,
+                                deadline: true,
+                                id: true
+                            }
+                        }
+                    },
+                }
+            );
+            return customerProjects;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
+
     async getRecentCustomers() {
         try {
             const sevenDaysAgo = new Date();
@@ -106,10 +172,10 @@ export class CustomersService {
         }
     }
 
-    async getCustomer(id: string) {
+    async getCustomer(phone: string) {
         try {
             return await this.prisma.customer.findUniqueOrThrow({
-                where: { id },
+                where: { phone },
                 include: { projects: true },
                 omit: { created_at: true, updated_at: true }
             })

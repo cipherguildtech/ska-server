@@ -24,6 +24,12 @@ let CustomersContoller = class CustomersContoller {
     async getCustomersCount() {
         return await this.customersService.getCustomersCount();
     }
+    async getCustomerProjects(phone) {
+        return await this.customersService.getCustomerProjects(phone);
+    }
+    async getCustomerWithProjectCount(phone) {
+        return await this.customersService.getCustomerWithProjectCount(phone);
+    }
     async getRecentCustomers() {
         return await this.customersService.getRecentCustomers();
     }
@@ -47,6 +53,20 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CustomersContoller.prototype, "getCustomersCount", null);
+__decorate([
+    (0, common_1.Get)('projects/:phone'),
+    __param(0, (0, common_1.Param)('phone')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CustomersContoller.prototype, "getCustomerProjects", null);
+__decorate([
+    (0, common_1.Get)('customer_with_project_count/:phone'),
+    __param(0, (0, common_1.Param)('phone')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CustomersContoller.prototype, "getCustomerWithProjectCount", null);
 __decorate([
     (0, common_1.Get)('recent_customers'),
     __metadata("design:type", Function),

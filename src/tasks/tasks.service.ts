@@ -1072,7 +1072,7 @@ async elabrateTeams() {
       {
         where: {id},
         data: {
-          files: urls
+          files: [files, ...urls]
         }
       }
     );
