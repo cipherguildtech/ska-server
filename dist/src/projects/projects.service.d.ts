@@ -102,14 +102,14 @@ export declare class ProjectsService {
         deadline: Date;
         id: string;
         customer: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
             name: string;
             phone: string;
             email: string | null;
             address: string | null;
             customer_type: import("@prisma/client").$Enums.Customer_type;
-            id: string;
-            created_at: Date;
-            updated_at: Date;
             referal: string | null;
         };
     }[]>;
