@@ -13,7 +13,6 @@ exports.projectCreationDTO = void 0;
 const client_1 = require("@prisma/client");
 const class_validator_1 = require("class-validator");
 class projectCreationDTO {
-    project_code;
     customer_phone;
     service_type;
     description;
@@ -21,11 +20,6 @@ class projectCreationDTO {
     created_user_phone;
 }
 exports.projectCreationDTO = projectCreationDTO;
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], projectCreationDTO.prototype, "project_code", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsPhoneNumber)('IN'),

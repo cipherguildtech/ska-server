@@ -79,13 +79,13 @@ export declare class ProjectsController {
             completed_at: Date | null;
         })[];
     } & {
-        project_code: string;
         customer_phone: string;
         service_type: import("@prisma/client").$Enums.Service_type;
         description: string;
         deadline: Date;
         created_user_phone: string;
         id: string;
+        project_code: string;
         status: import("@prisma/client").$Enums.Project_status;
         current_stage: number;
         paid: import("@prisma/client-runtime-utils").Decimal;
@@ -94,11 +94,11 @@ export declare class ProjectsController {
         updated_at: Date | null;
     }) | undefined>;
     getActiveProjects(): Promise<{
-        project_code: string;
         service_type: import("@prisma/client").$Enums.Service_type;
         description: string;
         deadline: Date;
         id: string;
+        project_code: string;
         customer: {
             id: string;
             created_at: Date;
@@ -115,13 +115,13 @@ export declare class ProjectsController {
         count: number;
     }>;
     createProject(requestBody: projectCreationDTO): Promise<{
-        project_code: string;
         customer_phone: string;
         service_type: import("@prisma/client").$Enums.Service_type;
         description: string;
         deadline: Date;
         created_user_phone: string;
         id: string;
+        project_code: string;
         status: import("@prisma/client").$Enums.Project_status;
         current_stage: number;
         paid: import("@prisma/client-runtime-utils").Decimal;
@@ -130,20 +130,20 @@ export declare class ProjectsController {
         updated_at: Date | null;
     }>;
     getProjects(): Promise<{
-        project_code: string;
         description: string;
         deadline: Date;
         id: string;
+        project_code: string;
         status: import("@prisma/client").$Enums.Project_status;
         customer: {
             name: string;
         };
     }[]>;
     getProject(project_code: string): Promise<{
-        project_code: string;
         service_type: import("@prisma/client").$Enums.Service_type;
         description: string;
         deadline: Date;
+        project_code: string;
         status: import("@prisma/client").$Enums.Project_status;
         current_stage: number;
         paid: import("@prisma/client-runtime-utils").Decimal;
@@ -162,11 +162,11 @@ export declare class ProjectsController {
         };
     } | undefined>;
     getfullProject(project_code: string): Promise<{
-        project_code: string;
         service_type: import("@prisma/client").$Enums.Service_type;
         description: string;
         deadline: Date;
         id: string;
+        project_code: string;
         status: import("@prisma/client").$Enums.Project_status;
         current_stage: number;
         paid: import("@prisma/client-runtime-utils").Decimal;
@@ -209,13 +209,13 @@ export declare class ProjectsController {
     updateProjectStatus(id: string, requestBody: {
         status: Project_status;
     }): Promise<{
-        project_code: string;
         customer_phone: string;
         service_type: import("@prisma/client").$Enums.Service_type;
         description: string;
         deadline: Date;
         created_user_phone: string;
         id: string;
+        project_code: string;
         status: import("@prisma/client").$Enums.Project_status;
         current_stage: number;
         paid: import("@prisma/client-runtime-utils").Decimal;
