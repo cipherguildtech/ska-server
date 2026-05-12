@@ -197,6 +197,7 @@ let ProjectsService = class ProjectsService {
             return await this.prisma.projects.findUniqueOrThrow({
                 where: { project_code },
                 select: {
+                    id: true,
                     project_code: true,
                     status: true,
                     service_type: true,
@@ -228,6 +229,7 @@ let ProjectsService = class ProjectsService {
                             }
                         },
                         select: {
+                            id: true,
                             title: true,
                             due_at: true,
                             quotations: {
