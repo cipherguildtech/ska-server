@@ -47,7 +47,7 @@ __decorate([
 ], projectCreationDTO.prototype, "deadline", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsPhoneNumber)('IN'),
     __metadata("design:type", String)
 ], projectCreationDTO.prototype, "created_user_phone", void 0);
 //# sourceMappingURL=project_creation_DTO.js.map

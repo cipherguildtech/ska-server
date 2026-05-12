@@ -8,9 +8,9 @@ export declare class SalesController {
         pendingQuotations: number;
         approvedDeals: number;
         resentCustomers: {
+            id: string;
             name: string;
             phone: string;
-            id: string;
         }[];
         activeProjectsDetailed: {
             project_code: string;
