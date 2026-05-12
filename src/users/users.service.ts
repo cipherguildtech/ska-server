@@ -19,7 +19,7 @@ export class UsersService {
                 },
                 
             );
-            
+        return user;            
         }
         catch(e) {
             throw new InternalServerErrorException('something went wrong');
