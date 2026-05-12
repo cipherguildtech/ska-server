@@ -15,11 +15,11 @@ export declare class CustomersService {
     }>;
     getCustomerProjects(phone: string): Promise<({
         projects: {
-            description: string;
             id: string;
             created_at: Date;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
+            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             deadline: Date;
         }[];
@@ -69,12 +69,12 @@ export declare class CustomersService {
     } | undefined>;
     getCustomer(phone: string): Promise<({
         projects: {
-            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
+            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
