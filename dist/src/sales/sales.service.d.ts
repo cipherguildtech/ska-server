@@ -12,15 +12,15 @@ export declare class SalesService {
         pendingQuotations: number;
         approvedDeals: number;
         resentCustomers: {
-            id: string;
-            phone: string;
             name: string;
+            phone: string;
+            id: string;
         }[];
         activeProjectsDetailed: {
-            id: string;
             customer: {
                 name: string;
             };
+            id: string;
             project_code: string;
             description: string;
             status: import("@prisma/client").$Enums.Project_status;
