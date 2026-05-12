@@ -1,9 +1,15 @@
 import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Users_dept, Users_role } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
+    @Put('update_details/:phone') 
+    async updateUserDetails(@Param('phone') phone: string, @Body() requestBody: {name: string | null, email: string | null, password: string |null, role: Users_role | null, department: Users_dept | null}){
+        return await this.usersService.updateUserDetails(phone, requestBody);
+    }
+    
     @Get('full_detail/:phone')
     async getUserFullDetail(@Param('phone') phone: string) {
         return await this.usersService.getUserFullDetail(phone);

@@ -1,10 +1,39 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/wasm-compiler-edge';
+import { Users_dept, Users_role } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) {}
+    async updateUserDetails(phone: string, requestBody: {name: string | null, email: string | null, password: string |null, role: Users_role | null, department: Users_dept | null}) {
+        try {
+           const saltOrRounds = 10
+           const data: Record<string, any> = {};
+
+        if (requestBody.name !== null)       data.full_name = requestBody.name;
+        if (requestBody.email !== null)      data.email = requestBody.email;
+        if (requestBody.password !== null)   data.password_hash = await bcrypt.hash(requestBody.password, saltOrRounds);
+        if (requestBody.role !== null)       data.role = requestBody.role;
+        if (requestBody.department !== null) data.department = requestBody.department;
+
+        if (Object.keys(data).length === 0) {
+            throw new Error('No fields to update');
+        }
+            const user = this.prisma.users.update(
+                {
+                    where: {phone},
+                    data: data
+                }
+            )
+            return user;
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
+
     async getUserFullDetail(phone: string) {
         try{
             const user = this.prisma.users.findUnique(
@@ -25,6 +54,8 @@ export class UsersService {
             throw new InternalServerErrorException('something went wrong');
         }
     }
+
+
 
     async activateOrDeactivate(phone: string, action: boolean) {
         try {
