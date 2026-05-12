@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Approval_status, Project_status, Task_status, Users_dept } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { cloudinary } from '../../cloundinary_config';
+import { log } from 'node:console';
 
 
 function isDbHourlyConnectionLimitError(error: unknown): boolean {
@@ -244,30 +245,58 @@ export class TasksService {
     const assigned_to = assignee?.id ?? body.assigned_to;
     const assigned_by = assigner?.id ?? body.assigned_by;
 
-    const tasks = await this.prisma.tasks.create(
-      {
-        data: {
-          project_id,
-          assigned_to,
-          assigned_by,
-          assigner: { connect: { id: assigned_by } },
-          assignee: { connect: { id: assigned_to } },
-          project: { connect: { id: project_id } },
-          department: body.department,
-          title: body.title,
-          notes: body.notes,
-          description: body.description,
-          status: body.status,
-          files: body.files,
-          history: body.history,
-          work_details: body.work_details,
-          is_quotation: body.is_quotation,
-          due_at: new Date(body.due_at),
-          completed_at: body.completed_at ? new Date(body.completed_at) : undefined,
-        }
-      }
-    );
+    // const tasks = await this.prisma.tasks.create(
+    //   {
+    //     data: {
+    //       project_id,
+    //       assigned_to,
+    //       assigned_by,
+    //       assigner: { connect: { id: assigned_by } },
+    //       assignee: { connect: { id: assigned_to } },
+    //       project: { connect: { id: project_id } },
+    //       department: body.department,
+    //       title: body.title,
+    //       notes: body.notes,
+    //       description: body.description,
+    //       status: body.status,
+    //       files: body.files,
+    //       history: body.history,
+    //       work_details: body.work_details,
+    //       is_quotation: body.is_quotation,
+    //       due_at: new Date(body.due_at),
+    //       completed_at: body.completed_at ? new Date(body.completed_at) : undefined,
+    //     }
+    //   }
+    // );
+const tasks = await this.prisma.tasks.create({
+  data: {
+    project: {
+      connect: { id: project_id },
+    },
 
+    assignee: {
+      connect: { id: assigned_to },
+    },
+
+    assigner: {
+      connect: { id: assigned_by },
+    },
+
+    department: body.department,
+    title: body.title,
+    notes: body.notes,
+    description: body.description,
+    status: body.status,
+    files: body.files,
+    history: body.history,
+    work_details: body.work_details,
+    is_quotation: body.is_quotation,
+    due_at: new Date(body.due_at),
+    completed_at: body.completed_at
+      ? new Date(body.completed_at)
+      : undefined,
+  },
+});
     const project_history = await this.prisma.projectHistory.create(
       {
         data: {

@@ -217,12 +217,15 @@ let TasksService = class TasksService {
         const assigned_by = assigner?.id ?? body.assigned_by;
         const tasks = await this.prisma.tasks.create({
             data: {
-                project_id,
-                assigned_to,
-                assigned_by,
-                assigner: { connect: { id: assigned_by } },
-                assignee: { connect: { id: assigned_to } },
-                project: { connect: { id: project_id } },
+                project: {
+                    connect: { id: project_id },
+                },
+                assignee: {
+                    connect: { id: assigned_to },
+                },
+                assigner: {
+                    connect: { id: assigned_by },
+                },
                 department: body.department,
                 title: body.title,
                 notes: body.notes,
@@ -233,8 +236,10 @@ let TasksService = class TasksService {
                 work_details: body.work_details,
                 is_quotation: body.is_quotation,
                 due_at: new Date(body.due_at),
-                completed_at: body.completed_at ? new Date(body.completed_at) : undefined,
-            }
+                completed_at: body.completed_at
+                    ? new Date(body.completed_at)
+                    : undefined,
+            },
         });
         const project_history = await this.prisma.projectHistory.create({
             data: {
