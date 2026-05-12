@@ -10,9 +10,9 @@ export class customerCreationDto {
     @IsPhoneNumber('IN')
     phone!: string
 
-    @IsNotEmpty()
+   
     @IsEmail()
-    email!: string
+    email!: string | null
 
     @IsNotEmpty()
     @IsString()
