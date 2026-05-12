@@ -36,9 +36,9 @@ export class CustomersContoller {
         return await this.customersService.createCustomer(requestBody);
     }
 
-    @Get(':id')
-    async getCustomer(@Param('id') id: string) {
-        return await this.customersService.getCustomer(id);
+    @Get(':phone')
+    async getCustomer(@Param('phone') phone: string) {
+        return await this.customersService.getCustomer(phone);
     }
 
     @Put(':id')

@@ -55,17 +55,17 @@ model Projects {
   deadline           DateTime
   created_at         DateTime         @default(now())
   updated_at         DateTime?        @updatedAt
-  created_user_email String
-  customer_email     String
+  created_user_phone String
+  customer_phone     String
   payments           Payments[]
   history            ProjectHistory[]
-  created_by  Users  @relation(fields: [created_user_email], references: [email], map: "Projects_created_user_email_fkey_1")
-  customer    Customer @relation(fields: [customer_email], references: [email], map: "Projects_customer_email_fkey")
+  created_by  Users  @relation(fields: [created_user_phone], references: [phone], map: "Projects_created_user_phone_fkey_1")
+  customer    Customer @relation(fields: [customer_phone], references: [phone], map: "Projects_customer_phone_fkey")
   tasks              Tasks[]
 
-  @@index([customer_email])
+  @@index([customer_phone])
   @@index([status])
-  @@index([created_user_email], map: "Projects_created_user_email_fkey")
+  @@index([created_user_phone], map: "Projects_created_user_phone_fkey")
 }
 
 model Tasks {
