@@ -5,6 +5,26 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/wasm-compi
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) {}
+    async getUserFullDetail(phone: string) {
+        try{
+            const user = this.prisma.users.findUnique(
+                {
+                    where: {
+                        phone
+                    },
+                    omit: {
+                        otp: true,
+                        otp_expiry: true,
+                    }
+                },
+                
+            );
+            
+        }
+        catch(e) {
+            throw new InternalServerErrorException('something went wrong');
+        }
+    }
 
     async activateOrDeactivate(phone: string, action: boolean) {
         try {

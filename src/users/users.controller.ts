@@ -4,6 +4,10 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
+    @Get('full_detail/:phone')
+    async getUserFullDetail(@Param('phone') phone: string) {
+        return await this.usersService.getUserFullDetail(phone);
+    }
     @Get('tasks/single/:phone')
     async getUserTasksDetail(@Param('phone') phone: string) {
         return await this.usersService.getUserTasksDetail(phone);
