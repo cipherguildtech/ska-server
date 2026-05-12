@@ -7,12 +7,12 @@ export declare class PaymentServices {
     constructor(prisma: PrismaService, eventsGateWay: EventsGateway);
     getAll(): Promise<({
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -47,12 +47,12 @@ export declare class PaymentServices {
         message: string;
         data: {
             project: {
+                description: string;
                 id: string;
                 created_at: Date;
                 updated_at: Date | null;
                 project_code: string;
                 service_type: import("@prisma/client").$Enums.Service_type;
-                description: string;
                 status: import("@prisma/client").$Enums.Project_status;
                 current_stage: number;
                 paid: import("@prisma/client-runtime-utils").Decimal;
@@ -85,12 +85,12 @@ export declare class PaymentServices {
     }>;
     getAllByProject(id: string): Promise<({
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
