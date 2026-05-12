@@ -5,5 +5,5 @@ export declare class customerCreationDto {
     email: string;
     address: string;
     customer_type: Customer_type;
-    referal: string;
+    referal: string | null;
 }

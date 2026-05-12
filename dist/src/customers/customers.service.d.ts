@@ -15,13 +15,13 @@ export declare class CustomersService {
     }>;
     getCustomerProjects(phone: string): Promise<({
         projects: {
-            id: string;
-            created_at: Date;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
             description: string;
-            status: import("@prisma/client").$Enums.Project_status;
             deadline: Date;
+            id: string;
+            status: import("@prisma/client").$Enums.Project_status;
+            created_at: Date;
         }[];
     } & {
         name: string;
@@ -30,9 +30,9 @@ export declare class CustomersService {
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
-        referal: string | null;
         created_at: Date;
         updated_at: Date;
+        referal: string | null;
     }) | null>;
     getRecentCustomers(): Promise<{
         name: string;
@@ -63,25 +63,25 @@ export declare class CustomersService {
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
-        referal: string | null;
         created_at: Date;
         updated_at: Date;
+        referal: string | null;
     } | undefined>;
     getCustomer(phone: string): Promise<({
         projects: {
-            id: string;
-            created_at: Date;
-            updated_at: Date | null;
             project_code: string;
+            customer_phone: string;
             service_type: import("@prisma/client").$Enums.Service_type;
             description: string;
+            deadline: Date;
+            created_user_phone: string;
+            id: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
-            deadline: Date;
-            created_user_phone: string;
-            customer_phone: string;
+            created_at: Date;
+            updated_at: Date | null;
         }[];
     } & {
         name: string;
@@ -99,8 +99,8 @@ export declare class CustomersService {
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
-        referal: string | null;
         created_at: Date;
         updated_at: Date;
+        referal: string | null;
     } | undefined>;
 }
