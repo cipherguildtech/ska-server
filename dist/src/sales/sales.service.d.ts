@@ -12,17 +12,17 @@ export declare class SalesService {
         pendingQuotations: number;
         approvedDeals: number;
         resentCustomers: {
-            name: string;
-            phone: string;
             id: string;
+            phone: string;
+            name: string;
         }[];
         activeProjectsDetailed: {
+            id: string;
             customer: {
                 name: string;
             };
-            description: string;
-            id: string;
             project_code: string;
+            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             deadline: Date;
         }[];
