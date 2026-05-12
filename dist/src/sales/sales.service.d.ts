@@ -17,11 +17,11 @@ export declare class SalesService {
             phone: string;
         }[];
         activeProjectsDetailed: {
+            id: string;
             project_code: string;
             description: string;
-            deadline: Date;
-            id: string;
             status: import("@prisma/client").$Enums.Project_status;
+            deadline: Date;
             customer: {
                 name: string;
             };

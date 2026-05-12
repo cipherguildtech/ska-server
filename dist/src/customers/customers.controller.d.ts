@@ -8,13 +8,13 @@ export declare class CustomersContoller {
     }>;
     getCustomerProjects(phone: string): Promise<({
         projects: {
+            description: string;
+            id: string;
+            created_at: Date;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
-            deadline: Date;
-            id: string;
             status: import("@prisma/client").$Enums.Project_status;
-            created_at: Date;
+            deadline: Date;
         }[];
     } & {
         name: string;
@@ -23,9 +23,9 @@ export declare class CustomersContoller {
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        referal: string | null;
         created_at: Date;
         updated_at: Date;
-        referal: string | null;
     }) | null>;
     getCustomerWithProjectCount(phone: string): Promise<{
         project_count: number;
@@ -56,25 +56,25 @@ export declare class CustomersContoller {
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        referal: string | null;
         created_at: Date;
         updated_at: Date;
-        referal: string | null;
     } | undefined>;
     getCustomer(phone: string): Promise<({
         projects: {
-            project_code: string;
-            customer_phone: string;
-            service_type: import("@prisma/client").$Enums.Service_type;
             description: string;
-            deadline: Date;
-            created_user_phone: string;
             id: string;
+            created_at: Date;
+            updated_at: Date | null;
+            project_code: string;
+            service_type: import("@prisma/client").$Enums.Service_type;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
-            created_at: Date;
-            updated_at: Date | null;
+            deadline: Date;
+            created_user_phone: string;
+            customer_phone: string;
         }[];
     } & {
         name: string;
@@ -92,8 +92,8 @@ export declare class CustomersContoller {
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        referal: string | null;
         created_at: Date;
         updated_at: Date;
-        referal: string | null;
     } | undefined>;
 }

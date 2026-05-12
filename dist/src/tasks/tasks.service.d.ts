@@ -49,12 +49,12 @@ export declare class TasksService {
             role: import("@prisma/client").$Enums.Users_role;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -64,10 +64,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -130,12 +130,12 @@ export declare class TasksService {
             is_active: boolean;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -145,10 +145,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -168,10 +168,10 @@ export declare class TasksService {
         message: string;
     } | undefined>;
     updateTasks(id: string, body: any): Promise<"Task not available" | {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -188,10 +188,10 @@ export declare class TasksService {
         completed_at: Date | null;
     }>;
     deleteTasks(id: string): Promise<"Task not available" | {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -237,12 +237,12 @@ export declare class TasksService {
             is_active: boolean;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -252,10 +252,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -280,10 +280,10 @@ export declare class TasksService {
         inCompleted: number;
     }>;
     updateNotes(id: string, body: any): Promise<"Task not available" | {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -300,10 +300,10 @@ export declare class TasksService {
         completed_at: Date | null;
     }>;
     updateStatus(id: string, status: string, completed_at: string): Promise<"Task not available" | "Invalid status" | {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -349,12 +349,12 @@ export declare class TasksService {
             is_active: boolean;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -364,10 +364,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -413,12 +413,12 @@ export declare class TasksService {
             is_active: boolean;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -428,10 +428,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -477,12 +477,12 @@ export declare class TasksService {
             is_active: boolean;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -492,10 +492,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -541,12 +541,12 @@ export declare class TasksService {
             is_active: boolean;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -556,10 +556,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -605,12 +605,12 @@ export declare class TasksService {
             is_active: boolean;
         };
         project: {
+            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
@@ -620,10 +620,10 @@ export declare class TasksService {
             customer_phone: string;
         };
     } & {
+        description: string | null;
         id: string;
         created_at: Date;
         updated_at: Date;
-        description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
         history: string | null;
         project_id: string;
@@ -674,10 +674,10 @@ export declare class TasksService {
             tasks: number;
         }[];
         tasksToAssign: {
+            description: string;
             id: string;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
         }[];
         incompleteTasks: number;
     }>;
@@ -699,10 +699,10 @@ export declare class TasksService {
             notes: string | null;
         }[];
         tasksToAssign: {
+            description: string;
             id: string;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
         }[];
     }>;
     teams(): Promise<{

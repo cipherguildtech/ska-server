@@ -110,8 +110,14 @@ let ProjectsService = class ProjectsService {
     }
     async createProject(requestBody) {
         try {
+            const lastProject = await this.prisma.projects.findFirst({
+                orderBy: {
+                    created_at: 'desc'
+                }
+            });
             const project = await this.prisma.projects.create({
                 data: {
+                    project_code: lastProject != null ? `SKA-${new Date().getFullYear()}-${parseInt(lastProject.project_code.split('-').pop()) + 1}` : `SKA-${new Date().getFullYear()}-000001`,
                     description: requestBody.description,
                     deadline: new Date(requestBody.deadline),
                     created_user_phone: requestBody.created_user_phone,
