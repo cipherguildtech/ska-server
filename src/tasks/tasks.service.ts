@@ -31,7 +31,7 @@ export class TasksService {
   constructor(private prisma: PrismaService) { }
 
   async acceptOrReject(task_id: string, action: string, phone: string, reason: string | null) {
-    if(action == "accept") {
+    if (action == "accept") {
       try {
         await this.updateStatus(task_id, Task_status.COMPLETED, new Date().toString());
 
@@ -42,7 +42,7 @@ export class TasksService {
             },
             select: {
               project_id: true,
-              work_details:true,
+              work_details: true,
             }
           }
         );
@@ -56,7 +56,7 @@ export class TasksService {
               task_old_status: Task_status.REVIEW,
               task_new_status: Task_status.COMPLETED,
               note: "accepted",
-              detail:{
+              detail: {
                 "work detail": reason,
                 "reason": "User accepted after verification",
               },
@@ -66,7 +66,7 @@ export class TasksService {
         )
         return project_history;
       }
-      catch(e) {
+      catch (e) {
         console.log(e);
         throw new InternalServerErrorException('something went wrong');
       }
@@ -82,7 +82,7 @@ export class TasksService {
             },
             select: {
               project_id: true,
-              work_details:true,
+              work_details: true,
             }
           }
         );
@@ -96,7 +96,7 @@ export class TasksService {
               task_old_status: Task_status.REVIEW,
               task_new_status: Task_status.PENDING,
               note: "rejected",
-              detail:{
+              detail: {
                 "work detail": reason,
                 "reason": "Rejected due to required modifications",
               },
@@ -107,7 +107,7 @@ export class TasksService {
         return project_history;
 
       }
-      catch(e) {
+      catch (e) {
         console.log(e);
         throw new InternalServerErrorException("something went wrong");
       }
@@ -118,7 +118,7 @@ export class TasksService {
     try {
       const task = await this.prisma.tasks.findUniqueOrThrow(
         {
-          where: {id: id},
+          where: { id: id },
           include: {
             assignee: {
               select: {
@@ -144,9 +144,9 @@ export class TasksService {
       );
       return task;
     }
-    catch(e) {
-      if( e instanceof PrismaClientKnownRequestError) {
-        if(e.code == 'P2025') {
+    catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code == 'P2025') {
           throw new NotFoundException('task not exists')
         }
       }
@@ -161,7 +161,7 @@ export class TasksService {
     try {
       const task = await this.prisma.tasks.findUniqueOrThrow(
         {
-          where: {id},
+          where: { id },
           select: {
             title: true,
             project: {
@@ -188,9 +188,9 @@ export class TasksService {
       console.log(task);
       return task;
     }
-    catch(e) {
-      if( e instanceof PrismaClientKnownRequestError) {
-        if(e.code == 'P2025') {
+    catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code == 'P2025') {
           throw new NotFoundException('task not exists')
         }
       }
@@ -199,7 +199,7 @@ export class TasksService {
         throw new InternalServerErrorException("something went wrong");
       }
     }
-  } 
+  }
 
 
 
@@ -250,6 +250,9 @@ export class TasksService {
           project_id,
           assigned_to,
           assigned_by,
+          assigner: { connect: { id: assigned_by } },
+          assignee: { connect: { id: assigned_to } },
+          project: { connect: { id: project_id } },
           department: body.department,
           title: body.title,
           notes: body.notes,
@@ -276,29 +279,29 @@ export class TasksService {
           task_new_status: "PENDING",
           task_old_status: "PENDING",
           detail: {
-  reason: `Task "${body.title}" created and assigned to ${body.assigned_to_phone}`,
-  work_detail: body.notes ?? body.description ?? "No additional details",
-}
+            reason: `Task "${body.title}" created and assigned to ${body.assigned_to_phone}`,
+            work_detail: body.notes ?? body.description ?? "No additional details",
+          }
         }
       }
     );
 
     const projects = await this.prisma.projects.update(
-     {
-      data: {
-        status: 'IN_PROGRESS',
-      },
-      where: {
-        id: project_id
+      {
+        data: {
+          status: 'IN_PROGRESS',
+        },
+        where: {
+          id: project_id
+        }
       }
-     }
     );
 
-   if(tasks != null && project_history != null && projects != null) {
-    return {
-      "message": "task assigned"
+    if (tasks != null && project_history != null && projects != null) {
+      return {
+        "message": "task assigned"
+      }
     }
-   }
   }
 
   //UPDATE TASK BY ID
@@ -309,7 +312,7 @@ export class TasksService {
       }
     });
     if (!existing) return "Task not available";
-  
+
     const tasks = await this.prisma.tasks.update(
       {
         where: {
@@ -319,7 +322,7 @@ export class TasksService {
           ...body,
           updated_at: new Date()
         }
-        
+
       }
     );
 
@@ -511,7 +514,7 @@ export class TasksService {
         data
       }
     );
-   return tasks;
+    return tasks;
   }
 
 
@@ -768,8 +771,8 @@ export class TasksService {
             }
           }
         ]
-        }
-      });
+      }
+    });
 
     const taskInProgress = await this.prisma.tasks.findMany
       ({
@@ -915,178 +918,178 @@ export class TasksService {
       }
     });
     return {
-      taskInProgress, 
+      taskInProgress,
       taskForReview,
       tasksToAssign
     }
   }
 
-async teams() {
-  const allDepartments = Users_dept ? Object.values(Users_dept) : []; 
+  async teams() {
+    const allDepartments = Users_dept ? Object.values(Users_dept) : [];
 
-  const teamsData = await this.prisma.tasks.groupBy({
-    where: {
-      status: {
-        notIn: ['CANCELLED', 'COMPLETED'],
-      },
-    },
-    by: ['department'],
-    _count: {
-      department: true,
-    },
-  });
-
-  const map = new Map(
-    teamsData.map((item) => [item.department, item._count.department])
-  );
-
-  return allDepartments.map((dept) => ({
-    name: dept,
-    tasks: map.get(dept as Users_dept) || 0,
-  }));
-}
-async elabrateTeams() {
-  const allUsers = await this.prisma.users.findMany({
-    select: {
-      id: true,
-      full_name: true,
-      department: true,
-    },
-  });
-
-  const allDepartments = Users_dept ? Object.values(Users_dept) : [];
-
-  const tasks = await this.prisma.tasks.findMany({
-    where: {
-      status: {
-        notIn: ['CANCELLED', 'COMPLETED'],
-      },
-    },
-    select: {
-      department: true,
-      assigner: {
-        select: {
-          id: true,
-          full_name: true,
+    const teamsData = await this.prisma.tasks.groupBy({
+      where: {
+        status: {
+          notIn: ['CANCELLED', 'COMPLETED'],
         },
       },
-    },
-  });
+      by: ['department'],
+      _count: {
+        department: true,
+      },
+    });
 
-  // ✅ Types
-  type UserEntry = {
-    userId: string;
-    name: string;
-    count: number;
-  };
-
-  type DeptEntry = {
-    name: string;
-    tasks: number;
-    users: Record<string, UserEntry>;
-  };
-
-  const deptMap: Record<string, DeptEntry> = {};
-
-  // 🔹 Step 1: Initialize departments
-  for (const dept of allDepartments) {
-    if (!dept) continue;
-
-    deptMap[dept] = {
-      name: dept,
-      tasks: 0,
-      users: {},
-    };
-  }
-
-  // 🔹 Step 2: Add all users (count = 0)
-  for (const user of allUsers) {
-    const dept = user.department;
-
-    if (!dept || !deptMap[dept]) continue;
-
-    deptMap[dept].users[user.id] = {
-      userId: user.id,
-      name: user.full_name,
-      count: 0,
-    };
-  }
-
-  // 🔹 Step 3: Aggregate tasks
-  for (const task of tasks) {
-    const dept = task.department;
-    const user = task.assigner;
-
-    if (!dept || !deptMap[dept]) continue;
-
-    deptMap[dept].tasks += 1;
-
-    if (user) {
-      // create user if missing
-      if (!deptMap[dept].users[user.id]) {
-        deptMap[dept].users[user.id] = {
-          userId: user.id,
-          name: user.full_name,
-          count: 0,
-        };
-      }
-
-      deptMap[dept].users[user.id].count += 1;
-    }
-  }
-
-  // 🔹 Step 4: Convert users object → array
-  const result = Object.values(deptMap).map((dept) => ({
-    name: dept.name,
-    tasks: dept.tasks,
-    users: Object.values(dept.users),
-  }));
-  return result;
- }
-
- async saveTaskFiles(id: string, files: string[]) {
-  console.log(files);
-  try {
-    const urls: string[] = [];
-    let mimeType = 'image/jpeg'; 
-    for (var base64 of files) {
-      if (base64.startsWith('iVBORw0K')) {
-         mimeType = 'image/png';
-      } else if (base64.startsWith('/9j/')) {
-         mimeType = 'image/jpeg';
-      } else if (base64.startsWith('UklGR')) {
-         mimeType = 'image/webp';
-      }
-      const url = await cloudinary.uploader.upload(
-        `data:${mimeType};base64,${base64}`,
-        {
-          folder: 'ska_images',
-          resource_type: 'image',
-        }
-
-      );
-      urls.push(url.secure_url);
-   }
-   if(urls.length != 0) {
-    const task = await this.prisma.tasks.update(
-      {
-        where: {id},
-        data: {
-          files: [files, ...urls]
-        }
-      }
+    const map = new Map(
+      teamsData.map((item) => [item.department, item._count.department])
     );
-    if(task != null) {
-      return {
-        'message': 'files saved'
+
+    return allDepartments.map((dept) => ({
+      name: dept,
+      tasks: map.get(dept as Users_dept) || 0,
+    }));
+  }
+  async elabrateTeams() {
+    const allUsers = await this.prisma.users.findMany({
+      select: {
+        id: true,
+        full_name: true,
+        department: true,
+      },
+    });
+
+    const allDepartments = Users_dept ? Object.values(Users_dept) : [];
+
+    const tasks = await this.prisma.tasks.findMany({
+      where: {
+        status: {
+          notIn: ['CANCELLED', 'COMPLETED'],
+        },
+      },
+      select: {
+        department: true,
+        assigner: {
+          select: {
+            id: true,
+            full_name: true,
+          },
+        },
+      },
+    });
+
+    // ✅ Types
+    type UserEntry = {
+      userId: string;
+      name: string;
+      count: number;
+    };
+
+    type DeptEntry = {
+      name: string;
+      tasks: number;
+      users: Record<string, UserEntry>;
+    };
+
+    const deptMap: Record<string, DeptEntry> = {};
+
+    // 🔹 Step 1: Initialize departments
+    for (const dept of allDepartments) {
+      if (!dept) continue;
+
+      deptMap[dept] = {
+        name: dept,
+        tasks: 0,
+        users: {},
+      };
+    }
+
+    // 🔹 Step 2: Add all users (count = 0)
+    for (const user of allUsers) {
+      const dept = user.department;
+
+      if (!dept || !deptMap[dept]) continue;
+
+      deptMap[dept].users[user.id] = {
+        userId: user.id,
+        name: user.full_name,
+        count: 0,
+      };
+    }
+
+    // 🔹 Step 3: Aggregate tasks
+    for (const task of tasks) {
+      const dept = task.department;
+      const user = task.assigner;
+
+      if (!dept || !deptMap[dept]) continue;
+
+      deptMap[dept].tasks += 1;
+
+      if (user) {
+        // create user if missing
+        if (!deptMap[dept].users[user.id]) {
+          deptMap[dept].users[user.id] = {
+            userId: user.id,
+            name: user.full_name,
+            count: 0,
+          };
+        }
+
+        deptMap[dept].users[user.id].count += 1;
       }
     }
-   }
+
+    // 🔹 Step 4: Convert users object → array
+    const result = Object.values(deptMap).map((dept) => ({
+      name: dept.name,
+      tasks: dept.tasks,
+      users: Object.values(dept.users),
+    }));
+    return result;
   }
-  catch(e){
-    console.log(e);
-    throw new InternalServerErrorException('something went wrong');
+
+  async saveTaskFiles(id: string, files: string[]) {
+    console.log(files);
+    try {
+      const urls: string[] = [];
+      let mimeType = 'image/jpeg';
+      for (var base64 of files) {
+        if (base64.startsWith('iVBORw0K')) {
+          mimeType = 'image/png';
+        } else if (base64.startsWith('/9j/')) {
+          mimeType = 'image/jpeg';
+        } else if (base64.startsWith('UklGR')) {
+          mimeType = 'image/webp';
+        }
+        const url = await cloudinary.uploader.upload(
+          `data:${mimeType};base64,${base64}`,
+          {
+            folder: 'ska_images',
+            resource_type: 'image',
+          }
+
+        );
+        urls.push(url.secure_url);
+      }
+      if (urls.length != 0) {
+        const task = await this.prisma.tasks.update(
+          {
+            where: { id },
+            data: {
+              files: [files, ...urls]
+            }
+          }
+        );
+        if (task != null) {
+          return {
+            'message': 'files saved'
+          }
+        }
+      }
+    }
+    catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException('something went wrong');
+    }
   }
- }
 }
 

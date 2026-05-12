@@ -4,20 +4,20 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 
 @Controller('payment')
 export class PaymentController {
-    constructor(private readonly paymentService: PaymentServices) {}
-    @Get('all')
-    getAll() {
-        return this.paymentService.getAll();
-    }
-    @Post()
+  constructor(private readonly paymentService: PaymentServices) { }
+  @Get('all')
+  getAll() {
+    return this.paymentService.getAll();
+  }
+  @Post('create')
   async create(
     @Body() dto: CreatePaymentDto,
   ) {
     return this.paymentService.createPayment(dto);
   }
-    @Get('all_by_project/:id')
-    getAllByProject(@Param('id') id: string) {
-        return this.paymentService.getAllByProject(id);
-    }
+  @Get('all_by_project/:id')
+  getAllByProject(@Param('id') id: string) {
+    return this.paymentService.getAllByProject(id);
+  }
 
 }
