@@ -14,11 +14,11 @@ const client_1 = require("@prisma/client");
 const class_validator_1 = require("class-validator");
 class projectCreationDTO {
     project_code;
-    customer_email;
+    customer_phone;
     service_type;
     description;
     deadline;
-    created_user_email;
+    created_user_phone;
 }
 exports.projectCreationDTO = projectCreationDTO;
 __decorate([
@@ -28,9 +28,9 @@ __decorate([
 ], projectCreationDTO.prototype, "project_code", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsPhoneNumber)('IN'),
     __metadata("design:type", String)
-], projectCreationDTO.prototype, "customer_email", void 0);
+], projectCreationDTO.prototype, "customer_phone", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
@@ -49,5 +49,5 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], projectCreationDTO.prototype, "created_user_email", void 0);
+], projectCreationDTO.prototype, "created_user_phone", void 0);
 //# sourceMappingURL=project_creation_DTO.js.map

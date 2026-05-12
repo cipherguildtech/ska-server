@@ -8,92 +8,92 @@ export declare class CustomersContoller {
     }>;
     getCustomerProjects(phone: string): Promise<({
         projects: {
-            id: string;
-            created_at: Date;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
             description: string;
-            status: import("@prisma/client").$Enums.Project_status;
             deadline: Date;
+            id: string;
+            status: import("@prisma/client").$Enums.Project_status;
+            created_at: Date;
         }[];
     } & {
-        id: string;
+        name: string;
         phone: string;
         email: string | null;
-        name: string;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
-        referal: string | null;
+        id: string;
         created_at: Date;
         updated_at: Date;
+        referal: string | null;
     }) | null>;
     getCustomerWithProjectCount(phone: string): Promise<{
         project_count: number;
+        name?: string | undefined;
         phone?: string | undefined;
         email?: string | null | undefined;
-        name?: string | undefined;
         address?: string | null | undefined;
         customer_type?: import("@prisma/client").$Enums.Customer_type | undefined;
     }>;
     getRecentCustomers(): Promise<{
-        id: string;
-        phone: string;
         name: string;
+        phone: string;
+        id: string;
     }[]>;
     getCustomers(): Promise<{
-        id: string;
+        name: string;
         phone: string;
         email: string | null;
-        name: string;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
+        id: string;
         referal: string | null;
     }[]>;
     createCustomer(requestBody: customerCreationDto): Promise<{
-        id: string;
+        name: string;
         phone: string;
         email: string | null;
-        name: string;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
-        referal: string | null;
+        id: string;
         created_at: Date;
         updated_at: Date;
+        referal: string | null;
     } | undefined>;
     getCustomer(phone: string): Promise<({
         projects: {
-            id: string;
-            created_at: Date;
-            updated_at: Date | null;
             project_code: string;
+            customer_phone: string;
             service_type: import("@prisma/client").$Enums.Service_type;
             description: string;
+            deadline: Date;
+            created_user_phone: string;
+            id: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
-            deadline: Date;
-            created_user_email: string;
-            customer_email: string;
+            created_at: Date;
+            updated_at: Date | null;
         }[];
     } & {
-        id: string;
+        name: string;
         phone: string;
         email: string | null;
-        name: string;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
+        id: string;
         referal: string | null;
     }) | undefined>;
     updateCustomer(id: string, requestBody: {}): Promise<{
-        id: string;
+        name: string;
         phone: string;
         email: string | null;
-        name: string;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
-        referal: string | null;
+        id: string;
         created_at: Date;
         updated_at: Date;
+        referal: string | null;
     } | undefined>;
 }

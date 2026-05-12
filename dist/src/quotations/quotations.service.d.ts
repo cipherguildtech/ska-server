@@ -15,10 +15,10 @@ export declare class QuotationServices {
             paid_at: Date;
         }[];
         task: {
-            description: string | null;
             id: string;
             created_at: Date;
             updated_at: Date;
+            description: string | null;
             status: import("@prisma/client").$Enums.Task_status;
             history: string | null;
             project_id: string;
@@ -57,10 +57,10 @@ export declare class QuotationServices {
             paid_at: Date;
         }[];
         task: {
-            description: string | null;
             id: string;
             created_at: Date;
             updated_at: Date;
+            description: string | null;
             status: import("@prisma/client").$Enums.Task_status;
             history: string | null;
             project_id: string;
@@ -93,10 +93,10 @@ export declare class QuotationServices {
         message: string;
         data: {
             task: {
-                description: string | null;
                 id: string;
                 created_at: Date;
                 updated_at: Date;
+                description: string | null;
                 status: import("@prisma/client").$Enums.Task_status;
                 history: string | null;
                 project_id: string;
@@ -147,10 +147,10 @@ export declare class QuotationServices {
             paid_at: Date;
         }[];
         task: {
-            description: string | null;
             id: string;
             created_at: Date;
             updated_at: Date;
+            description: string | null;
             status: import("@prisma/client").$Enums.Task_status;
             history: string | null;
             project_id: string;
@@ -200,10 +200,10 @@ export declare class QuotationServices {
             paid_at: Date;
         }[];
         task: {
-            description: string | null;
             id: string;
             created_at: Date;
             updated_at: Date;
+            description: string | null;
             status: import("@prisma/client").$Enums.Task_status;
             history: string | null;
             project_id: string;

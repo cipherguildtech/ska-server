@@ -3,32 +3,6 @@ export declare class TasksController {
     private readonly tasksService;
     constructor(tasksService: TasksService);
     getTaskSingle(id: string): Promise<({
-        project: {
-            id: string;
-            created_at: Date;
-            updated_at: Date | null;
-            project_code: string;
-            service_type: import("@prisma/client").$Enums.Service_type;
-            description: string;
-            status: import("@prisma/client").$Enums.Project_status;
-            current_stage: number;
-            paid: import("@prisma/client-runtime-utils").Decimal;
-            balance: import("@prisma/client-runtime-utils").Decimal;
-            deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        taskHistory: {
-            id: string;
-            task_old_status: import("@prisma/client").$Enums.Task_status;
-            task_new_status: import("@prisma/client").$Enums.Task_status;
-            detail: import("@prisma/client/runtime/client").JsonValue | null;
-            note: string | null;
-            changed_at: Date;
-            task_id: string;
-            project_id: string;
-            changed_by: string;
-        }[];
         quotations: {
             id: string;
             created_at: Date;
@@ -39,6 +13,17 @@ export declare class TasksController {
             approval_status: import("@prisma/client").$Enums.Approval_status;
             pdf_url: import("@prisma/client/runtime/client").JsonValue | null;
             approved_at: Date | null;
+        }[];
+        taskHistory: {
+            id: string;
+            project_id: string;
+            task_old_status: import("@prisma/client").$Enums.Task_status;
+            task_new_status: import("@prisma/client").$Enums.Task_status;
+            detail: import("@prisma/client/runtime/client").JsonValue | null;
+            note: string | null;
+            changed_at: Date;
+            task_id: string;
+            changed_by: string;
         }[];
         assigner: {
             phone: string;
@@ -51,6 +36,21 @@ export declare class TasksController {
             department: import("@prisma/client").$Enums.Users_dept | null;
             full_name: string;
             role: import("@prisma/client").$Enums.Users_role;
+        };
+        project: {
+            id: string;
+            created_at: Date;
+            updated_at: Date | null;
+            project_code: string;
+            service_type: import("@prisma/client").$Enums.Service_type;
+            description: string;
+            status: import("@prisma/client").$Enums.Project_status;
+            current_stage: number;
+            paid: import("@prisma/client-runtime-utils").Decimal;
+            balance: import("@prisma/client-runtime-utils").Decimal;
+            deadline: Date;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -77,6 +77,34 @@ export declare class TasksController {
     }): Promise<void>;
     acceptOrReject(requestBody: any): Promise<void>;
     getAllTasks(): Promise<({
+        assigner: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
+        assignee: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
         project: {
             id: string;
             created_at: Date;
@@ -89,36 +117,8 @@ export declare class TasksController {
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        assigner: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
-        };
-        assignee: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -184,6 +184,34 @@ export declare class TasksController {
         completed_at: Date | null;
     }>;
     getAllByAssignedTo(assigned_to: string): Promise<({
+        assigner: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
+        assignee: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
         project: {
             id: string;
             created_at: Date;
@@ -196,36 +224,8 @@ export declare class TasksController {
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        assigner: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
-        };
-        assignee: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -275,7 +275,7 @@ export declare class TasksController {
         due_at: Date;
         completed_at: Date | null;
     }>;
-    updateStatus(id: string, status: string, completed_at: string, requestBody: any): Promise<"Task not available" | {
+    updateStatus(id: string, status: string, completed_at: string, requestBody: any): Promise<"Task not available" | "Invalid status" | {
         id: string;
         created_at: Date;
         updated_at: Date;
@@ -294,8 +294,36 @@ export declare class TasksController {
         is_quotation: boolean;
         due_at: Date;
         completed_at: Date | null;
-    } | "Invalid status">;
+    }>;
     getAllByProjectId(project_id: string): Promise<({
+        assigner: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
+        assignee: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
         project: {
             id: string;
             created_at: Date;
@@ -308,36 +336,8 @@ export declare class TasksController {
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        assigner: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
-        };
-        assignee: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -360,6 +360,34 @@ export declare class TasksController {
         completed_at: Date | null;
     })[]>;
     getAllByAssignedBy(assigned_by: string): Promise<({
+        assigner: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
+        assignee: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
         project: {
             id: string;
             created_at: Date;
@@ -372,36 +400,8 @@ export declare class TasksController {
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        assigner: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
-        };
-        assignee: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -424,6 +424,34 @@ export declare class TasksController {
         completed_at: Date | null;
     })[]>;
     getAllByDepartment(department: string): Promise<({
+        assigner: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
+        assignee: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
         project: {
             id: string;
             created_at: Date;
@@ -436,36 +464,8 @@ export declare class TasksController {
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        assigner: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
-        };
-        assignee: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -488,6 +488,34 @@ export declare class TasksController {
         completed_at: Date | null;
     })[]>;
     getAllByTitle(title: string): Promise<({
+        assigner: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
+        assignee: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
         project: {
             id: string;
             created_at: Date;
@@ -500,36 +528,8 @@ export declare class TasksController {
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        assigner: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
-        };
-        assignee: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -552,6 +552,34 @@ export declare class TasksController {
         completed_at: Date | null;
     })[]>;
     getAllByStatus(status: string): Promise<({
+        assigner: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
+        assignee: {
+            phone: string;
+            email: string | null;
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            department: import("@prisma/client").$Enums.Users_dept | null;
+            full_name: string;
+            password_hash: string;
+            otp: string | null;
+            otp_expiry: Date | null;
+            role: import("@prisma/client").$Enums.Users_role;
+            is_active: boolean;
+        };
         project: {
             id: string;
             created_at: Date;
@@ -564,36 +592,8 @@ export declare class TasksController {
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
-        };
-        assigner: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
-        };
-        assignee: {
-            id: string;
-            phone: string;
-            email: string | null;
-            created_at: Date;
-            updated_at: Date;
-            department: import("@prisma/client").$Enums.Users_dept | null;
-            full_name: string;
-            password_hash: string;
-            otp: string | null;
-            otp_expiry: Date | null;
-            role: import("@prisma/client").$Enums.Users_role;
-            is_active: boolean;
+            created_user_phone: string;
+            customer_phone: string;
         };
     } & {
         id: string;
@@ -697,10 +697,6 @@ export declare class TasksController {
     getTask(id: string): Promise<{
         description: string | null;
         status: import("@prisma/client").$Enums.Task_status;
-        project: {
-            id: string;
-            project_code: string;
-        };
         department: import("@prisma/client").$Enums.Users_dept;
         title: string;
         files: import("@prisma/client/runtime/client").JsonValue;
@@ -709,6 +705,10 @@ export declare class TasksController {
         completed_at: Date | null;
         assignee: {
             phone: string;
+        };
+        project: {
+            id: string;
+            project_code: string;
         };
     } | undefined>;
 }

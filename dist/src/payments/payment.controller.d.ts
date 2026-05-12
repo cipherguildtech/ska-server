@@ -5,19 +5,19 @@ export declare class PaymentController {
     constructor(paymentService: PaymentServices);
     getAll(): Promise<({
         project: {
-            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
+            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
+            created_user_phone: string;
+            customer_phone: string;
         };
         quotation: {
             id: string;
@@ -45,19 +45,19 @@ export declare class PaymentController {
         message: string;
         data: {
             project: {
-                description: string;
                 id: string;
                 created_at: Date;
                 updated_at: Date | null;
                 project_code: string;
                 service_type: import("@prisma/client").$Enums.Service_type;
+                description: string;
                 status: import("@prisma/client").$Enums.Project_status;
                 current_stage: number;
                 paid: import("@prisma/client-runtime-utils").Decimal;
                 balance: import("@prisma/client-runtime-utils").Decimal;
                 deadline: Date;
-                created_user_email: string;
-                customer_email: string;
+                created_user_phone: string;
+                customer_phone: string;
             };
             quotation: {
                 id: string;
@@ -83,19 +83,19 @@ export declare class PaymentController {
     }>;
     getAllByProject(id: string): Promise<({
         project: {
-            description: string;
             id: string;
             created_at: Date;
             updated_at: Date | null;
             project_code: string;
             service_type: import("@prisma/client").$Enums.Service_type;
+            description: string;
             status: import("@prisma/client").$Enums.Project_status;
             current_stage: number;
             paid: import("@prisma/client-runtime-utils").Decimal;
             balance: import("@prisma/client-runtime-utils").Decimal;
             deadline: Date;
-            created_user_email: string;
-            customer_email: string;
+            created_user_phone: string;
+            customer_phone: string;
         };
         quotation: {
             id: string;

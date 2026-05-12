@@ -115,8 +115,8 @@ let ProjectsService = class ProjectsService {
                     project_code: requestBody.project_code,
                     description: requestBody.description,
                     deadline: new Date(requestBody.deadline),
-                    created_user_email: requestBody.created_user_email,
-                    customer_email: requestBody.customer_email,
+                    created_user_phone: requestBody.created_user_phone,
+                    customer_phone: requestBody.customer_phone,
                     service_type: requestBody.service_type,
                 }
             });
