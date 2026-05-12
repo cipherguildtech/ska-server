@@ -5,5 +5,5 @@ export declare class RegisterDto {
     phone: string;
     password: string;
     role: Users_role;
-    department: Users_dept;
+    department?: Users_dept;
 }

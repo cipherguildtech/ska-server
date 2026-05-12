@@ -47,6 +47,9 @@ let ProjectHistoryService = class ProjectHistoryService {
                 detail: data.detail,
                 note: data.note,
                 changed_at: new Date(),
+                user: { connect: { phone: data.changed_by } },
+                project: { connect: { id: project?.id ?? data.project_id } },
+                task: { connect: { id: task?.id ?? data.task_id } },
             }
         });
         this.eventsGateway.emit("project_history:created");
