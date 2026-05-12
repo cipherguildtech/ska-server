@@ -173,10 +173,12 @@ export declare class ProjectsController {
                 created_at: Date;
                 approval_status: import("@prisma/client").$Enums.Approval_status;
             }[];
+            id: string;
             title: string;
             due_at: Date;
         }[];
         description: string;
+        id: string;
         created_at: Date;
         updated_at: Date | null;
         project_code: string;

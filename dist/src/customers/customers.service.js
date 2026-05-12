@@ -165,10 +165,10 @@ let CustomersService = class CustomersService {
             }
         }
     }
-    async getCustomer(id) {
+    async getCustomer(phone) {
         try {
             return await this.prisma.customer.findUniqueOrThrow({
-                where: { id },
+                where: { phone },
                 include: { projects: true },
                 omit: { created_at: true, updated_at: true }
             });
