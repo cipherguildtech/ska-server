@@ -194,7 +194,7 @@ export class ProjectsService {
             const project = await this.prisma.projects.create(
                 {
                     data: {
-                        project_code: lastProject != null ?`SKA-${new Date().getFullYear()}-${parseInt(lastProject.project_code.split('-').pop()!)+1}` : `SKA-${new Date().getFullYear()}-000001`,
+                        project_code: lastProject != null ?`SKA-${new Date().getFullYear()}-${String(parseInt(lastProject.project_code.split('-').pop()!)+1).padStart(6,'0')}` : `SKA-${new Date().getFullYear()}-000001`,
                         description: requestBody.description,
                         deadline: new Date(requestBody.deadline),
                         created_user_phone: requestBody.created_user_phone,
