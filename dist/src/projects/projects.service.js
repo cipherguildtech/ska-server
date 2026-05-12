@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client/runtime/client");
 const events_gateway_1 = require("../gateway/events.gateway");
+const node_console_1 = require("node:console");
 let ProjectsService = class ProjectsService {
     prisma;
     eventsGateway;
@@ -276,6 +277,7 @@ let ProjectsService = class ProjectsService {
         }
     }
     async updateProjectStatus(id, requestBody) {
+        (0, node_console_1.log)("Updating project status", { id, newStatus: requestBody.status });
         try {
             const project = await this.prisma.projects.findFirst({
                 where: {
@@ -290,6 +292,7 @@ let ProjectsService = class ProjectsService {
                 data: { status: requestBody.status },
                 where: { id: project?.id ?? id }
             });
+            (0, node_console_1.log)(projectStatus);
             this.eventsGateway.emit("project_status:updated");
             return projectStatus;
         }
