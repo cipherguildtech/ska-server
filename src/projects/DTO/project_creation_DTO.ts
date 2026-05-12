@@ -22,6 +22,6 @@ export class projectCreationDTO{
     deadline!: Date
 
     @IsNotEmpty()
-    @IsEmail()
+    @IsPhoneNumber('IN')
     created_user_phone!: string
 }

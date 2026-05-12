@@ -186,7 +186,6 @@ export class ProjectsService {
             const project = await this.prisma.projects.create(
                 {
                     data: {
-                        project_code: requestBody.project_code,
                         description: requestBody.description,
                         deadline: new Date(requestBody.deadline),
                         created_user_phone: requestBody.created_user_phone,
