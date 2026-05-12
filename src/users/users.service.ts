@@ -290,9 +290,9 @@ export class UsersService {
                                             }
                                         },
                                         balance: true,
-                                        created_user_email: true,
+                                        created_user_phone: true,
                                         current_stage: true,
-                                        customer_email: true,
+                                        customer_phone: true,
                                         deadline: true,
                                         description: true,
                                         service_type: true,
