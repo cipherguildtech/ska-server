@@ -37,7 +37,7 @@ export class ProjectsController {
     async getProject(@Param('project_code') project_code: string) {
         return await this.projectService.getProject(project_code);
     }
-@Get('full/:project_code')
+    @Get('full/:project_code')
     async getfullProject(@Param('project_code') project_code: string) {
         return await this.projectService.getfullProject(project_code);
     }
