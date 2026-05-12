@@ -1,5 +1,5 @@
 import { Customer, Service_type, Users } from "@prisma/client";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from "class-validator";
 
 export class projectCreationDTO{
     @IsNotEmpty()
@@ -7,8 +7,8 @@ export class projectCreationDTO{
     project_code!: string
 
     @IsNotEmpty()
-    @IsEmail()
-    customer_email!: string
+    @IsPhoneNumber('IN')
+    customer_phone!: string
 
     @IsNotEmpty()
     @IsString()
@@ -23,5 +23,5 @@ export class projectCreationDTO{
 
     @IsNotEmpty()
     @IsEmail()
-    created_user_email!: string
+    created_user_phone!: string
 }
