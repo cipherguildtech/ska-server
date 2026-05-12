@@ -1,7 +1,41 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { Users_dept, Users_role } from '@prisma/client';
 export declare class UsersService {
     private prisma;
     constructor(prisma: PrismaService);
+    updateUserDetails(phone: string, requestBody: {
+        name: string | null;
+        email: string | null;
+        password: string | null;
+        role: Users_role | null;
+        department: Users_dept | null;
+    }): Promise<{
+        phone: string;
+        email: string | null;
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        department: import("@prisma/client").$Enums.Users_dept | null;
+        full_name: string;
+        password_hash: string;
+        otp: string | null;
+        otp_expiry: Date | null;
+        role: import("@prisma/client").$Enums.Users_role;
+        is_active: boolean;
+    }>;
+    getUserFullDetail(phone: string): Promise<{
+        phone: string;
+        email: string | null;
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        department: import("@prisma/client").$Enums.Users_dept | null;
+        full_name: string;
+        password_hash: string;
+        role: import("@prisma/client").$Enums.Users_role;
+        is_active: boolean;
+    } | null>;
+    activateOrDeactivate(phone: string, action: boolean): Promise<void>;
     getUserTaskTypeCounts(phone: string): Promise<{
         total_task_count: number;
         pending_task_count: number;

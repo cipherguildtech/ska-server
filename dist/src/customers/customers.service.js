@@ -21,6 +21,62 @@ let CustomersService = class CustomersService {
         this.prisma = prisma;
         this.eventsGateway = eventsGateway;
     }
+    async getCustomerWithProjectCount(phone) {
+        try {
+            const customer = await this.prisma.customer.findUnique({
+                where: {
+                    phone: phone
+                },
+                select: {
+                    name: true,
+                    phone: true,
+                    address: true,
+                    email: true,
+                    customer_type: true,
+                }
+            });
+            const project_count = await this.prisma.projects.count({
+                where: {
+                    customer: {
+                        phone: phone
+                    }
+                }
+            });
+            return {
+                ...customer,
+                'project_count': project_count
+            };
+        }
+        catch (e) {
+            throw new common_1.InternalServerErrorException('something went wrong');
+        }
+    }
+    async getCustomerProjects(phone) {
+        try {
+            const customerProjects = await this.prisma.customer.findUnique({
+                where: {
+                    phone
+                },
+                include: {
+                    projects: {
+                        select: {
+                            status: true,
+                            created_at: true,
+                            description: true,
+                            project_code: true,
+                            service_type: true,
+                            deadline: true,
+                            id: true
+                        }
+                    }
+                },
+            });
+            return customerProjects;
+        }
+        catch (e) {
+            throw new common_1.InternalServerErrorException('something went wrong');
+        }
+    }
     async getRecentCustomers() {
         try {
             const sevenDaysAgo = new Date();
