@@ -32,6 +32,13 @@ __decorate([
     __metadata("design:type", String)
 ], customerCreationDto.prototype, "phone", void 0);
 __decorate([
+<<<<<<< HEAD
+=======
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", Object)
+], customerCreationDto.prototype, "email", void 0);
+__decorate([
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)

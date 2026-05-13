@@ -4,6 +4,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { Project_status } from "@prisma/client";
 import { projectCreationDTO } from "./DTO/project_creation_DTO";
 import { EventsGateway } from "../gateway/events.gateway";
+import { log } from "node:console";
 
 @Injectable()
 export class ProjectsService {
@@ -17,7 +18,7 @@ export class ProjectsService {
                         project_code
                     },
                     include: {
-                        tasks:{
+                        tasks: {
                             include: {
                                 quotations: {
                                     include: {
@@ -194,7 +195,7 @@ export class ProjectsService {
             const project = await this.prisma.projects.create(
                 {
                     data: {
-                        project_code: lastProject != null ?`SKA-${new Date().getFullYear()}-${String(parseInt(lastProject.project_code.split('-').pop()!)+1).padStart(6,'0')}` : `SKA-${new Date().getFullYear()}-000001`,
+                        project_code: lastProject != null ? `SKA-${new Date().getFullYear()}-${String(parseInt(lastProject.project_code.split('-').pop()!) + 1).padStart(6, '0')}` : `SKA-${new Date().getFullYear()}-000001`,
                         description: requestBody.description,
                         deadline: new Date(requestBody.deadline),
                         created_user_phone: requestBody.created_user_phone,
@@ -223,8 +224,8 @@ export class ProjectsService {
                         status: true,
                         deadline: true,
                         description: true,
-                        customer:{
-                            select:{
+                        customer: {
+                            select: {
                                 name: true,
                             }
                         }
@@ -243,7 +244,7 @@ export class ProjectsService {
                 {
                     where: { project_code },
                     select: {
-                        
+
                         project_code: true,
                         status: true,
                         service_type: true,
@@ -268,7 +269,7 @@ export class ProjectsService {
                         },
                         paid: true,
                         updated_at: true,
-                        
+
                     },
 
                 },
@@ -291,11 +292,11 @@ export class ProjectsService {
             return await this.prisma.projects.findUniqueOrThrow(
                 {
                     where: { project_code },
-                   
-                        
-                     select: {
-                        
-                        id:true,
+
+
+                    select: {
+
+                        id: true,
                         project_code: true,
                         status: true,
                         service_type: true,
@@ -327,24 +328,24 @@ export class ProjectsService {
                                 }
                             },
                             select: {
-                                id:true,
+                                id: true,
                                 title: true,
                                 due_at: true,
-                                quotations:{
-                                    where:{
+                                quotations: {
+                                    where: {
                                         approval_status: {
                                             notIn: ['REJECTED', "APPROVED"]
                                         }
                                     },
-                                    select:{
+                                    select: {
                                         created_at: true,
                                         approval_status: true,
                                     }
-                                    },
-                                    
-                                }
+                                },
+
                             }
-                        },
+                        }
+                    },
 
                 },
             )
@@ -376,6 +377,7 @@ export class ProjectsService {
     }
 
     async updateProjectStatus(id: string, requestBody: { status: Project_status }) {
+        log("Updating project status", { id, newStatus: requestBody.status });
         try {
             const project = await this.prisma.projects.findFirst({
                 where: {
@@ -392,6 +394,7 @@ export class ProjectsService {
                     where: { id: project?.id ?? id }
                 }
             )
+            log(projectStatus);
             this.eventsGateway.emit("project_status:updated");
             return projectStatus;
         }

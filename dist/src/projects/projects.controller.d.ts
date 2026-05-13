@@ -64,6 +64,23 @@ export declare class ProjectsController {
             completed_at: Date | null;
         })[];
         history: {
+<<<<<<< HEAD
+            id: string;
+            project_id: string;
+            task_old_status: import("@prisma/client").$Enums.Task_status;
+            task_new_status: import("@prisma/client").$Enums.Task_status;
+            detail: import("@prisma/client/runtime/client").JsonValue | null;
+            note: string | null;
+            changed_at: Date;
+            task_id: string;
+            changed_by: string;
+        }[];
+        created_by: {
+            phone: string;
+            full_name: string;
+        };
+    } & {
+=======
             id: string;
             project_id: string;
             task_old_status: import("@prisma/client").$Enums.Task_status;
@@ -97,10 +114,10 @@ export declare class ProjectsController {
         customer: {
             name: string;
             phone: string;
+            email: string | null;
             address: string | null;
             customer_type: import("@prisma/client").$Enums.Customer_type;
             id: string;
-            email: string | null;
             referal: string | null;
             created_at: Date;
             updated_at: Date;
@@ -126,6 +143,130 @@ export declare class ProjectsController {
         paid: import("@prisma/client-runtime-utils").Decimal;
         balance: import("@prisma/client-runtime-utils").Decimal;
         deadline: Date;
+        created_user_phone: string;
+        customer_phone: string;
+    }>;
+    getProjects(): Promise<{
+        customer: {
+            name: string;
+        };
+        description: string;
+        id: string;
+        project_code: string;
+        status: import("@prisma/client").$Enums.Project_status;
+        deadline: Date;
+    }[]>;
+    getProject(project_code: string): Promise<{
+        customer: {
+            name: string;
+            phone: string;
+            email: string | null;
+            address: string | null;
+        };
+        description: string;
+        created_at: Date;
+        updated_at: Date | null;
+        project_code: string;
+        service_type: import("@prisma/client").$Enums.Service_type;
+        status: import("@prisma/client").$Enums.Project_status;
+        current_stage: number;
+        paid: import("@prisma/client-runtime-utils").Decimal;
+        balance: import("@prisma/client-runtime-utils").Decimal;
+        deadline: Date;
+        created_by: {
+            email: string | null;
+            full_name: string;
+        };
+    } | undefined>;
+    getfullProject(project_code: string): Promise<{
+        customer: {
+            name: string;
+            phone: string;
+            email: string | null;
+            address: string | null;
+        };
+        tasks: {
+            quotations: {
+                created_at: Date;
+                approval_status: import("@prisma/client").$Enums.Approval_status;
+            }[];
+            id: string;
+            title: string;
+            due_at: Date;
+        }[];
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
+        description: string;
+        id: string;
+        created_at: Date;
+        updated_at: Date | null;
+        project_code: string;
+        service_type: import("@prisma/client").$Enums.Service_type;
+        status: import("@prisma/client").$Enums.Project_status;
+        current_stage: number;
+        paid: import("@prisma/client-runtime-utils").Decimal;
+        balance: import("@prisma/client-runtime-utils").Decimal;
+        deadline: Date;
+<<<<<<< HEAD
+        created_user_phone: string;
+        customer_phone: string;
+    }) | undefined>;
+    getActiveProjects(): Promise<{
+        customer: {
+            name: string;
+            phone: string;
+            address: string | null;
+            customer_type: import("@prisma/client").$Enums.Customer_type;
+            id: string;
+            email: string | null;
+            referal: string | null;
+            created_at: Date;
+            updated_at: Date;
+        };
+        description: string;
+        id: string;
+        project_code: string;
+        service_type: import("@prisma/client").$Enums.Service_type;
+        deadline: Date;
+    }[]>;
+    getActiveProjectCount(): Promise<{
+        count: number;
+    }>;
+    createProject(requestBody: projectCreationDTO): Promise<{
+=======
+        created_by: {
+            email: string | null;
+            full_name: string;
+        };
+    } | undefined>;
+    getProjectHistory(id: string): Promise<{
+        history: {
+            id: string;
+            project_id: string;
+            task_old_status: import("@prisma/client").$Enums.Task_status;
+            task_new_status: import("@prisma/client").$Enums.Task_status;
+            detail: import("@prisma/client/runtime/client").JsonValue | null;
+            note: string | null;
+            changed_at: Date;
+            task_id: string;
+            changed_by: string;
+        }[];
+    } | null>;
+    updateProjectStatus(id: string, requestBody: {
+        status: Project_status;
+    }): Promise<{
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
+        description: string;
+        id: string;
+        created_at: Date;
+        updated_at: Date | null;
+        project_code: string;
+        service_type: import("@prisma/client").$Enums.Service_type;
+        status: import("@prisma/client").$Enums.Project_status;
+        current_stage: number;
+        paid: import("@prisma/client-runtime-utils").Decimal;
+        balance: import("@prisma/client-runtime-utils").Decimal;
+        deadline: Date;
+<<<<<<< HEAD
         created_user_phone: string;
         customer_phone: string;
     }>;
@@ -220,6 +361,8 @@ export declare class ProjectsController {
         paid: import("@prisma/client-runtime-utils").Decimal;
         balance: import("@prisma/client-runtime-utils").Decimal;
         deadline: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         created_user_phone: string;
         customer_phone: string;
     }>;

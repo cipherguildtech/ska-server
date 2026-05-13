@@ -6,6 +6,7 @@ export declare class QuotationServices {
     getAll(): Promise<({
         payments: {
             id: string;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             created_at: Date;
             project_id: string;
             amount: import("@prisma/client-runtime-utils").Decimal;
@@ -36,8 +37,11 @@ export declare class QuotationServices {
         };
     } & {
         id: string;
+<<<<<<< HEAD
         created_at: Date;
         updated_at: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         task_id: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
@@ -48,6 +52,7 @@ export declare class QuotationServices {
     getAllById(id: string): Promise<({
         payments: {
             id: string;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             created_at: Date;
             project_id: string;
             amount: import("@prisma/client-runtime-utils").Decimal;
@@ -78,8 +83,11 @@ export declare class QuotationServices {
         };
     } & {
         id: string;
+<<<<<<< HEAD
         created_at: Date;
         updated_at: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         task_id: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
@@ -114,8 +122,11 @@ export declare class QuotationServices {
             };
         } & {
             id: string;
+<<<<<<< HEAD
             created_at: Date;
             updated_at: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
             task_id: string;
             amount: import("@prisma/client-runtime-utils").Decimal;
             advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
@@ -126,8 +137,11 @@ export declare class QuotationServices {
     }>;
     update(id: string, body: any): Promise<{
         id: string;
+<<<<<<< HEAD
         created_at: Date;
         updated_at: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         task_id: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
@@ -138,6 +152,7 @@ export declare class QuotationServices {
     getAllByProjectStatus(id: string, status: string): Promise<"Invalid status" | ({
         payments: {
             id: string;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             created_at: Date;
             project_id: string;
             amount: import("@prisma/client-runtime-utils").Decimal;
@@ -168,8 +183,11 @@ export declare class QuotationServices {
         };
     } & {
         id: string;
+<<<<<<< HEAD
         created_at: Date;
         updated_at: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         task_id: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
@@ -177,10 +195,15 @@ export declare class QuotationServices {
         pdf_url: import("@prisma/client/runtime/client").JsonValue | null;
         approved_at: Date | null;
     })[]>;
+<<<<<<< HEAD
     updateStatus(id: string, status: string): Promise<"Invalid status" | {
         id: string;
         created_at: Date;
         updated_at: Date;
+=======
+    updateStatus(id: string, status: string): Promise<{
+        id: string;
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         task_id: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
@@ -191,6 +214,7 @@ export declare class QuotationServices {
     getAllByStatus(status: string): Promise<"Invalid status" | ({
         payments: {
             id: string;
+            amount: import("@prisma/client-runtime-utils").Decimal;
             created_at: Date;
             project_id: string;
             amount: import("@prisma/client-runtime-utils").Decimal;
@@ -221,8 +245,11 @@ export declare class QuotationServices {
         };
     } & {
         id: string;
+<<<<<<< HEAD
         created_at: Date;
         updated_at: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         task_id: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
@@ -237,8 +264,11 @@ export declare class QuotationServices {
         };
     } & {
         id: string;
+<<<<<<< HEAD
         created_at: Date;
         updated_at: Date;
+=======
+>>>>>>> bd347ceb7eddaaa7464ea4b26cc68366312843fa
         task_id: string;
         amount: import("@prisma/client-runtime-utils").Decimal;
         advance_paid: import("@prisma/client-runtime-utils").Decimal | null;
