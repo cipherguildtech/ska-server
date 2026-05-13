@@ -11,8 +11,8 @@ export declare class UsersController {
         department: Users_dept | null;
     }): Promise<{
         phone: string;
-        email: string | null;
         id: string;
+        email: string | null;
         created_at: Date;
         updated_at: Date;
         department: import("@prisma/client").$Enums.Users_dept | null;
@@ -25,8 +25,8 @@ export declare class UsersController {
     }>;
     getUserFullDetail(phone: string): Promise<{
         phone: string;
-        email: string | null;
         id: string;
+        email: string | null;
         created_at: Date;
         updated_at: Date;
         department: import("@prisma/client").$Enums.Users_dept | null;
@@ -245,8 +245,8 @@ export declare class UsersController {
         email: string;
     }): Promise<{
         phone: string;
-        email: string | null;
         id: string;
+        email: string | null;
         created_at: Date;
         updated_at: Date;
         department: import("@prisma/client").$Enums.Users_dept | null;

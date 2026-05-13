@@ -12,19 +12,19 @@ export declare class SalesService {
         pendingQuotations: number;
         approvedDeals: number;
         resentCustomers: {
-            id: string;
             name: string;
             phone: string;
+            id: string;
         }[];
         activeProjectsDetailed: {
-            id: string;
-            project_code: string;
-            description: string;
-            status: import("@prisma/client").$Enums.Project_status;
-            deadline: Date;
             customer: {
                 name: string;
             };
+            description: string;
+            id: string;
+            project_code: string;
+            status: import("@prisma/client").$Enums.Project_status;
+            deadline: Date;
         }[];
     }>;
 }

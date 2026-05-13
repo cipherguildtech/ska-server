@@ -19,10 +19,10 @@ export declare class CustomersContoller {
     } & {
         name: string;
         phone: string;
-        email: string | null;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        email: string | null;
         referal: string | null;
         created_at: Date;
         updated_at: Date;
@@ -31,9 +31,9 @@ export declare class CustomersContoller {
         project_count: number;
         name?: string | undefined;
         phone?: string | undefined;
-        email?: string | null | undefined;
         address?: string | null | undefined;
         customer_type?: import("@prisma/client").$Enums.Customer_type | undefined;
+        email?: string | null | undefined;
     }>;
     getRecentCustomers(): Promise<{
         name: string;
@@ -43,19 +43,19 @@ export declare class CustomersContoller {
     getCustomers(): Promise<{
         name: string;
         phone: string;
-        email: string | null;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        email: string | null;
         referal: string | null;
     }[]>;
     createCustomer(requestBody: customerCreationDto): Promise<{
         name: string;
         phone: string;
-        email: string | null;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        email: string | null;
         referal: string | null;
         created_at: Date;
         updated_at: Date;
@@ -79,19 +79,19 @@ export declare class CustomersContoller {
     } & {
         name: string;
         phone: string;
-        email: string | null;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        email: string | null;
         referal: string | null;
     }) | undefined>;
     updateCustomer(id: string, requestBody: {}): Promise<{
         name: string;
         phone: string;
-        email: string | null;
         address: string | null;
         customer_type: import("@prisma/client").$Enums.Customer_type;
         id: string;
+        email: string | null;
         referal: string | null;
         created_at: Date;
         updated_at: Date;

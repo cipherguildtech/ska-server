@@ -19,8 +19,8 @@ export declare class AuthService {
     }>;
     register(requestBody: RegisterDto): Promise<{
         phone: string;
-        email: string | null;
         id: string;
+        email: string | null;
         created_at: Date;
         updated_at: Date;
         department: import("@prisma/client").$Enums.Users_dept | null;
